@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
@@ -30,7 +31,10 @@ public class MainViewController implements Initializable{
 	
 	@FXML
 	public void onMenuItemDocumentoAction() {
-		loadView2("/gui/DocumentosList.fxml");
+		loadView("/gui/DocumentosList.fxml", (DocumentoListController controller) -> {
+			controller.setDocumentoService(new DocumentoService());
+			controller.updateTableView();
+		});
 	}
 	@FXML
 	public void onMenuItemFuncionarioAction() {
@@ -38,31 +42,14 @@ public class MainViewController implements Initializable{
 	}
 	@FXML
 	public void onMenuItemAboutAction() {
-		loadView("/gui/About.fxml");
+		loadView("/gui/About.fxml", x -> {});
 	}
 	
 	@Override
 	public void initialize(URL uri, ResourceBundle rb) {	
 	}
 	
-	private synchronized void loadView(String absoluteName) {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-			VBox newVbox = loader.load();
-			Scene mainScene = Main.getMainScene();
-			VBox mainVbox = (VBox) ((ScrollPane)mainScene.getRoot()).getContent();
-			
-			Node mainMenu = mainVbox.getChildren().get(0);
-			mainVbox.getChildren().clear();
-			mainVbox.getChildren().add(mainMenu);
-			mainVbox.getChildren().addAll(newVbox.getChildren());
-		} 
-		catch (IOException e) {
-			Alerts.showAlert("IOException", "Erro ao carregar página", e.getMessage(), AlertType.ERROR);
-		}
-	}
-	
-	private synchronized void loadView2(String absoluteName) {
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {  
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			VBox newVbox = loader.load();
@@ -74,13 +61,11 @@ public class MainViewController implements Initializable{
 			mainVbox.getChildren().add(mainMenu);
 			mainVbox.getChildren().addAll(newVbox.getChildren());
 			
-			DocumentoListController controller = loader.getController();
-			controller.setDocumentoService(new DocumentoService());
-			controller.updateTableView();
+			T controller = loader.getController();
+			initializingAction.accept(controller);
 		} 
 		catch (IOException e) {
 			Alerts.showAlert("IOException", "Erro ao carregar página", e.getMessage(), AlertType.ERROR);
 		}
 	}
-
 }
