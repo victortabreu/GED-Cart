@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import model.services.DocumentoService;
 
 public class MainViewController implements Initializable{
 
@@ -29,7 +30,7 @@ public class MainViewController implements Initializable{
 	
 	@FXML
 	public void onMenuItemDocumentoAction() {
-		loadView("/gui/DocumentosList.fxml");
+		loadView2("/gui/DocumentosList.fxml");
 	}
 	@FXML
 	public void onMenuItemFuncionarioAction() {
@@ -55,6 +56,27 @@ public class MainViewController implements Initializable{
 			mainVbox.getChildren().clear();
 			mainVbox.getChildren().add(mainMenu);
 			mainVbox.getChildren().addAll(newVbox.getChildren());
+		} 
+		catch (IOException e) {
+			Alerts.showAlert("IOException", "Erro ao carregar página", e.getMessage(), AlertType.ERROR);
+		}
+	}
+	
+	private synchronized void loadView2(String absoluteName) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+			VBox newVbox = loader.load();
+			Scene mainScene = Main.getMainScene();
+			VBox mainVbox = (VBox) ((ScrollPane)mainScene.getRoot()).getContent();
+			
+			Node mainMenu = mainVbox.getChildren().get(0);
+			mainVbox.getChildren().clear();
+			mainVbox.getChildren().add(mainMenu);
+			mainVbox.getChildren().addAll(newVbox.getChildren());
+			
+			DocumentoListController controller = loader.getController();
+			controller.setDocumentoService(new DocumentoService());
+			controller.updateTableView();
 		} 
 		catch (IOException e) {
 			Alerts.showAlert("IOException", "Erro ao carregar página", e.getMessage(), AlertType.ERROR);
