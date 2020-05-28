@@ -14,4 +14,11 @@ public class DocumentoService {
 		return dao.findAll();
 	}
 
+	public void saveOrUpdate(Documento obj) {
+		if(obj.getId() == null) {
+			dao.insert(obj);
+		}else {
+			dao.update(obj);
+		}
+	}
 }

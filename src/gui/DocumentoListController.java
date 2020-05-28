@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import application.Main;
 import gui.util.Alerts;
+import gui.util.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -47,7 +48,8 @@ public class DocumentoListController implements Initializable{
 	@FXML
 	public void OnBtNovoAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/DocumentoForm.fxml", parentStage);
+		Documento obj = new Documento();
+		createDialogForm(obj, "/gui/DocumentoForm.fxml", parentStage);
 	}
 		
 	public void setDocumentoService(DocumentoService service) {
@@ -75,10 +77,15 @@ public class DocumentoListController implements Initializable{
 		obsList = FXCollections.observableArrayList(list);
 		tableViewDocumento.setItems(obsList);
 	}
-	private void createDialogForm(String absoluteName, Stage parentStage) {
+	private void createDialogForm(Documento obj, String absoluteName, Stage parentStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
+			
+			DocumentoFormController controller = loader.getController();
+			controller.setDocumento(obj);
+			controller.setDocumentoService(new DocumentoService());
+			controller.updateFomrData();
 			
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Entre com os dados do documento");
