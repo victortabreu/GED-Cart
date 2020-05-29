@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -26,7 +27,7 @@ import javafx.stage.Stage;
 import model.entities.Documento;
 import model.services.DocumentoService;
 
-public class DocumentoListController implements Initializable{
+public class DocumentoListController implements Initializable, DataChangeListener{
 
 	@FXML
 	private TableView<Documento> tableViewDocumento;
@@ -85,6 +86,7 @@ public class DocumentoListController implements Initializable{
 			DocumentoFormController controller = loader.getController();
 			controller.setDocumento(obj);
 			controller.setDocumentoService(new DocumentoService());
+			controller.subscribeDataChangeListener(this);
 			controller.updateFomrData();
 			
 			Stage dialogStage = new Stage();
@@ -98,6 +100,11 @@ public class DocumentoListController implements Initializable{
 		}catch(IOException e) {
 			Alerts.showAlert("IOException", "Erro ao carregar view", e.getMessage(), AlertType.ERROR);
 		}
+	}
+
+	@Override
+	public void onDataChanged() {
+		updateTableView();
 	}
 
 }
