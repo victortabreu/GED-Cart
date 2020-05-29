@@ -3,7 +3,9 @@ package gui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import db.DbException;
 import gui.listeners.DataChangeListener;
@@ -18,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Documento;
+import model.exceptions.ValidationException;
 import model.services.DocumentoService;
 
 public class DocumentoFormController implements Initializable {
@@ -69,6 +72,9 @@ public class DocumentoFormController implements Initializable {
 			notifyDataChangeListeners();
 			Utils.currentStage(event).close();
 		}
+		catch(ValidationException e) {
+			setErrorMessages(e.getErrors());
+		}
 		catch(DbException e) {
 			Alerts.showAlert("Erro ao salvar objet", null, e.getMessage(), AlertType.ERROR);
 		}
@@ -82,8 +88,20 @@ public class DocumentoFormController implements Initializable {
 
 	private Documento getFormData() {
 		Documento obj = new Documento();
+		
+		ValidationException exception = new ValidationException("Erro de validação");
+		
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
+		
+		if(txtName.getText() == null || txtName.getText().trim().equals("")) {
+			exception.addError("name", "O Campo não pode ser vazio");
+		}
+		
 		obj.setName(txtName.getText());
+		
+		if(exception.getErrors().size() > 0) {
+			throw exception;
+		}
 		
 		return obj;
 	}
@@ -108,6 +126,15 @@ public class DocumentoFormController implements Initializable {
 			throw new IllegalStateException("Entity was null");
 		}
 		txtId.setText(String.valueOf(entity.getId()));
+	}
+	
+	private void setErrorMessages(Map<String, String> errors) {
+		Set<String> fields = errors.keySet();
+		
+		if(fields.contains("name")) {
+			labelErrorName.setText(errors.get("name"));
+		}
+		
 	}
 
 }
