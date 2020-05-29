@@ -10,7 +10,8 @@ public class Documento implements Serializable {
 	private String name;
 	
 	public Documento() {
-	}
+		
+	}	
 
 	public Documento(Integer id, String name) {
 		this.id = id;
@@ -38,6 +39,7 @@ public class Documento implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -55,11 +57,16 @@ public class Documento implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Department [id=" + id + ", name=" + name + "]";
+		return "Documento [id=" + id + ", name=" + name + "]";
 	}
 }

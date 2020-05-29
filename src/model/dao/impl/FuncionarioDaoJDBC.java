@@ -1,4 +1,4 @@
-package model.dao.impl;
+/*package model.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -229,5 +229,5 @@ public class FuncionarioDaoJDBC implements FuncionarioDao {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
-	}*/
-}
+	}
+}*/
