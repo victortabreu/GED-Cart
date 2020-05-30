@@ -3,9 +3,11 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import application.Main;
+import db.DbIntegrityException;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
@@ -19,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -42,6 +45,9 @@ public class DocumentoListController implements Initializable, DataChangeListene
 
 	@FXML
 	private TableColumn<Documento, Documento> tableColumnEDIT;
+
+	@FXML
+	private TableColumn<Documento, Documento> tableColumnREMOVE;
 
 	@FXML
 	private Button btNovo;
@@ -82,6 +88,7 @@ public class DocumentoListController implements Initializable, DataChangeListene
 		obsList = FXCollections.observableArrayList(list);
 		tableViewDocumento.setItems(obsList);
 		initEditButtons();
+		initRemoveButtons();
 	}
 
 	private void createDialogForm(Documento obj, String absoluteName, Stage parentStage) {
@@ -130,5 +137,39 @@ public class DocumentoListController implements Initializable, DataChangeListene
 						event -> createDialogForm(obj, "/gui/DocumentoForm.fxml", Utils.currentStage(event)));
 			}
 		});
+	}
+
+	private void initRemoveButtons() {
+		tableColumnREMOVE.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+		tableColumnREMOVE.setCellFactory(param -> new TableCell<Documento, Documento>() {
+			private final Button button = new Button("remove");
+
+			@Override
+			protected void updateItem(Documento obj, boolean empty) {
+				super.updateItem(obj, empty);
+				if (obj == null) {
+					setGraphic(null);
+					return;
+				}
+				setGraphic(button);
+				button.setOnAction(event -> removeEntity(obj));
+			}
+		});
+	}
+
+	private void removeEntity(Documento obj) {
+		Optional<ButtonType> result = Alerts.showConfirmation("Confirmação", "Tem certeza que quer remover o documento?");
+		
+		if(result.get() == ButtonType.OK){
+			if(service == null) {
+				throw new IllegalStateException("service está nulo");
+			}
+			try {
+				service.remove(obj);
+				updateTableView();
+			}catch(DbIntegrityException e){
+				Alerts.showAlert("Erro ao remover objeto", null, e.getMessage(), AlertType.ERROR);
+			}
+		}
 	}
 }

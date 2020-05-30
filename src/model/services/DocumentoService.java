@@ -21,4 +21,8 @@ public class DocumentoService {
 			dao.update(obj);
 		}
 	}
+	
+	public void remove(Documento obj) {
+		dao.deleteById(obj.getId());
+	}
 }
