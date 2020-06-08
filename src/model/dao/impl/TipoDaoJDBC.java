@@ -11,29 +11,30 @@ import java.util.List;
 import db.DB;
 import db.DbException;
 import db.DbIntegrityException;
-import model.dao.DocumentoDao;
-import model.entities.Documento;
+import model.dao.TipoDao;
+import model.entities.Tipo;
 
-public class DocumentoDaoJDBC implements DocumentoDao {
+public class TipoDaoJDBC implements TipoDao {
 
 	private Connection conn;
 	
-	public DocumentoDaoJDBC(Connection conn) {
+	public TipoDaoJDBC(Connection conn) {
 		this.conn = conn;
 	}
 	
 	@Override
-	public Documento findById(Integer id) {
+	public Tipo findById(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM documento WHERE Id = ?");
+				"SELECT * FROM tipo WHERE Id = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
-				Documento obj = new Documento();
+				Tipo obj = new Tipo();
 				obj.setId(rs.getInt("Id"));
+				obj.setName(rs.getString("Name"));
 				return obj;
 			}
 			return null;
@@ -48,19 +49,20 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 	}
 
 	@Override
-	public List<Documento> findAll() {
+	public List<Tipo> findAll() {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM documento ORDER BY Name");
+				"SELECT * FROM tipo ORDER BY Name");
 			rs = st.executeQuery();
 
-			List<Documento> list = new ArrayList<>();
+			List<Tipo> list = new ArrayList<>();
 
 			while (rs.next()) {
-				Documento obj = new Documento();
+				Tipo obj = new Tipo();
 				obj.setId(rs.getInt("Id"));
+				obj.setName(rs.getString("Name"));
 				list.add(obj);
 			}
 			return list;
@@ -75,15 +77,17 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 	}
 
 	@Override
-	public void insert(Documento obj) {
+	public void insert(Tipo obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"INSERT INTO documento " +
+				"INSERT INTO tipo " +
 				"(Name) " +
 				"VALUES " +
 				"(?)", 
 				Statement.RETURN_GENERATED_KEYS);
+
+			st.setString(1, obj.getName());
 
 			int rowsAffected = st.executeUpdate();
 			
@@ -107,13 +111,15 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 	}
 
 	@Override
-	public void update(Documento obj) {
+	public void update(Tipo obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"UPDATE documento " +
+				"UPDATE tipo " +
+				"SET Name = ? " +
 				"WHERE Id = ?");
 
+			st.setString(1, obj.getName());
 			st.setInt(2, obj.getId());
 
 			st.executeUpdate();
@@ -131,7 +137,7 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"DELETE FROM documento WHERE Id = ?");
+				"DELETE FROM tipo WHERE Id = ?");
 
 			st.setInt(1, id);
 

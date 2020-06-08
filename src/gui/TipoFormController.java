@@ -19,15 +19,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import model.entities.Documento;
+import model.entities.Tipo;
 import model.exceptions.ValidationException;
-import model.services.DocumentoService;
+import model.services.TipoService;
 
-public class DocumentoFormController implements Initializable {
+public class TipoFormController implements Initializable {
 
-	private Documento entity;
+	private Tipo entity;
 
-	private DocumentoService service;
+	private TipoService service;
 	
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
@@ -50,11 +50,11 @@ public class DocumentoFormController implements Initializable {
 		dataChangeListeners.add(listener);
 	}
 
-	public void setDocumento(Documento entity) {
+	public void setTipo(Tipo entity) {
 		this.entity = entity;
 	}
 
-	public void setDocumentoService(DocumentoService service) {
+	public void setTipoService(TipoService service) {
 		this.service = service;
 	}
 
@@ -86,8 +86,8 @@ public class DocumentoFormController implements Initializable {
 		}		
 	}
 
-	private Documento getFormData() {
-		Documento obj = new Documento();
+	private Tipo getFormData() {
+		Tipo obj = new Tipo();
 		
 		ValidationException exception = new ValidationException("Erro de validação");
 		
@@ -96,6 +96,8 @@ public class DocumentoFormController implements Initializable {
 		if(txtName.getText() == null || txtName.getText().trim().equals("")) {
 			exception.addError("name", "O Campo não pode ser vazio");
 		}
+		
+		obj.setName(txtName.getText());
 		
 		if(exception.getErrors().size() > 0) {
 			throw exception;

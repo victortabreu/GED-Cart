@@ -16,6 +16,7 @@
                   <items>
                     <MenuItem fx:id="menuItemDocumento" mnemonicParsing="false" onAction="#onMenuItemDocumentoAction" text="Documento" />
                         <MenuItem fx:id="menuItemFuncionario" mnemonicParsing="false" onAction="#onMenuItemFuncionarioAction" text="Funcionário" />
+                        <MenuItem fx:id="menuItemTipo" mnemonicParsing="false" onAction="#onMenuItemTipoAction" text="Tipos de documento" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

@@ -19,15 +19,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import model.entities.Documento;
+import model.entities.Pessoa;
 import model.exceptions.ValidationException;
-import model.services.DocumentoService;
+import model.services.PessoaService;
 
-public class DocumentoFormController implements Initializable {
+public class PessoaFormController implements Initializable {
 
-	private Documento entity;
+	private Pessoa entity;
 
-	private DocumentoService service;
+	private PessoaService service;
 	
 	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 
@@ -50,11 +50,11 @@ public class DocumentoFormController implements Initializable {
 		dataChangeListeners.add(listener);
 	}
 
-	public void setDocumento(Documento entity) {
+	public void setPessoa(Pessoa entity) {
 		this.entity = entity;
 	}
 
-	public void setDocumentoService(DocumentoService service) {
+	public void setPessoaService(PessoaService service) {
 		this.service = service;
 	}
 
@@ -86,8 +86,8 @@ public class DocumentoFormController implements Initializable {
 		}		
 	}
 
-	private Documento getFormData() {
-		Documento obj = new Documento();
+	private Pessoa getFormData() {
+		Pessoa obj = new Pessoa();
 		
 		ValidationException exception = new ValidationException("Erro de validação");
 		

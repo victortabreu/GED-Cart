@@ -11,28 +11,28 @@ import java.util.List;
 import db.DB;
 import db.DbException;
 import db.DbIntegrityException;
-import model.dao.DocumentoDao;
-import model.entities.Documento;
+import model.dao.PessoaDao;
+import model.entities.Pessoa;
 
-public class DocumentoDaoJDBC implements DocumentoDao {
+public class PessoaDaoJDBC implements PessoaDao {
 
 	private Connection conn;
 	
-	public DocumentoDaoJDBC(Connection conn) {
+	public PessoaDaoJDBC(Connection conn) {
 		this.conn = conn;
 	}
 	
 	@Override
-	public Documento findById(Integer id) {
+	public Pessoa findById(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM documento WHERE Id = ?");
+				"SELECT * FROM pessoa WHERE Id = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
-				Documento obj = new Documento();
+				Pessoa obj = new Pessoa();
 				obj.setId(rs.getInt("Id"));
 				return obj;
 			}
@@ -48,18 +48,18 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 	}
 
 	@Override
-	public List<Documento> findAll() {
+	public List<Pessoa> findAll() {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM documento ORDER BY Name");
+				"SELECT * FROM pessoa ORDER BY Name");
 			rs = st.executeQuery();
 
-			List<Documento> list = new ArrayList<>();
+			List<Pessoa> list = new ArrayList<>();
 
 			while (rs.next()) {
-				Documento obj = new Documento();
+				Pessoa obj = new Pessoa();
 				obj.setId(rs.getInt("Id"));
 				list.add(obj);
 			}
@@ -75,11 +75,11 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 	}
 
 	@Override
-	public void insert(Documento obj) {
+	public void insert(Pessoa obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"INSERT INTO documento " +
+				"INSERT INTO pessoa " +
 				"(Name) " +
 				"VALUES " +
 				"(?)", 
@@ -107,11 +107,11 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 	}
 
 	@Override
-	public void update(Documento obj) {
+	public void update(Pessoa obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"UPDATE documento " +
+				"UPDATE pessoa " +
 				"WHERE Id = ?");
 
 			st.setInt(2, obj.getId());
@@ -131,7 +131,7 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"DELETE FROM documento WHERE Id = ?");
+				"DELETE FROM pessoa WHERE Id = ?");
 
 			st.setInt(1, id);
 

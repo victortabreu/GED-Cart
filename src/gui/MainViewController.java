@@ -17,6 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import model.services.DocumentoService;
+import model.services.TipoService;
 
 public class MainViewController implements Initializable{
 
@@ -25,6 +26,9 @@ public class MainViewController implements Initializable{
 	
 	@FXML
 	private MenuItem menuItemFuncionario;
+	
+	@FXML
+	private MenuItem menuItemTipo;
 	
 	@FXML
 	private MenuItem menuItemAbout;
@@ -39,6 +43,13 @@ public class MainViewController implements Initializable{
 	@FXML
 	public void onMenuItemFuncionarioAction() {
 		System.out.println("onMenuItemFuncionarioAction");
+	}
+	@FXML
+	public void onMenuItemTipoAction() {
+		loadView("/gui/TipoList.fxml", (TipoListController controller) -> {
+			controller.setTipoService(new TipoService());
+			controller.updateTableView();
+		});
 	}
 	@FXML
 	public void onMenuItemAboutAction() {

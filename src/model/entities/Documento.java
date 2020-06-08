@@ -7,14 +7,16 @@ public class Documento implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	private String name;
+	private Integer tipo;
+	private Integer pessoas;
 	
 	public Documento() {
 	}
 
-	public Documento(Integer id, String name) {
+	public Documento(Integer id, Integer tipo, Integer pessoas) {
 		this.id = id;
-		this.name = name;
+		this.tipo = tipo;
+		this.pessoas = pessoas;
 	}
 
 	public Integer getId() {
@@ -25,12 +27,20 @@ public class Documento implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public Integer getTipo() {
+		return tipo;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTipo(Integer tipo) {
+		this.tipo = tipo;
+	}
+
+	public Integer getPessoas() {
+		return pessoas;
+	}
+
+	public void setPessoas(Integer pessoas) {
+		this.pessoas = pessoas;
 	}
 
 	@Override
@@ -38,6 +48,8 @@ public class Documento implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((pessoas == null) ? 0 : pessoas.hashCode());
+		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		return result;
 	}
 
@@ -55,11 +67,23 @@ public class Documento implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (pessoas == null) {
+			if (other.pessoas != null)
+				return false;
+		} else if (!pessoas.equals(other.pessoas))
+			return false;
+		if (tipo == null) {
+			if (other.tipo != null)
+				return false;
+		} else if (!tipo.equals(other.tipo))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Department [id=" + id + ", name=" + name + "]";
+		return "Documento [id=" + id + ", tipo=" + tipo + ", pessoas=" + pessoas + "]";
 	}
+
+	
 }
