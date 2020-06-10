@@ -28,12 +28,15 @@ public class PessoaDaoJDBC implements PessoaDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM pessoa WHERE Id = ?");
+				"SELECT * FROM pessoas WHERE Id = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
 				Pessoa obj = new Pessoa();
 				obj.setId(rs.getInt("Id"));
+				obj.setName(rs.getString("name"));
+				obj.setCpf(rs.getString("cpf"));
+				obj.setRg(rs.getString("rg"));
 				return obj;
 			}
 			return null;
@@ -53,7 +56,7 @@ public class PessoaDaoJDBC implements PessoaDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM pessoa ORDER BY Name");
+				"SELECT * FROM pessoas ORDER BY name");
 			rs = st.executeQuery();
 
 			List<Pessoa> list = new ArrayList<>();
@@ -61,6 +64,9 @@ public class PessoaDaoJDBC implements PessoaDao {
 			while (rs.next()) {
 				Pessoa obj = new Pessoa();
 				obj.setId(rs.getInt("Id"));
+				obj.setName(rs.getString("name"));
+				obj.setCpf(rs.getString("cpf"));
+				obj.setRg(rs.getString("rg"));
 				list.add(obj);
 			}
 			return list;
@@ -79,8 +85,10 @@ public class PessoaDaoJDBC implements PessoaDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"INSERT INTO pessoa " +
-				"(Name) " +
+				"INSERT INTO pessoas " +
+				"(name) " +
+				"(cpf) " +
+				"(rg) " +
 				"VALUES " +
 				"(?)", 
 				Statement.RETURN_GENERATED_KEYS);
@@ -111,7 +119,10 @@ public class PessoaDaoJDBC implements PessoaDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"UPDATE pessoa " +
+				"UPDATE pessoas " +
+				"SET name = ? " +
+				"SET cpf = ? " +
+				"SET rg = ? " +
 				"WHERE Id = ?");
 
 			st.setInt(2, obj.getId());
@@ -131,7 +142,7 @@ public class PessoaDaoJDBC implements PessoaDao {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"DELETE FROM pessoa WHERE Id = ?");
+				"DELETE FROM pessoas WHERE Id = ?");
 
 			st.setInt(1, id);
 

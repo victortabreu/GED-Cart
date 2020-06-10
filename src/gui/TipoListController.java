@@ -133,8 +133,7 @@ public class TipoListController implements Initializable, DataChangeListener {
 					return;
 				}
 				setGraphic(button);
-				button.setOnAction(
-						event -> createDialogForm(obj, "/gui/TipoForm.fxml", Utils.currentStage(event)));
+				button.setOnAction(event -> createDialogForm(obj, "/gui/TipoForm.fxml", Utils.currentStage(event)));
 			}
 		});
 	}
@@ -159,15 +158,15 @@ public class TipoListController implements Initializable, DataChangeListener {
 
 	private void removeEntity(Tipo obj) {
 		Optional<ButtonType> result = Alerts.showConfirmation("Confirmação", "Tem certeza que quer remover este tipo?");
-		
-		if(result.get() == ButtonType.OK){
-			if(service == null) {
+
+		if (result.get() == ButtonType.OK) {
+			if (service == null) {
 				throw new IllegalStateException("service está nulo");
 			}
 			try {
 				service.remove(obj);
 				updateTableView();
-			}catch(DbIntegrityException e){
+			} catch (DbIntegrityException e) {
 				Alerts.showAlert("Erro ao remover objeto", null, e.getMessage(), AlertType.ERROR);
 			}
 		}

@@ -17,6 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import model.services.DocumentoService;
+import model.services.PessoaService;
 import model.services.TipoService;
 
 public class MainViewController implements Initializable{
@@ -29,6 +30,9 @@ public class MainViewController implements Initializable{
 	
 	@FXML
 	private MenuItem menuItemTipo;
+	
+	@FXML
+	private MenuItem menuItemPessoa;
 	
 	@FXML
 	private MenuItem menuItemAbout;
@@ -48,6 +52,13 @@ public class MainViewController implements Initializable{
 	public void onMenuItemTipoAction() {
 		loadView("/gui/TipoList.fxml", (TipoListController controller) -> {
 			controller.setTipoService(new TipoService());
+			controller.updateTableView();
+		});
+	}
+	@FXML
+	public void onMenuItemPessoaAction() {
+		loadView("/gui/PessoaList.fxml", (PessoaListController controller) -> {
+			controller.setPessoaService(new PessoaService());
 			controller.updateTableView();
 		});
 	}

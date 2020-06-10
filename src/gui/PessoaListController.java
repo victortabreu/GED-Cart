@@ -81,6 +81,8 @@ public class PessoaListController implements Initializable, DataChangeListener {
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
+		tableColumnCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
+		tableColumnRg.setCellValueFactory(new PropertyValueFactory<>("rg"));
 
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		tableViewPessoa.prefHeightProperty().bind(stage.heightProperty());
