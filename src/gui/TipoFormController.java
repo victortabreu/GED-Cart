@@ -126,6 +126,7 @@ public class TipoFormController implements Initializable {
 			throw new IllegalStateException("Entity was null");
 		}
 		txtId.setText(String.valueOf(entity.getId()));
+		txtName.setText(entity.getName());
 	}
 	
 	private void setErrorMessages(Map<String, String> errors) {

@@ -58,12 +58,14 @@
                   <Button fx:id="btCancel" mnemonicParsing="false" onAction="#onBtCancelAction" text="Cancelar" />
                </children>
             </HBox>
-            <ComboBox prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="comboBoxTipo" prefHeight="25.0" prefWidth="186.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TableView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
               <columns>
                 <TableColumn prefWidth="186.0" text="Nome" />
                 <TableColumn prefWidth="108.0" text="CPF" />
                   <TableColumn prefWidth="91.0" text="RG" />
+                  <TableColumn prefWidth="75.0" text="Column X" />
+                  <TableColumn prefWidth="75.0" text="Column X" />
               </columns>
             </TableView>
          </children>

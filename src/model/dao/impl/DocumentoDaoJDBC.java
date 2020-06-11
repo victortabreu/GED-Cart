@@ -53,7 +53,7 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM documento ORDER BY Name");
+				"SELECT * FROM documento ORDER BY Tipo");
 			rs = st.executeQuery();
 
 			List<Documento> list = new ArrayList<>();
@@ -80,10 +80,12 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 		try {
 			st = conn.prepareStatement(
 				"INSERT INTO documento " +
-				"(Name) " +
+				"(Tipo) " +
 				"VALUES " +
 				"(?)", 
 				Statement.RETURN_GENERATED_KEYS);
+			
+			st.setInt(1, obj.getTipo().getId());
 
 			int rowsAffected = st.executeUpdate();
 			
@@ -112,8 +114,10 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 		try {
 			st = conn.prepareStatement(
 				"UPDATE documento " +
+				"SET Tipo = ? " +
 				"WHERE Id = ?");
 
+			st.setInt(1, obj.getTipo().getId());
 			st.setInt(2, obj.getId());
 
 			st.executeUpdate();

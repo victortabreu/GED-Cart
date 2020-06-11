@@ -40,12 +40,12 @@
             </HBox>
             <Label text="CPF" GridPane.rowIndex="2" />
             <Label text="Identidade" GridPane.rowIndex="3" />
-            <TextField fx:id="txtName1" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <TextField fx:id="txtCpf" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets right="100.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="txtName2" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="txtRg" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets right="100.0" />
                </GridPane.margin>

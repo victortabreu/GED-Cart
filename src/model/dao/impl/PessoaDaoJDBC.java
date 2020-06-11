@@ -4,13 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.jdbc.Statement;
+
 import db.DB;
 import db.DbException;
-import db.DbIntegrityException;
 import model.dao.PessoaDao;
 import model.entities.Pessoa;
 
@@ -22,21 +22,22 @@ public class PessoaDaoJDBC implements PessoaDao {
 		this.conn = conn;
 	}
 	
+	//lista os ítens da tabela ordenados por Id 
 	@Override
 	public Pessoa findById(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM pessoas WHERE Id = ?");
+				"SELECT * FROM Pessoa WHERE Id = ?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
 				Pessoa obj = new Pessoa();
 				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("name"));
-				obj.setCpf(rs.getString("cpf"));
-				obj.setRg(rs.getString("rg"));
+				obj.setName(rs.getString("Name"));
+				obj.setCpf(rs.getString("Cpf"));
+				obj.setRg(rs.getString("Rg"));
 				return obj;
 			}
 			return null;
@@ -49,14 +50,15 @@ public class PessoaDaoJDBC implements PessoaDao {
 			DB.closeResultSet(rs);
 		}
 	}
-
+	
+	//lista os ítens da tabela ordenados por nome 
 	@Override
 	public List<Pessoa> findAll() {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM pessoas ORDER BY name");
+				"SELECT * FROM pessoa ORDER BY Name");
 			rs = st.executeQuery();
 
 			List<Pessoa> list = new ArrayList<>();
@@ -64,9 +66,9 @@ public class PessoaDaoJDBC implements PessoaDao {
 			while (rs.next()) {
 				Pessoa obj = new Pessoa();
 				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("name"));
-				obj.setCpf(rs.getString("cpf"));
-				obj.setRg(rs.getString("rg"));
+				obj.setName(rs.getString("Name"));
+				obj.setCpf(rs.getString("Cpf"));
+				obj.setRg(rs.getString("Rg"));
 				list.add(obj);
 			}
 			return list;
@@ -79,19 +81,22 @@ public class PessoaDaoJDBC implements PessoaDao {
 			DB.closeResultSet(rs);
 		}
 	}
-
+	
+	//Insere um ítem na tabela
 	@Override
 	public void insert(Pessoa obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"INSERT INTO pessoas " +
-				"(name) " +
-				"(cpf) " +
-				"(rg) " +
+				"INSERT INTO pessoa " +
+				"(Name, Rg, Cpf) " +
 				"VALUES " +
-				"(?)", 
+				"(?, ?, ?)", 
 				Statement.RETURN_GENERATED_KEYS);
+
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getCpf());
+			st.setString(3, obj.getRg());
 
 			int rowsAffected = st.executeUpdate();
 			
@@ -114,18 +119,20 @@ public class PessoaDaoJDBC implements PessoaDao {
 		}
 	}
 
+	//Edita o ítem da tabela
 	@Override
 	public void update(Pessoa obj) {
 		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement(
-				"UPDATE pessoas " +
-				"SET name = ? " +
-				"SET cpf = ? " +
-				"SET rg = ? " +
+				"UPDATE Pessoa " +
+				"SET Name = ?, Cpf = ?, Rg = ? " +
 				"WHERE Id = ?");
 
-			st.setInt(2, obj.getId());
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getCpf());
+			st.setString(3, obj.getRg());
+			st.setInt(4, obj.getId());
 
 			st.executeUpdate();
 		}
@@ -136,24 +143,23 @@ public class PessoaDaoJDBC implements PessoaDao {
 			DB.closeStatement(st);
 		}
 	}
-
+	
+	// Exclui o ítem da tabela
 	@Override
 	public void deleteById(Integer id) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement(
-				"DELETE FROM pessoas WHERE Id = ?");
-
+			st = conn.prepareStatement("DELETE FROM pessoa WHERE Id = ?");
+			
 			st.setInt(1, id);
-
+			
 			st.executeUpdate();
 		}
 		catch (SQLException e) {
-			throw new DbIntegrityException(e.getMessage());
-		} 
+			throw new DbException(e.getMessage());
+		}
 		finally {
 			DB.closeStatement(st);
 		}
 	}
-		
 }

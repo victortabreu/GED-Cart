@@ -7,16 +7,15 @@ public class Documento implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	private Integer tipo;
-	private Integer pessoas;
+	private Tipo tipo;
 	
 	public Documento() {
 	}
 
-	public Documento(Integer id, Integer tipo, Integer pessoas) {
+	public Documento(Integer id, Tipo tipo) {
+		super();
 		this.id = id;
 		this.tipo = tipo;
-		this.pessoas = pessoas;
 	}
 
 	public Integer getId() {
@@ -27,20 +26,16 @@ public class Documento implements Serializable {
 		this.id = id;
 	}
 
-	public Integer getTipo() {
+	public Tipo getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(Integer tipo) {
+	public void setTipo(Tipo tipo) {
 		this.tipo = tipo;
 	}
 
-	public Integer getPessoas() {
-		return pessoas;
-	}
-
-	public void setPessoas(Integer pessoas) {
-		this.pessoas = pessoas;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override
@@ -48,7 +43,6 @@ public class Documento implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((pessoas == null) ? 0 : pessoas.hashCode());
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		return result;
 	}
@@ -67,11 +61,6 @@ public class Documento implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (pessoas == null) {
-			if (other.pessoas != null)
-				return false;
-		} else if (!pessoas.equals(other.pessoas))
-			return false;
 		if (tipo == null) {
 			if (other.tipo != null)
 				return false;
@@ -82,8 +71,6 @@ public class Documento implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Documento [id=" + id + ", tipo=" + tipo + ", pessoas=" + pessoas + "]";
+		return "Documento [id=" + id + ", tipo=" + tipo + "]";
 	}
-
-	
 }

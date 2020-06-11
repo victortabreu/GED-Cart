@@ -90,7 +90,7 @@ public class PessoaListController implements Initializable, DataChangeListener {
 
 	public void updateTableView() {
 		if (service == null) {
-			throw new IllegalStateException("Service estava Nulo");
+			throw new IllegalStateException("Service estava nulo");
 		}
 		List<Pessoa> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
@@ -128,6 +128,7 @@ public class PessoaListController implements Initializable, DataChangeListener {
 		updateTableView();
 	}
 
+	// Adciona um botão de editar em cada linha da lista
 	private void initEditButtons() {
 		tableColumnEDIT.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
 		tableColumnEDIT.setCellFactory(param -> new TableCell<Pessoa, Pessoa>() {
@@ -147,10 +148,11 @@ public class PessoaListController implements Initializable, DataChangeListener {
 		});
 	}
 
+	// Adciona um botão de remover em cada linha da lista
 	private void initRemoveButtons() {
 		tableColumnREMOVE.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
 		tableColumnREMOVE.setCellFactory(param -> new TableCell<Pessoa, Pessoa>() {
-			private final Button button = new Button("remove");
+			private final Button button = new Button("remover");
 
 			@Override
 			protected void updateItem(Pessoa obj, boolean empty) {

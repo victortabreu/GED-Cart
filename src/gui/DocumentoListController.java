@@ -31,6 +31,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Documento;
 import model.services.DocumentoService;
+import model.services.TipoService;
 
 public class DocumentoListController implements Initializable, DataChangeListener {
 
@@ -39,9 +40,6 @@ public class DocumentoListController implements Initializable, DataChangeListene
 
 	@FXML
 	private TableColumn<Documento, Integer> tableColumnId;
-
-	@FXML
-	private TableColumn<Documento, String> tableColumnName;
 
 	@FXML
 	private TableColumn<Documento, Documento> tableColumnEDIT;
@@ -74,7 +72,6 @@ public class DocumentoListController implements Initializable, DataChangeListene
 
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
-		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		tableViewDocumento.prefHeightProperty().bind(stage.heightProperty());
@@ -98,7 +95,8 @@ public class DocumentoListController implements Initializable, DataChangeListene
 
 			DocumentoFormController controller = loader.getController();
 			controller.setDocumento(obj);
-			controller.setDocumentoService(new DocumentoService());
+			controller.setServices(new DocumentoService(), new TipoService());
+			controller.loadAssociatedObjects();
 			controller.subscribeDataChangeListener(this);
 			controller.updateFomrData();
 

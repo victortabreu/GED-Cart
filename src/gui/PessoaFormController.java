@@ -36,6 +36,12 @@ public class PessoaFormController implements Initializable {
 
 	@FXML
 	private TextField txtName;
+	
+	@FXML
+	private TextField txtCpf;
+	
+	@FXML
+	private TextField txtRg;
 
 	@FXML
 	private Label labelErrorName;
@@ -57,6 +63,33 @@ public class PessoaFormController implements Initializable {
 	public void setPessoaService(PessoaService service) {
 		this.service = service;
 	}
+	
+	//Retorna os dados digitados no formulário
+	private Pessoa getFormData() {
+		Pessoa obj = new Pessoa();
+		
+		ValidationException exception = new ValidationException("Erro de validação");
+		
+		obj.setId(Utils.tryParseToInt(txtId.getText()));
+		
+		if(txtName.getText() == null || txtName.getText().trim().equals("")) {
+			exception.addError("name", "O Campo não pode ser vazio");
+		}
+		obj.setName(txtName.getText());
+		
+		if(txtCpf.getText() == null || txtCpf.getText().trim().equals("")) {
+			exception.addError("cpf", "O Campo não pode ser vazio");
+		}
+		obj.setCpf(txtCpf.getText());
+		
+		obj.setRg(txtRg.getText());
+		
+		if(exception.getErrors().size() > 0) {
+			throw exception;
+		}
+		
+		return obj;
+	}
 
 	@FXML
 	public void onBtSaveAction(ActionEvent event) {
@@ -76,7 +109,7 @@ public class PessoaFormController implements Initializable {
 			setErrorMessages(e.getErrors());
 		}
 		catch(DbException e) {
-			Alerts.showAlert("Erro ao salvar objet", null, e.getMessage(), AlertType.ERROR);
+			Alerts.showAlert("Erro ao salvar objeto", null, e.getMessage(), AlertType.ERROR);
 		}
 	}
 
@@ -84,24 +117,6 @@ public class PessoaFormController implements Initializable {
 		for (DataChangeListener listener : dataChangeListeners) {
 			listener.onDataChanged();
 		}		
-	}
-
-	private Pessoa getFormData() {
-		Pessoa obj = new Pessoa();
-		
-		ValidationException exception = new ValidationException("Erro de validação");
-		
-		obj.setId(Utils.tryParseToInt(txtId.getText()));
-		
-		if(txtName.getText() == null || txtName.getText().trim().equals("")) {
-			exception.addError("name", "O Campo não pode ser vazio");
-		}
-		
-		if(exception.getErrors().size() > 0) {
-			throw exception;
-		}
-		
-		return obj;
 	}
 
 	@FXML
@@ -117,6 +132,8 @@ public class PessoaFormController implements Initializable {
 	public void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
 		Constraints.setTextFieldMaxLength(txtName, 50);
+		Constraints.setTextFieldMaxLength(txtCpf, 14);
+		Constraints.setTextFieldMaxLength(txtRg, 20);
 	}
 
 	public void updateFomrData() {
@@ -124,6 +141,9 @@ public class PessoaFormController implements Initializable {
 			throw new IllegalStateException("Entity was null");
 		}
 		txtId.setText(String.valueOf(entity.getId()));
+		txtName.setText(entity.getName());
+		txtCpf.setText(entity.getCpf());
+		txtRg.setText(entity.getRg());
 	}
 	
 	private void setErrorMessages(Map<String, String> errors) {
