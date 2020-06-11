@@ -3,9 +3,7 @@ package gui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import db.DbException;
 import gui.listeners.DataChangeListener;
@@ -20,7 +18,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -99,6 +96,8 @@ public class DocumentoFormController implements Initializable {
 
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
 
+		obj.setTipo(comboBoxTipo.getValue());
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -127,7 +126,9 @@ public class DocumentoFormController implements Initializable {
 			throw new IllegalStateException("Entity was null");
 		}
 		txtId.setText(String.valueOf(entity.getId()));
+		
 		if (entity.getTipo() == null) {
+			comboBoxTipo.getSelectionModel().selectFirst();
 		}else {
 			comboBoxTipo.setValue(entity.getTipo());
 		}

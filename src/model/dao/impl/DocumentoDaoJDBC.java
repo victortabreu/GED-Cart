@@ -13,6 +13,7 @@ import db.DbException;
 import db.DbIntegrityException;
 import model.dao.DocumentoDao;
 import model.entities.Documento;
+import model.entities.Tipo;
 
 public class DocumentoDaoJDBC implements DocumentoDao {
 
@@ -28,12 +29,16 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-				"SELECT * FROM documento WHERE Id = ?");
+					"SELECT documento.*,tipo.Name as TipoName "
+					+ "FROM documento INNER JOIN tipo "
+					+ "ON documento.TipoId = tipo.Id "
+					+ "WHERE documento.Id = ?");
+			
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
-				Documento obj = new Documento();
-				obj.setId(rs.getInt("Id"));
+				Tipo tip = instantiateTipo(rs);
+				Documento obj = instantiateDocumento(rs, tip);
 				return obj;
 			}
 			return null;
@@ -45,6 +50,22 @@ public class DocumentoDaoJDBC implements DocumentoDao {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
+	}
+
+	private Documento instantiateDocumento(ResultSet rs, Tipo tip) throws SQLException {
+		Documento obj = new Documento();
+		obj.setId(rs.getInt("Id"));
+		obj.setTipo(tip);
+		
+		return obj;
+	}
+
+	private Tipo instantiateTipo(ResultSet rs) throws SQLException {
+		Tipo dep = new Tipo();
+		dep.setId(rs.getInt("TipoId"));
+		dep.setName(rs.getString("TipoName"));
+		
+		return dep;
 	}
 
 	@Override
