@@ -21,6 +21,7 @@ import principal.GerarCodigos;
  * @author Victor
  */
 public class DocumentosSql {
+
     static Conectar cc = new Conectar();
     static Connection cn = cc.conexao();
     static PreparedStatement ps;
@@ -39,7 +40,7 @@ public class DocumentosSql {
                     + " order by codigo_doc";
 
         }
-         String dados[] = new String[5];
+        String dados[] = new String[5];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
@@ -55,7 +56,7 @@ public class DocumentosSql {
             Logger.getLogger(Documentos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void listarCat(String busca) {
         DefaultTableModel modelo = (DefaultTableModel) documentos.FrmListaDoc.tabela.getModel();
 
@@ -70,7 +71,7 @@ public class DocumentosSql {
                     + " order by codigo_doc";
 
         }
-         String dados[] = new String[5];
+        String dados[] = new String[5];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
@@ -184,7 +185,7 @@ public class DocumentosSql {
         System.out.println(sql);
         return rsu;
     }
-    
+
     public static boolean isNumber(String n) {
         try {
             if (Integer.parseInt(n) > 0) {
@@ -200,5 +201,5 @@ public class DocumentosSql {
     private static void print(SQLException ex) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

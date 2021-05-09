@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package selos;
+package atos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,29 +14,28 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import principal.Conectar;
-import principal.GerarCodigos;
 
 /**
  *
  * @author Victor
  */
-public class SelosSql {
+public class AtosSql {
 
     static Conectar cc = new Conectar();
     static Connection cn = cc.conexao();
     static PreparedStatement ps;
 
-    public static void listarSelos(String busca) {
-        DefaultTableModel modelo = (DefaultTableModel) selos.FrmListaSelo.tabela.getModel();
+    public static void listarAtos(String busca) {
+        DefaultTableModel modelo = (DefaultTableModel) atos.FrmListaAtos.tabela.getModel();
 
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
         String sql = "";
         if (busca.equals("")) {
-            sql = Selos.LISTAR_SELO;
+            sql = Atos.LISTAR_ATO;
         } else {
-            sql = "SELECT * FROM selos WHERE (codigo_selo like'" + busca + "%' or tipo_selo like'%" + busca + "%' or textoOCR like'%" + busca + "%') "
+            sql = "SELECT * FROM Atos WHERE (codigo_selo like'" + busca + "%' or tipo_selo like'%" + busca + "%' or textoOCR like'%" + busca + "%') "
                     + " order by codigo_selo";
 
         }
@@ -50,45 +49,50 @@ public class SelosSql {
                 modelo.addRow(dados);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Selos.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public static void listarCat(String busca) {
-        DefaultTableModel modelo = (DefaultTableModel) selos.FrmListaSelo.tabela.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) atos.FrmListaAtos.tabela.getModel();
 
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
         String sql = "";
         if (busca.equals("")) {
-            sql = Selos.LISTAR_SELO;
+            sql = Atos.LISTAR_ATO;
         } else {
-            sql = "SELECT * FROM selos WHERE (codigo_selo like'" + busca + "%' or tipo_selo like'%" + busca + "%') "
-                    + " order by codigo_selo";
+            sql = "SELECT * FROM atos WHERE (codigo_ato like'" + busca + "%' or nome_ato like'%" + busca + "%') "
+                    + " order by codigo_ato";
 
         }
-        String dados[] = new String[2];
+        String dados[] = new String[7];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                dados[0] = rs.getString("codigo_selo");
-                dados[1] = rs.getString("tipo_selo");
+                dados[0] = rs.getString("codigo_ato");
+                dados[1] = rs.getString("nome_ato");
+                dados[2] = rs.getString("emol_bruto");
+                dados[3] = rs.getString("recompe_mg");
+                dados[4] = rs.getString("emol_Liquido");
+                dados[5] = rs.getString("taxa_fiscal");
+                dados[6] = rs.getString("valor_final");
                 modelo.addRow(dados);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Selos.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static int registrarSelo(Selos uc) {
+    public static int registrarAto(Atos uc) {
         int rsu = 0;
-        String sql = Selos.REGISTRAR;
+        String sql = Atos.REGISTRAR;
         try {
             ps = cn.prepareStatement(sql);
             ps.setString(1, uc.getPrimaryKey());
-            ps.setString(2, uc.getTipoSelo());
+
             //ps.setBytes(4, uc.getScan());
             rsu = ps.executeUpdate();
         } catch (SQLException ex) {
@@ -111,7 +115,7 @@ public class SelosSql {
 //        int cont = 1;
 //        String num = "";
 //        String c = "";
-//        String SQL = "SELECT MAX(codigo_doc) FROM selos";
+//        String SQL = "SELECT MAX(codigo_doc) FROM Atos";
 //
 //        try {
 //            Statement st = cn.createStatement();
@@ -121,7 +125,7 @@ public class SelosSql {
 //            }
 //
 //            if (c == null) {
-//                selos.FrmListaSelo.codigo.setText("DOC0001");
+//                Atos.FrmListaAto.codigo.setText("DOC0001");
 //            } else {
 //                char r1 = c.charAt(3);
 //                char r2 = c.charAt(4);
@@ -132,18 +136,18 @@ public class SelosSql {
 //                j = Integer.parseInt(r);
 //                GerarCodigos gen = new GerarCodigos();
 //                gen.gerar(j);
-//                selos.FrmSelos.codigo.setText("DOC" + gen.serie());
+//                Atos.FrmAtos.codigo.setText("DOC" + gen.serie());
 //
 //            }
 //
 //        } catch (SQLException ex) {
-//            Logger.getLogger(SelosSql.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(AtosSql.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
 //
-//    public static int atualizarDocumento(Selos uc) {
+//    public static int atualizarDocumento(Atos uc) {
 //        int rsu = 0;
-//        String sql = Selos.ATUALIZAR;
+//        String sql = Atos.ATUALIZAR;
 //        try {
 //            ps = cn.prepareStatement(sql);
 //            ps.setString(1, uc.getNome());
@@ -159,7 +163,7 @@ public class SelosSql {
 //
 //    public static int eliminarDocumento(String id) {
 //        int rsu = 0;
-//        String sql = Selos.ELIMINAR;
+//        String sql = Atos.ELIMINAR;
 //
 //        try {
 //            ps = cn.prepareStatement(sql);
@@ -174,7 +178,7 @@ public class SelosSql {
 //
 //    public static int eliminaTodos() {
 //        int rsu = 0;
-//        String sql = Selos.ELIMINAR_TUDO;
+//        String sql = Atos.ELIMINAR_TUDO;
 //        try {
 //            ps = cn.prepareStatement(sql);
 //            rsu = ps.executeUpdate();

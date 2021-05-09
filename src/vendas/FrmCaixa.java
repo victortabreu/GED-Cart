@@ -5,6 +5,7 @@
  */
 package vendas;
 
+import atos.FrmListaAtos;
 import documentos.FrmListaDoc;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,7 +18,6 @@ import static principal.MenuPrincipal.carregador;
 import selos.FrmListaSelo;
 import static vendas.FrmVendas.tabela;
 
-
 /**
  *
  * @author hugov
@@ -27,8 +27,6 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
     /**
      * Creates new form FrmCaixa
      */
-    
-    
     public boolean estaFechado(Object obj) {
         JInternalFrame[] ativos = carregador.getAllFrames();
         boolean fechado = true;
@@ -41,18 +39,16 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         }
         return fechado;
     }
-    
-    
+
     public FrmCaixa() {
         initComponents();
         FrmCaixa.tabela.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
         FrmCaixa.tabela.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
-        
+
         FrmCaixa.tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         limparCampos();
     }
-    
-    
+
     public static String dataAtual() {
         Date data = new Date();
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/YYYY");
@@ -441,19 +437,19 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    selos.FrmListaSelo lista;
+    atos.FrmListaAtos lista;
     private void buscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscaActionPerformed
-           if (estaFechado(lista)) {
-            lista = new FrmListaSelo();
+        if (estaFechado(lista)) {
+            lista = new FrmListaAtos();
             principal.MenuPrincipal.carregador.add(lista);
-            
+
             lista.toFront();
             lista.setVisible(true);
-        }else{
+        } else {
             lista.toFront();
-            
+
         }
-           
+
     }//GEN-LAST:event_buscaActionPerformed
 
     private void calculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculoActionPerformed
@@ -488,9 +484,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
                 limparCampos();
                 JOptionPane.showMessageDialog(this, "Venda Efetuada.", "Venda", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-               
-                     
-                
+
             }
         }
     }//GEN-LAST:event_venderActionPerformed
@@ -521,12 +515,12 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         if (estaFechado(lista1)) {
             lista1 = new FrmListaDoc();
             principal.MenuPrincipal.carregador.add(lista1);
-            
+
             lista1.toFront();
             lista1.setVisible(true);
-        }else{
+        } else {
             lista1.toFront();
-            
+
         }
     }//GEN-LAST:event_busca1ActionPerformed
 
