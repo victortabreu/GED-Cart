@@ -11,9 +11,12 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Clock;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -99,12 +102,12 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         nome.setText(tabelaDocumentos.getValueAt(linha, 1).toString());
         tipo.setSelectedItem(tabelaDocumentos.getValueAt(linha, 2).toString());
         scan.setText(tabelaDocumentos.getValueAt(linha, 3).toString());
-        caminho.setText("C:\\GedCartImagens/" + scan.getText());
+        caminho.setText("C:\\GedCart\\GedCartImagens/" + scan.getText());
         imagem = new ImageIcon(caminho.getText());
         redmensionarImagem();
         documento = caminho.getText();
     }
-
+    Scanner scanner;
     void limparCampos() {
         if (tabelaDocumentos.getSelectedRow() > -1) {
             tabelaDocumentos.removeRowSelectionInterval(tabelaDocumentos.getSelectedRow(), tabelaDocumentos.getSelectedRow());
@@ -122,6 +125,13 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         Image i = im.getImage().getScaledInstance(500, 510, Image.SCALE_SMOOTH);
         jLabelImagem.setIcon(new ImageIcon(i));
         imagem = null;
+        java.io.File pasta = new java.io.File("C:\\GedCart\\pasta.txt");
+        try {
+            scanner = new Scanner(pasta,"UTF-8");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        nomePasta.setText(scanner.nextLine());
     }
 
     void selecionarLinha(String id) {
@@ -156,6 +166,10 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         caminho = new javax.swing.JTextField();
         scan = new javax.swing.JTextField();
         pasta = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        nomePasta = new javax.swing.JTextField();
+        inserePasta = new javax.swing.JButton();
+        uploadSelected = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelaDocumentos = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
@@ -185,10 +199,10 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         codigo.setOpaque(false);
         codigo.setPhColor(new java.awt.Color(255, 255, 255));
         codigo.setPlaceholder("CÓDIGO");
-        jPanel2.add(codigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, 180, -1));
+        jPanel2.add(codigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 80, -1));
 
         codigoL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/codigoL.png"))); // NOI18N
-        jPanel2.add(codigoL, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 30, -1, 52));
+        jPanel2.add(codigoL, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, 52));
 
         nome.setBackground(new java.awt.Color(34, 102, 145));
         nome.setBorder(null);
@@ -205,18 +219,18 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 nomeKeyTyped(evt);
             }
         });
-        jPanel2.add(nome, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 180, -1));
+        jPanel2.add(nome, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 30, 180, -1));
 
         nomeL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/nomeLabel.png"))); // NOI18N
-        jPanel2.add(nomeL, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 90, -1, 52));
+        jPanel2.add(nomeL, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 20, -1, 52));
 
         tipo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "TIPO", "CERTIDÃO DE NASCIMENTO", "CERTIDÃO DE ÓBITO", "CERTIDÃO DE CASAMENTO", "ESCRITURA", "PROCURAÇÃO", "RECONHECIMENTO DE FIRMA", "AUTENTICAÇÃO" }));
         tipo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jPanel2.add(tipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 40, 183, -1));
+        jPanel2.add(tipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 20, 183, -1));
 
         tipoL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/tipopro.png"))); // NOI18N
         tipoL.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel2.add(tipoL, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 30, -1, 52));
+        jPanel2.add(tipoL, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 20, -1, 52));
 
         jButtonInserirScanner.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         jButtonInserirScanner.setText("INSERIR SCANNER");
@@ -225,13 +239,13 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 jButtonInserirScannerActionPerformed(evt);
             }
         });
-        jPanel2.add(jButtonInserirScanner, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 90, 180, 40));
+        jPanel2.add(jButtonInserirScanner, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 80, 180, 40));
 
         caminho.setEditable(false);
-        jPanel2.add(caminho, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 130, 280, -1));
+        jPanel2.add(caminho, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 120, 280, -1));
 
         scan.setEditable(false);
-        jPanel2.add(scan, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 130, 280, -1));
+        jPanel2.add(scan, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 120, 280, -1));
 
         pasta.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pasta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/pasta.png"))); // NOI18N
@@ -240,7 +254,34 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 pastaMouseClicked(evt);
             }
         });
-        jPanel2.add(pasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 80, -1, -1));
+        jPanel2.add(pasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 70, -1, -1));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setText("PASTA DE UPLOAD");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
+
+        nomePasta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nomePastaActionPerformed(evt);
+            }
+        });
+        jPanel2.add(nomePasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 340, -1));
+
+        inserePasta.setText("Inserir Pasta");
+        inserePasta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inserePastaActionPerformed(evt);
+            }
+        });
+        jPanel2.add(inserePasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, -1));
+
+        uploadSelected.setText("Upload Selected");
+        uploadSelected.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadSelectedActionPerformed(evt);
+            }
+        });
+        jPanel2.add(uploadSelected, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 140, -1, -1));
 
         tabelaDocumentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -368,6 +409,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 buscarMouseClicked(evt);
             }
         });
+        buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarActionPerformed(evt);
+            }
+        });
         buscar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 buscarKeyReleased(evt);
@@ -426,13 +472,14 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabelImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -489,11 +536,15 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 doc.setScan(nomeImagem);
                 
                 //Salvar imagem na pasta do sistema
-                File file = new File("C:\\GedCartImagens/");
+                File file1 = new File("C:\\GedCart/");
+                if (!file1.exists()) {
+                    file1.mkdirs();
+                }
+                File file = new File("C:\\GedCart\\GedCartImagens/");
                 if (!file.exists()) {
                     file.mkdirs();
                 }
-                File novaImagem = new File("C:\\GedCartImagens/" + nomeImagem);
+                File novaImagem = new File("C:\\GedCart\\GedCartImagens/" + nomeImagem);
                 BufferedImage bi = new BufferedImage(imagem.getIconWidth(), imagem.getIconHeight(), BufferedImage.TYPE_INT_RGB);
                 Graphics2D g2d = bi.createGraphics();
                 g2d.drawImage(scan1, null, null);
@@ -518,10 +569,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 Documentos document = new Documentos();
                 document.setScan(nomeImagem);
                 System.out.println(document.getScan());
+                documento = "C:\\GedCart\\GedCartImagens/" + nomeImagem;
                 System.out.println(documento);
                 FileWriter arq = null;
                 try {
-                    arq = new FileWriter("C:\\Users\\Katariny\\Documents\\NetBeansProjects\\sistema\\src\\main\\java\\upload.txt");
+                    arq = new FileWriter("C:\\GedCart\\upload.txt");
                 } catch (IOException ex) {
                     Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -534,8 +586,25 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
+                FileWriter up = null;
                 try {
-                    Desktop.getDesktop().open(new java.io.File("C:\\Users\\Katariny\\Documents\\NetBeansProjects\\sistema\\src\\documentos\\upload.bat"));
+                    up = new FileWriter("C:\\GedCart\\upload.bat");
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                PrintWriter gravarUp = new PrintWriter(up);
+                gravarUp.println("d:");
+                gravarUp.println("cd Documentos\\NetBeansProjects\\GEDCart");
+                gravarUp.println("gradle run");
+                try {
+                    up.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                try {
+                    Desktop.getDesktop().open(new java.io.File("C:\\GedCart\\upload.bat"));
+                    System.out.println("Chegou aqui");
                 } catch (IOException ex) {
                     Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -694,12 +763,81 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 
     private void pastaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pastaMouseClicked
         try {
-            Desktop.getDesktop().open(new java.io.File("C:\\GedCartImagens/"));
+            Desktop.getDesktop().open(new java.io.File("C:\\GedCart\\GedCartImagens/"));
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Não foi possível abrir a imagem.", "Documentos", 0,
+            JOptionPane.showMessageDialog(this, "Não foi possível abrir a pasta.", "Documentos", 0,
                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
     }//GEN-LAST:event_pastaMouseClicked
+
+    private void nomePastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nomePastaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nomePastaActionPerformed
+
+    private void inserePastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inserePastaActionPerformed
+                FileWriter pasta = null;
+                try {
+                    pasta = new FileWriter("C:\\GedCart\\pasta.txt");
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                PrintWriter gravarPasta = new PrintWriter(pasta);
+                gravarPasta.println(nomePasta.getText());
+                try {
+                    pasta.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                File file = new File("D:\\Documentos\\NetBeansProjects\\GEDCart\\tokens\\StoredCredential");
+                file.delete();
+                JOptionPane.showMessageDialog(this, "Pasta atualizada com sucesso!", "Documentos", 0,
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                limparCampos();
+    }//GEN-LAST:event_inserePastaActionPerformed
+
+    private void uploadSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadSelectedActionPerformed
+        FileWriter arq = null;
+                try {
+                    arq = new FileWriter("C:\\GedCart\\upload.txt");
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                PrintWriter gravarArq = new PrintWriter(arq);
+                gravarArq.println(scan.getText());
+                gravarArq.println(caminho.getText());
+                try {
+                    arq.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }        
+        
+        FileWriter up = null;
+                try {
+                    up = new FileWriter("C:\\GedCart\\upload.bat");
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                PrintWriter gravarUp = new PrintWriter(up);
+                gravarUp.println("d:");
+                gravarUp.println("cd Documentos\\NetBeansProjects\\GEDCart");
+                gravarUp.println("gradle run");
+                try {
+                    up.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    Desktop.getDesktop().open(new java.io.File("C:\\GedCart\\upload.bat"));
+                    System.out.println("Chegou aqui");
+                } catch (IOException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+    }//GEN-LAST:event_uploadSelectedActionPerformed
+
+    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -710,7 +848,9 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private javax.swing.JLabel codigoL;
     private javax.swing.JLabel codigoL1;
     private javax.swing.JButton excluir;
+    private javax.swing.JButton inserePasta;
     private javax.swing.JButton jButtonInserirScanner;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelImagem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -720,11 +860,13 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private javax.swing.JButton limpar;
     private app.bolivia.swing.JCTextField nome;
     private javax.swing.JLabel nomeL;
+    private javax.swing.JTextField nomePasta;
     private javax.swing.JLabel pasta;
     private javax.swing.JButton registrar;
     private javax.swing.JTextField scan;
     public static javax.swing.JTable tabelaDocumentos;
     private org.bolivia.combo.SComboBoxBlue tipo;
     private javax.swing.JLabel tipoL;
+    private javax.swing.JButton uploadSelected;
     // End of variables declaration//GEN-END:variables
 }

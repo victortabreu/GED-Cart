@@ -81,14 +81,19 @@ public class DriveQuickstart {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         
-        String teste = null;
-        String nome = null;
-        java.io.File arquivo = new java.io.File("C:\\Users\\Katariny\\Documents\\NetBeansProjects\\sistema\\src\\main\\java\\upload.txt");
+        String teste;
+        String nome;
+        String idPasta;
+        java.io.File arquivo = new java.io.File("C:\\GedCart\\upload.txt");
         Scanner scanner = new Scanner(arquivo,"UTF-8");
         nome = scanner.nextLine(); 
         teste = scanner.nextLine();
         
-        String folderId = "1O6bcEr3f97fLGE6k72G8A9Njdu1lz8bB";
+        java.io.File pasta = new java.io.File("C:\\GedCart\\pasta.txt");
+        Scanner scan = new Scanner(pasta,"UTF-8");
+        idPasta = scan.nextLine();
+        
+        String folderId = idPasta;
         File fileMetadata = new File();
         fileMetadata.setName(nome);
         fileMetadata.setParents(Collections.singletonList(folderId));

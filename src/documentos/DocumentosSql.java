@@ -184,6 +184,18 @@ public class DocumentosSql {
         System.out.println(sql);
         return rsu;
     }
+    
+    public static boolean isNumber(String n) {
+        try {
+            if (Integer.parseInt(n) > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+    }
 
     private static void print(SQLException ex) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

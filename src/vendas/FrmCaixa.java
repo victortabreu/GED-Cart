@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import static principal.MenuPrincipal.carregador;
+import selos.FrmListaSelo;
 import static vendas.FrmVendas.tabela;
 
 
@@ -86,11 +87,12 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         jPanel2 = new javax.swing.JPanel();
         busca = new javax.swing.JButton();
         data = new app.bolivia.swing.JCTextField();
-        codigoL5 = new javax.swing.JLabel();
         recebido = new app.bolivia.swing.JCTextField();
         codigoL6 = new javax.swing.JLabel();
         troco = new app.bolivia.swing.JCTextField();
         codigoL7 = new javax.swing.JLabel();
+        busca1 = new javax.swing.JButton();
+        codigoL5 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         calculo = new javax.swing.JButton();
         vender = new javax.swing.JButton();
@@ -122,19 +124,19 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         busca.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        busca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/produto1.png"))); // NOI18N
+        busca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/Selos.png"))); // NOI18N
         busca.setBorder(null);
         busca.setContentAreaFilled(false);
         busca.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         busca.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        busca.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/produto.png"))); // NOI18N
+        busca.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/Selos1.png"))); // NOI18N
         busca.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         busca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buscaActionPerformed(evt);
             }
         });
-        jPanel2.add(busca, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+        jPanel2.add(busca, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 110, 50));
 
         data.setEditable(false);
         data.setBackground(new java.awt.Color(34, 102, 145));
@@ -144,10 +146,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         data.setOpaque(false);
         data.setPhColor(new java.awt.Color(255, 255, 255));
         data.setPlaceholder("DATA");
-        jPanel2.add(data, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 20, 180, -1));
-
-        codigoL5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/data.png"))); // NOI18N
-        jPanel2.add(codigoL5, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, -1, 52));
+        jPanel2.add(data, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 20, 100, -1));
 
         recebido.setBackground(new java.awt.Color(34, 102, 145));
         recebido.setBorder(null);
@@ -156,11 +155,11 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         recebido.setOpaque(false);
         recebido.setPhColor(new java.awt.Color(255, 255, 255));
         recebido.setPlaceholder("RECIBIDO");
-        jPanel2.add(recebido, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 20, 130, -1));
+        jPanel2.add(recebido, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 20, 130, -1));
 
         codigoL6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/recibi.png"))); // NOI18N
         codigoL6.setToolTipText("RECIBI");
-        jPanel2.add(codigoL6, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 10, -1, 52));
+        jPanel2.add(codigoL6, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 10, -1, 52));
 
         troco.setEditable(false);
         troco.setBackground(new java.awt.Color(34, 102, 145));
@@ -170,11 +169,29 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         troco.setOpaque(false);
         troco.setPhColor(new java.awt.Color(255, 255, 255));
         troco.setPlaceholder("TROCO");
-        jPanel2.add(troco, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 20, 130, -1));
+        jPanel2.add(troco, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 20, 130, -1));
 
         codigoL7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/valores.png"))); // NOI18N
         codigoL7.setToolTipText("CAMBIO");
-        jPanel2.add(codigoL7, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 10, -1, 52));
+        jPanel2.add(codigoL7, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 10, -1, 52));
+
+        busca1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        busca1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/produto1.png"))); // NOI18N
+        busca1.setBorder(null);
+        busca1.setContentAreaFilled(false);
+        busca1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        busca1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        busca1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/produto.png"))); // NOI18N
+        busca1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        busca1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                busca1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(busca1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 120, -1));
+
+        codigoL5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/data.png"))); // NOI18N
+        jPanel2.add(codigoL5, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, -1, 52));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "OPÇÕES", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
@@ -271,7 +288,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "CÓDIGO", "TIPO PRODUTO", "DESCRIÇÃO", "VALOR", "QUANTIDADE", "TOTAL"
+                "CÓDIGO", "NOME", "TIPO", "QUANTIDADE", "VALOR UNIT.", "TOTAL"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -306,7 +323,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("COMÉRCIO FREITAS LTDA");
+        jLabel3.setText("Cartório do Registro Civil e Notas do Distrito de Riacho da Cruz");
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -314,11 +331,11 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("31 97527-5084");
+        jLabel5.setText("38 3621-3866");
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("31 97527-5084");
+        jLabel6.setText("38 9 9998-6710");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -395,13 +412,12 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -425,10 +441,10 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    documentos.FrmListaDoc lista;
+    selos.FrmListaSelo lista;
     private void buscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscaActionPerformed
            if (estaFechado(lista)) {
-            lista = new FrmListaDoc();
+            lista = new FrmListaSelo();
             principal.MenuPrincipal.carregador.add(lista);
             
             lista.toFront();
@@ -485,7 +501,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
             int linha = tabela.getSelectedRow();
             if (linha >= 0) {
                 modelo.removeRow(linha);
-                FrmListaDoc lp = new FrmListaDoc();
+                FrmListaSelo lp = new FrmListaSelo();
                 lp.calcular();
             } else {
                 JOptionPane.showMessageDialog(this, "Selecionar uma Linha.", "Venda", 0,
@@ -500,10 +516,24 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
     private void cancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarActionPerformed
         limparCampos();
     }//GEN-LAST:event_cancelarActionPerformed
+    documentos.FrmListaDoc lista1;
+    private void busca1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busca1ActionPerformed
+        if (estaFechado(lista1)) {
+            lista1 = new FrmListaDoc();
+            principal.MenuPrincipal.carregador.add(lista1);
+            
+            lista1.toFront();
+            lista1.setVisible(true);
+        }else{
+            lista1.toFront();
+            
+        }
+    }//GEN-LAST:event_busca1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton busca;
+    private javax.swing.JButton busca1;
     private javax.swing.JButton calculo;
     private javax.swing.JButton cancelar;
     private javax.swing.JLabel codigoL3;

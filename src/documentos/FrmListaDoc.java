@@ -48,22 +48,27 @@ public class FrmListaDoc extends javax.swing.JInternalFrame {
         });
     }  
     
+    String quant = null;
+    String valor = null;
     public void calcular() {
-        String pre;
-        String quan;
         double total = 0;
         double preco;
         int quantidade;
         double calc = 0.0;
 
         for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
-            pre = vendas.FrmCaixa.tabela.getValueAt(i, 3).toString();
-            quan = vendas.FrmCaixa.tabela.getValueAt(i, 4).toString();
-            preco = Double.parseDouble(pre);
-            quantidade = Integer.parseInt(quan);
-            calc = preco * quantidade;
-            total = total + calc;
-            vendas.FrmCaixa.tabela.setValueAt(Math.rint(calc * 100) / 100, i, 5);
+            valor = vendas.FrmCaixa.tabela.getValueAt(i, 4).toString();
+            quant = vendas.FrmCaixa.tabela.getValueAt(i, 3).toString();
+            if(valor.equals("----")){
+                calc = 0;
+                vendas.FrmCaixa.tabela.setValueAt("----", i, 5);
+            }else{
+                preco = Double.parseDouble(valor);
+                quantidade = Integer.parseInt(quant);
+                calc = preco * quantidade;
+                total = total + calc;
+                vendas.FrmCaixa.tabela.setValueAt(Math.rint(calc * 100) / 100, i, 5);
+            }
 
         }
         vendas.FrmCaixa.total.setText("" + Math.rint(total * 100) / 100);
@@ -124,6 +129,11 @@ public class FrmListaDoc extends javax.swing.JInternalFrame {
         buscar.setOpaque(false);
         buscar.setPhColor(new java.awt.Color(255, 255, 255));
         buscar.setPlaceholder("CÓDIGO/NOME");
+        buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarActionPerformed(evt);
+            }
+        });
         buscar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 buscarKeyReleased(evt);
@@ -214,20 +224,19 @@ public class FrmListaDoc extends javax.swing.JInternalFrame {
                             new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
                 } else {
                     String cod = tabela.getValueAt(linha, 0).toString();
-                    String tipo = tabela.getValueAt(linha, 1).toString();
-                    String nom = tabela.getValueAt(linha, 2).toString();
-                    String preco = tabela.getValueAt(linha, 3).toString();
+                    String nome = tabela.getValueAt(linha, 1).toString();
+                    String tipo = tabela.getValueAt(linha, 2).toString();
+                    quant = "----";
+                    valor = "----";
+                    String total = "0";
                     int c = 0;
                     int j = 0;
-                    quant = JOptionPane.showInputDialog(this, "Quantidade:", "Produtos", JOptionPane.INFORMATION_MESSAGE);
-                    while (!DocumentosSql.isNumber(quant) && quant != null) {
-                        quant = JOptionPane.showInputDialog(this, "Somente valores númericos maiores que 0:",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    if ((quant.equals("")) || (quant.equals("0"))) {
-                       JOptionPane.showMessageDialog(this, "Insira um valor maior que 0");
-                    } else {
-                        for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
+//                    quant = JOptionPane.showInputDialog(this, "Quantidade:", "Produtos", JOptionPane.INFORMATION_MESSAGE);
+//                    while (!DocumentosSql.isNumber(quant) && quant != null) {
+//                        quant = JOptionPane.showInputDialog(this, "Somente valores númericos maiores que 0:",
+//                                "Error", JOptionPane.ERROR_MESSAGE);
+//                    }
+                            for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
                             Object com = vendas.FrmCaixa.tabela.getValueAt(i, 0);
                             Object quant1 = vendas.FrmCaixa.tabela.getValueAt(i, 4);
                             if (cod.equals(com)) {
@@ -243,10 +252,13 @@ public class FrmListaDoc extends javax.swing.JInternalFrame {
                         if (c == 0) {
 
                             dado[0] = cod;
-                            dado[1] = tipo;
-                            dado[2] = nom;
-                            dado[3] = preco;
+                            dado[1] = nome;
+                            dado[2] = tipo;
+                            dado[3] = valor;
                             dado[4] = quant;
+                            
+                                                        
+                            //dado[3] = quant;
 
                             tabeladet.addRow(dado);
 
@@ -254,9 +266,10 @@ public class FrmListaDoc extends javax.swing.JInternalFrame {
                             calcular();
 
                              vendas.FrmCaixa.recebido.setText("");
-                             vendas.FrmCaixa.troco.setText("");
+                             vendas.FrmCaixa.troco.setText(""); 
+                             dispose();
+                             
                         }
-                    }
                 }
             } catch (Exception e) {
             }
@@ -265,6 +278,10 @@ public class FrmListaDoc extends javax.swing.JInternalFrame {
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
     }//GEN-LAST:event_enviarActionPerformed
+
+    private void buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

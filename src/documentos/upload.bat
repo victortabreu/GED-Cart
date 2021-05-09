@@ -1,2 +1,3 @@
-cd C:\Users\Katariny\Documents\NetBeansProjects\sistema
-gradle run
+d:
+cd Documentos\NetBeansProjects\GEDCart 
+gradle run 

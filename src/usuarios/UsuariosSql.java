@@ -51,7 +51,7 @@ public class UsuariosSql {
                 dados[1] = rs.getString("nome_us");
                 dados[2] = rs.getString("sexo_us");
                 dados[3] = rs.getString("tipo_us");
-                dados[4] = rs.getString("senha");
+                dados[4] = "******";
                 modelo.addRow(dados);
             }
         } catch (SQLException ex) {
