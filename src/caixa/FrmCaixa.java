@@ -3,12 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package vendas;
+package caixa;
 
+import vendas.*;
 import atos.FrmListaAtos;
-import static caixa.FrmCaixa.numFac;
-import caixa.Servicos;
-import caixa.ServicosSql;
 import documentos.FrmListaDoc;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +17,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import static principal.MenuPrincipal.carregador;
 import selos.FrmListaSelo;
-import static vendas.FrmVendas.tabela;
 
 /**
  *
@@ -70,7 +67,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         total.setText("0.0");
         data.setText("");
         data.setText(dataAtual());
-        ServicosSql.numeros();
+        VendasSql.numeros();
     }
 
     /**
@@ -379,18 +376,13 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         numFac.setOpaque(false);
         numFac.setPhColor(new java.awt.Color(255, 255, 255));
         numFac.setPlaceholder("FATURA");
-        numFac.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                numFacActionPerformed(evt);
-            }
-        });
         jPanel6.add(numFac, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, 130, 30));
 
         codigoL4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/numFac.png"))); // NOI18N
         jPanel6.add(codigoL4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, 50));
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel15.setText("NÚMERO DE RECEITA");
+        jLabel15.setText("NÚMERO DE VENTA");
         jPanel6.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
         jLabel15.getAccessibleContext().setAccessibleName("NÚMERO DA VENDA");
 
@@ -478,7 +470,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_calculoActionPerformed
-    int opc = 0;
+    int opc;
     private void venderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_venderActionPerformed
         if (tabela.getRowCount() < 1) {
             JOptionPane.showMessageDialog(this, "Impossível realizar a venda.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -488,14 +480,13 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
                 s.setPrimaryKey(numFac.getText());
                 s.setNumDoc_ser(vendas.FrmCaixa.tabela.getValueAt(0, 0).toString());
                 s.setNumAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 0).toString());
-                s.setQuant_ser(vendas.FrmCaixa.tabela.getValueAt(i, 3).toString());
-                s.setTotalAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 5).toString());
+                s.setTotalAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 6).toString());
                 s.setData_ser(data.getText());
                 opc = ServicosSql.registrar(s);
             }
             if (opc != 0) {
                 limparCampos();
-                JOptionPane.showMessageDialog(this, "Receita Inserida com Sucesso!", "Venda", 0,
+                JOptionPane.showMessageDialog(this, "Venda Efetuada.", "Venda", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
             }
@@ -536,10 +527,6 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
         }
     }//GEN-LAST:event_busca1ActionPerformed
-
-    private void numFacActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numFacActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_numFacActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

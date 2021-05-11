@@ -5,6 +5,7 @@
  */
 package vendas;
 
+import caixa.ServicosSql;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.ImageIcon;
@@ -40,7 +41,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         }
         data.setDate(null);
         buscar.setText("");
-        VendasSql.listar("");
+        ServicosSql.listar("");
     }
 
     /**
@@ -67,7 +68,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         data = new com.toedter.calendar.JDateChooser();
 
         setClosable(true);
-        setTitle("Lista de Vendas");
+        setTitle("Lista de Receitas");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -76,11 +77,11 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "NÚMERO VENDA", "TOTAL", "DATA"
+                "RECEITA", "DOCUMENTO", "ATO", "QUANTIDADE", "VALOR TOTAL", "DATA"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, true, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -100,7 +101,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         buscar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         buscar.setOpaque(false);
         buscar.setPhColor(new java.awt.Color(255, 255, 255));
-        buscar.setPlaceholder("NÚMERO VENDA");
+        buscar.setPlaceholder("NÚMERO RECEITA");
         buscar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buscarMouseClicked(evt);
@@ -225,7 +226,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 628, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -234,7 +235,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -254,11 +255,11 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
     private void buscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buscarMouseClicked
         data.setDate(null);
-        VendasSql.listar("");
+        ServicosSql.listar("");
     }//GEN-LAST:event_buscarMouseClicked
 
     private void buscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarKeyReleased
-        VendasSql.listar(buscar.getText());
+        ServicosSql.listar(buscar.getText());
     }//GEN-LAST:event_buscarKeyReleased
 
     private void buscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarKeyTyped
@@ -268,20 +269,20 @@ public class FrmVendas extends javax.swing.JInternalFrame {
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
          if (tabela.getRowCount() > 0) {
             if (tabela.getSelectedRowCount() > 0) {
-                if (JOptionPane.showConfirmDialog(this, "Deseja excluir esta venda?", "Vendas", JOptionPane.YES_NO_OPTION, 0,
+                if (JOptionPane.showConfirmDialog(this, "Deseja excluir esta receita?", "Receitas", JOptionPane.YES_NO_OPTION, 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
                     int linha = tabela.getSelectedRow();
                     String id = tabela.getValueAt(linha, 0).toString();
-                    int elimina = VendasSql.eliminar(id);
+                    int elimina = ServicosSql.eliminar(id);
                     if (elimina != 0) {
                         limparCampos();
-                        JOptionPane.showMessageDialog(this, "Venda Excluída", "Vendas", 0,
+                        JOptionPane.showMessageDialog(this, "Receita Excluída", "Receitas", 0,
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
                         
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Selecione um Registro", "Vendas", 0,
+                JOptionPane.showMessageDialog(this, "Selecione um Registro", "Receitas", 0,
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             }
 
@@ -293,12 +294,12 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
     private void eliminarTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarTActionPerformed
              if (tabela.getRowCount() > 0) {
-            if (JOptionPane.showConfirmDialog(this, "Deseja Excluir?", "Venda", JOptionPane.YES_NO_OPTION, 0,
+            if (JOptionPane.showConfirmDialog(this, "Deseja Excluir?", "Receitas", JOptionPane.YES_NO_OPTION, 0,
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
-                int eliminaT = VendasSql.eliminaTodos();
+                int eliminaT = ServicosSql.eliminaTodos();
                 if (eliminaT != 0) {
                     limparCampos();
-                    JOptionPane.showMessageDialog(this, "Registros excluídos.", "Vendas", 0,
+                    JOptionPane.showMessageDialog(this, "Registros excluídos.", "Receitas", 0,
                             new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
                   
                 }
@@ -315,12 +316,12 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
     private void buscFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscFActionPerformed
         if (data.getDate() == null) {
-            VendasSql.listar("");
+            ServicosSql.listar("");
         } else {
             String formato = data.getDateFormatString();
             Date date = data.getDate();
             SimpleDateFormat sdf = new SimpleDateFormat(formato);
-            VendasSql.listar(String.valueOf(sdf.format(date)));
+            ServicosSql.listarData(String.valueOf(sdf.format(date)));
         }
     }//GEN-LAST:event_buscFActionPerformed
 
@@ -328,7 +329,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         Date sistemaData = new Date();
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
         String dataH = formato.format(sistemaData);
-        VendasSql.listar(dataH);
+        ServicosSql.listar(dataH);
         data.setDate(null);
     }//GEN-LAST:event_ventasHActionPerformed
 
