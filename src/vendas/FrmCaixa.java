@@ -54,11 +54,18 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
     public static String dataAtual() {
         Date data = new Date();
+        SimpleDateFormat formatoData = new SimpleDateFormat("YYYY-MM-dd");
+        return formatoData.format(data);
+
+    }
+    
+    public static String dataMostrar() {
+        Date data = new Date();
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/YYYY");
         return formatoData.format(data);
 
     }
-
+    String data1 = dataAtual();
     void limparCampos() {
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 
@@ -69,7 +76,8 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         troco.setText("");
         total.setText("0.0");
         data.setText("");
-        data.setText(dataAtual());
+        data.setText(dataMostrar());
+        data1 = dataAtual();
         ServicosSql.numeros();
     }
 
@@ -447,17 +455,22 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
     atos.FrmListaAtos lista;
     private void buscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscaActionPerformed
-        if (estaFechado(lista)) {
-            lista = new FrmListaAtos();
-            principal.MenuPrincipal.carregador.add(lista);
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        if(modelo.getRowCount() == 0){    
+            JOptionPane.showMessageDialog(this, "Insira primeiro um documento", "Caixa", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+        }else{
+            if (estaFechado(lista)) {
+                lista = new FrmListaAtos();
+                principal.MenuPrincipal.carregador.add(lista);
 
-            lista.toFront();
-            lista.setVisible(true);
-        } else {
-            lista.toFront();
+                lista.toFront();
+                lista.setVisible(true);
+            } else {
+                lista.toFront();
 
+            }
         }
-
     }//GEN-LAST:event_buscaActionPerformed
 
     private void calculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculoActionPerformed
@@ -484,14 +497,17 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Impossível realizar a venda.", "Erro", JOptionPane.ERROR_MESSAGE);
         } else {
             for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
-                Servicos s = new Servicos();
-                s.setPrimaryKey(numFac.getText());
-                s.setNumDoc_ser(vendas.FrmCaixa.tabela.getValueAt(0, 0).toString());
-                s.setNumAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 0).toString());
-                s.setQuant_ser(vendas.FrmCaixa.tabela.getValueAt(i, 3).toString());
-                s.setTotalAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 5).toString());
-                s.setData_ser(data.getText());
-                opc = ServicosSql.registrar(s);
+                String valor = vendas.FrmCaixa.tabela.getValueAt(i, 5).toString();
+                if(!valor.equals("----")){
+                    Servicos s = new Servicos();
+                    s.setPrimaryKey(numFac.getText());
+                    s.setNumDoc_ser(vendas.FrmCaixa.tabela.getValueAt(0, 0).toString());
+                    s.setNumAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 0).toString());
+                    s.setQuant_ser(vendas.FrmCaixa.tabela.getValueAt(i, 3).toString());
+                    s.setTotalAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 5).toString());
+                    s.setData_ser(data1);
+                    opc = ServicosSql.registrar(s);
+                }
             }
             if (opc != 0) {
                 limparCampos();

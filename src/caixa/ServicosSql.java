@@ -45,13 +45,14 @@ public class ServicosSql {
         return rsu;
     }
 
-    public static int eliminar(String id) {
+    public static int eliminar(String id, String ato) {
         int rsu = 0;
         String sql = Servicos.ELIMINAR;
 
         try {
             ps = cn.prepareStatement(sql);
             ps.setString(1, id);
+            ps.setString(2, ato);
             rsu = ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -81,22 +82,24 @@ public class ServicosSql {
         }
         String sql = "";
         if (busca.equals("")) {
-            sql = Servicos.LISTAR;
+            sql = Servicos.LISTAR_ESPECIAL;
         } else {
-            sql = "SELECT * FROM servicos WHERE (num_ser like '%" + busca + "%' or numDoc_ser='" + busca + "')"
-                    + " ORDER BY data_ser";
+            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE num_ser like '%"+busca+"%';";
         }
-        String dados[] = new String[6];
+        String dados[] = new String[9];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                dados[0] = rs.getString("num_ser");
-                dados[1] = rs.getString("numDoc_ser");
-                dados[2] = rs.getString("numAto_ser");
-                dados[3] = rs.getString("quant_ser");
-                dados[4] = rs.getString("totalAto_ser");
-                dados[5] = rs.getString("data_ser");
+                dados[0] = rs.getString("data_ser");
+                dados[1] = rs.getString("num_ser");
+                dados[2] = rs.getString("numDoc_ser");
+                dados[3] = rs.getString("numAto_ser");
+                dados[4] = rs.getString("quant_ser");
+                dados[5] = rs.getString("emol_bruto");
+                dados[6] = rs.getString("recompe_mg");
+                dados[7] = rs.getString("emol_Liquido");
+                dados[8] = rs.getString("taxa_fiscal");
                 modelo.addRow(dados);
             }
         } catch (SQLException ex) {
@@ -104,32 +107,70 @@ public class ServicosSql {
         }
     }
     
-    public static void listarData(String busca) {
+    public static void listarData(String data1, String data2) {
         DefaultTableModel modelo = (DefaultTableModel) vendas.FrmVendas.tabela.getModel();
 
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
         String sql = "";
-        if (busca.equals("")) {
-            sql = Servicos.LISTAR;
+        if (data1.equals("")) {
+            sql = Servicos.LISTAR_ESPECIAL;
         } else {
-            sql = "SELECT * FROM servicos WHERE (data_ser like '%" + busca + "' and totalAto_ser <> \"----\")"
-                    + " ORDER BY data_ser";
-            
+            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "';";
+            System.out.println(data1);
+            System.out.println(data2);
             //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
         }
-        String dados[] = new String[6];
+        String dados[] = new String[9];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                dados[0] = rs.getString("num_ser");
-                dados[1] = rs.getString("numDoc_ser");
-                dados[2] = rs.getString("numAto_ser");
-                dados[3] = rs.getString("quant_ser");
-                dados[4] = rs.getString("totalAto_ser");
-                dados[5] = rs.getString("data_ser");
+                dados[0] = rs.getString("data_ser");
+                dados[1] = rs.getString("num_ser");
+                dados[2] = rs.getString("numDoc_ser");
+                dados[3] = rs.getString("numAto_ser");
+                dados[4] = rs.getString("quant_ser");
+                dados[5] = rs.getString("emol_bruto");
+                dados[6] = rs.getString("recompe_mg");
+                dados[7] = rs.getString("emol_Liquido");
+                dados[8] = rs.getString("taxa_fiscal");
+                modelo.addRow(dados);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ServicosSql.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void listarDataH(String dataH) {
+        DefaultTableModel modelo = (DefaultTableModel) vendas.FrmVendas.tabela.getModel();
+
+        while (modelo.getRowCount() > 0) {
+            modelo.removeRow(0);
+        }
+        String sql = "";
+        if (dataH.equals("")) {
+            sql = Servicos.LISTAR_ESPECIAL;
+        } else {
+            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE data_ser LIKE '" + dataH + "';";
+            System.out.println(dataH);
+            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
+        }
+        String dados[] = new String[9];
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                dados[0] = rs.getString("data_ser");
+                dados[1] = rs.getString("num_ser");
+                dados[2] = rs.getString("numDoc_ser");
+                dados[3] = rs.getString("numAto_ser");
+                dados[4] = rs.getString("quant_ser");
+                dados[5] = rs.getString("emol_bruto");
+                dados[6] = rs.getString("recompe_mg");
+                dados[7] = rs.getString("emol_Liquido");
+                dados[8] = rs.getString("taxa_fiscal");
                 modelo.addRow(dados);
             }
         } catch (SQLException ex) {

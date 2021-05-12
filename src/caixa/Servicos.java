@@ -12,11 +12,13 @@ package caixa;
 public class Servicos {
 
     public static String LISTAR = "SELECT * FROM servicos WHERE totalAto_ser <> \"----\" ORDER BY data_ser";
+    
+    public static String LISTAR_ESPECIAL = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> \"----\";";
 
     public static String REGISTRAR = "INSERT INTO servicos(num_ser, numDoc_ser, numAto_ser, quant_ser, totalAto_ser, data_ser) "
             + "VALUES(?,?,?,?,?,?)";
 
-    public static String ELIMINAR = "DELETE FROM servicos WHERE num_ser = ?";
+    public static String ELIMINAR = "DELETE FROM servicos WHERE num_ser = ? and numAto_ser = ?";
 
     public static String ELIMINAR_TUDO = "DELETE FROM servicos";
 

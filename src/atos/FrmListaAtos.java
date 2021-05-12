@@ -53,17 +53,18 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
         double total = 0;
         double preco;
         int quantidade;
+        String quanti;
         double calc = 0.0;
 
         for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
             valor = vendas.FrmCaixa.tabela.getValueAt(i, 4).toString();
-            quant = vendas.FrmCaixa.tabela.getValueAt(i, 3).toString();
+            quanti = vendas.FrmCaixa.tabela.getValueAt(i, 3).toString();
              if(valor.equals("----")){
                 calc = 0;
                 vendas.FrmCaixa.tabela.setValueAt("----", i, 5);
             }else{
                 preco = Double.parseDouble(valor);
-                quantidade = Integer.parseInt(quant);
+                quantidade = Integer.parseInt(quanti);
                 calc = preco * quantidade;
                 total = total + calc;
                 vendas.FrmCaixa.tabela.setValueAt(Math.rint(calc * 100) / 100, i, 5);
@@ -237,15 +238,16 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
                     } else {
                         for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
                             Object com = vendas.FrmCaixa.tabela.getValueAt(i, 0);
-                            Object quant1 = vendas.FrmCaixa.tabela.getValueAt(i, 4);
+                            Object quant1 = vendas.FrmCaixa.tabela.getValueAt(i, 3);
                             if (cod.equals(com)) {
                                 j = i;
-                                int quantT = Integer.parseInt(quant) + Integer.parseInt((String) quant1);
-                                vendas.FrmCaixa.tabela.setValueAt(String.valueOf(quantT), i, 4);
+                                int quantT = Integer.parseInt(quant);// + Integer.parseInt((String) quant1);
+                                vendas.FrmCaixa.tabela.setValueAt(String.valueOf(quantT), i, 3);
                                 c++;
                                 calcular();
                                 vendas.FrmCaixa.recebido.setText("");
                                 vendas.FrmCaixa.troco.setText("");
+                                dispose();
                             }
                         }
                         if (c == 0) {
@@ -265,7 +267,6 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
                              vendas.FrmCaixa.recebido.setText("");
                              vendas.FrmCaixa.troco.setText("");
                              dispose();
-                             
                         }
                     }
                 }
