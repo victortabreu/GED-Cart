@@ -6,6 +6,7 @@
 package vendas;
 
 import caixa.ServicosSql;
+import despesas.DespesasSql;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +32,10 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         tabela.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
         
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabela1.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
+        tabela1.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
+        
+        tabela1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         limparCampos();
         
         
@@ -42,11 +47,46 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         if (tabela.getSelectedRow() > -1) {
             tabela.removeRowSelectionInterval(tabela.getSelectedRow(), tabela.getSelectedRow());
         }
+         if (tabela1.getSelectedRow() > -1) {
+            tabela1.removeRowSelectionInterval(tabela1.getSelectedRow(), tabela1.getSelectedRow());
+        }
         data.setDate(null);
         data2.setDate(null);
         buscar.setText("");
         ServicosSql.listar("");
+        DespesasSql.listarDepesas("");
         calcular();
+        calcularDespesas();
+    }
+    
+    public void calcularDespesas(){
+        String dataF;
+        String valorS;
+        double valor = 0.0;
+        double total = 0.0;
+        
+        for (int i = 0; i < vendas.FrmVendas.tabela1.getRowCount(); i++) {
+            
+            dataF = vendas.FrmVendas.tabela1.getValueAt(i, 1).toString();
+            SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateF = null;
+            try {
+                dateF = formato.parse(dataF);
+            } catch (ParseException ex) {
+                Logger.getLogger(FrmVendas.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            dataF = String.valueOf(sdf.format(dateF));
+            
+            vendas.FrmVendas.tabela1.setValueAt(dataF, i, 1);
+            
+            valorS = vendas.FrmVendas.tabela1.getValueAt(i, 3).toString();
+            valor = Double.parseDouble(valorS);
+            vendas.FrmVendas.tabela1.setValueAt("R$ " + Math.rint(valor * 100) / 100, i, 3);
+            
+            total += valor;
+        }
+        totalDes.setText("R$ " + Math.rint(total * 100) / 100);
     }
     
     public void calcular() {
@@ -99,19 +139,19 @@ public class FrmVendas extends javax.swing.JInternalFrame {
             tfj = Double.parseDouble(tfj1);
             
             calcB = bruto * quantidade;
-            vendas.FrmVendas.tabela.setValueAt(Math.rint(calcB * 100) / 100, i, 5);
+            vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcB * 100) / 100, i, 5);
             
             calcR = recompe * quantidade;
-            vendas.FrmVendas.tabela.setValueAt(Math.rint(calcR * 100) / 100, i, 6);
+            vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcR * 100) / 100, i, 6);
             
             calcL = liquido * quantidade;
-            vendas.FrmVendas.tabela.setValueAt(Math.rint(calcL * 100) / 100, i, 7);
+            vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcL * 100) / 100, i, 7);
             
             calcT = tfj * quantidade;
-            vendas.FrmVendas.tabela.setValueAt(Math.rint(calcT * 100) / 100, i, 8);
+            vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcT * 100) / 100, i, 8);
             
             total = calcR + calcL + calcT;
-            vendas.FrmVendas.tabela.setValueAt(Math.rint(total * 100) / 100, i, 9);
+            vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(total * 100) / 100, i, 9);
             
             totalBruto += calcB;
             totalRecomp += calcR;
@@ -119,11 +159,11 @@ public class FrmVendas extends javax.swing.JInternalFrame {
             totalTfj += calcT;
             totalReceita += total;
         }
-        emolBrutoT.setText("" + Math.rint(totalBruto * 100) / 100);
-        recompeT.setText("" + Math.rint(totalRecomp * 100) / 100);
-        emolLiquidoT.setText("" + Math.rint(totalLiquido * 100) / 100);
-        tfjT.setText("" + Math.rint(totalTfj * 100) / 100);
-        receita.setText("" + Math.rint(totalReceita * 100) / 100);
+        emolBrutoT.setText("R$ " + Math.rint(totalBruto * 100) / 100);
+        recompeT.setText("R$ " + Math.rint(totalRecomp * 100) / 100);
+        emolLiquidoT.setText("R$ " + Math.rint(totalLiquido * 100) / 100);
+        tfjT.setText("R$ " + Math.rint(totalTfj * 100) / 100);
+        receita.setText("R$ " + Math.rint(totalReceita * 100) / 100);
     }
 
     /**
@@ -165,7 +205,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        total5 = new javax.swing.JTextField();
+        totalDes = new javax.swing.JTextField();
 
         setClosable(true);
         setTitle("Receitas / Despesas");
@@ -315,11 +355,11 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "DATA", "HISTÓRICO", "VALOR"
+                "DATA", "ID DESPESA", "HISTÓRICO", "VALOR"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, true, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -403,19 +443,19 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel7.setText("Receita");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("Total de despezas do período selecionado:");
+        jLabel8.setText("Total de despesas do período selecionado:");
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel9.setText("Total Despezas");
+        jLabel9.setText("Total Despesas");
 
-        total5.setBackground(new java.awt.Color(0, 102, 153));
-        total5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        total5.setForeground(new java.awt.Color(255, 255, 255));
-        total5.setToolTipText("");
-        total5.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        total5.addActionListener(new java.awt.event.ActionListener() {
+        totalDes.setBackground(new java.awt.Color(0, 102, 153));
+        totalDes.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        totalDes.setForeground(new java.awt.Color(255, 255, 255));
+        totalDes.setToolTipText("");
+        totalDes.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        totalDes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                total5ActionPerformed(evt);
+                totalDesActionPerformed(evt);
             }
         });
 
@@ -456,7 +496,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(total5, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(totalDes, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 42, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -491,7 +531,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(total5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(totalDes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9))
                         .addGap(59, 59, 59))))
         );
@@ -606,9 +646,9 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_receitaActionPerformed
 
-    private void total5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_total5ActionPerformed
+    private void totalDesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalDesActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_total5ActionPerformed
+    }//GEN-LAST:event_totalDesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -641,7 +681,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
     public static javax.swing.JTable tabela;
     public static javax.swing.JTable tabela1;
     private javax.swing.JTextField tfjT;
-    private javax.swing.JTextField total5;
+    private javax.swing.JTextField totalDes;
     private javax.swing.JButton ventasH;
     // End of variables declaration//GEN-END:variables
 }

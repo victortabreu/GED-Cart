@@ -21,11 +21,11 @@ import principal.GerarNumero;
  * @author hugov
  */
 public class ServicosSql {
+
     static Conectar cc = new Conectar();
     static Connection cn = cc.conexao();
     static PreparedStatement ps;
-    
-    
+
     public static int registrar(Servicos uc) {
         int rsu = 0;
         String sql = Servicos.REGISTRAR;
@@ -84,7 +84,10 @@ public class ServicosSql {
         if (busca.equals("")) {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
-            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE num_ser like '%"+busca+"%';";
+            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto,"+
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` "+
+                    "INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
+                    "WHERE num_ser like '%" + busca + "%';";
         }
         String dados[] = new String[9];
         try {
@@ -106,7 +109,7 @@ public class ServicosSql {
             Logger.getLogger(ServicosSql.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void listarData(String data1, String data2) {
         DefaultTableModel modelo = (DefaultTableModel) vendas.FrmVendas.tabela.getModel();
 
@@ -117,7 +120,10 @@ public class ServicosSql {
         if (data1.equals("")) {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
-            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "';";
+            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto,"+
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` "+
+                    "INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
+                    "WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "';";
             System.out.println(data1);
             System.out.println(data2);
             //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
@@ -142,7 +148,7 @@ public class ServicosSql {
             Logger.getLogger(ServicosSql.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void listarDataH(String dataH) {
         DefaultTableModel modelo = (DefaultTableModel) vendas.FrmVendas.tabela.getModel();
 
@@ -153,7 +159,10 @@ public class ServicosSql {
         if (dataH.equals("")) {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
-            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE data_ser LIKE '" + dataH + "';";
+            sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto," + 
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos`"+
+                    " INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
+                    "WHERE data_ser LIKE '" + dataH + "';";
             System.out.println(dataH);
             //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
         }
@@ -205,6 +214,7 @@ public class ServicosSql {
             Logger.getLogger(ServicosSql.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     public static void numeros1() {
         int j;
         int cont = 1;
