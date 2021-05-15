@@ -5,8 +5,6 @@
  */
 package atos;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -25,30 +23,31 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
         initComponents();
         tabela.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
         tabela.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
-        
-        tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-       
-        AtosSql.listarCat("");
-        
-        tipo.addItemListener(new ItemListener() {
 
-            @Override
-            public void itemStateChanged(ItemEvent ie) {
-                if (tipo.getSelectedIndex() == 0) {
-                   
-                    AtosSql.listarCat("");
-                }    
-                 
-                 if (tipo.getSelectedIndex() != 0) {
-                   
-                    AtosSql.listarCat(tipo.getSelectedItem().toString());
-                }
-                
-            }
-        });
-    }  
+        tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        AtosSql.listarCat("");
+
+//        tipo.addItemListener(new ItemListener() {
+//
+//            @Override
+//            public void itemStateChanged(ItemEvent ie) {
+//                if (tipo.getSelectedIndex() == 0) {
+//                   
+//                    AtosSql.listarCat("");
+//                }    
+//                 
+//                 if (tipo.getSelectedIndex() != 0) {
+//                   
+//                    AtosSql.listarCat(tipo.getSelectedItem().toString());
+//                }
+//                
+//            }
+//        });
+    }
     String quant = null;
     String valor = null;
+
     public void calcular() {
         double total = 0;
         double preco;
@@ -59,10 +58,10 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
         for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
             valor = vendas.FrmCaixa.tabela.getValueAt(i, 4).toString();
             quanti = vendas.FrmCaixa.tabela.getValueAt(i, 3).toString();
-             if(valor.equals("----")){
+            if (valor.equals("----")) {
                 calc = 0;
                 vendas.FrmCaixa.tabela.setValueAt("----", i, 5);
-            }else{
+            } else {
                 preco = Double.parseDouble(valor);
                 quantidade = Integer.parseInt(quanti);
                 calc = preco * quantidade;
@@ -90,8 +89,6 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
         jPanel4 = new javax.swing.JPanel();
         buscar = new app.bolivia.swing.JCTextField();
         codigoL1 = new javax.swing.JLabel();
-        tipo = new org.bolivia.combo.SComboBoxBlue();
-        tipoL = new javax.swing.JLabel();
         enviar = new javax.swing.JButton();
 
         setClosable(true);
@@ -144,13 +141,6 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
         codigoL1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         codigoL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/buscarL.png"))); // NOI18N
         jPanel4.add(codigoL1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 250, 52));
-
-        tipo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "TIPO ", "CERTIDÃO DE NASCIMENTO", "CERTIDÃO DE ÓBITO", "CERTIDÃO DE CASAMENTO", "ESCRITURA", "RECONHECIMENTO DE FIRMA", "AUTENTICAÇÃO" }));
-        tipo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jPanel4.add(tipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 40, 183, -1));
-
-        tipoL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/tipopro.png"))); // NOI18N
-        jPanel4.add(tipoL, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 30, -1, 52));
 
         enviar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         enviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/regis1.png"))); // NOI18N
@@ -205,8 +195,8 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarKeyReleased
-         buscar.setText(buscar.getText().toUpperCase());
-         AtosSql.listarCat(buscar.getText());
+        buscar.setText(buscar.getText().toUpperCase());
+        AtosSql.listarCat(buscar.getText());
     }//GEN-LAST:event_buscarKeyReleased
 
     private void enviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enviarActionPerformed
@@ -225,7 +215,7 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
                     String cod = tabela.getValueAt(linha, 0).toString();
                     String nome = tabela.getValueAt(linha, 1).toString();
                     valor = tabela.getValueAt(linha, 6).toString();
-                    
+
                     int c = 0;
                     int j = 0;
                     quant = JOptionPane.showInputDialog(this, "Quantidade:", "Produtos", JOptionPane.INFORMATION_MESSAGE);
@@ -234,7 +224,7 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     if ((quant.equals("")) || (quant.equals("0"))) {
-                       JOptionPane.showMessageDialog(this, "Insira um valor maior que 0");
+                        JOptionPane.showMessageDialog(this, "Insira um valor maior que 0");
                     } else {
                         for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
                             Object com = vendas.FrmCaixa.tabela.getValueAt(i, 0);
@@ -257,16 +247,15 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
                             dado[2] = "----";
                             dado[3] = quant;
                             dado[4] = valor;
-                            
 
                             tabeladet.addRow(dado);
 
                             vendas.FrmCaixa.tabela.setModel(tabeladet);
                             calcular();
 
-                             vendas.FrmCaixa.recebido.setText("");
-                             vendas.FrmCaixa.troco.setText("");
-                             dispose();
+                            vendas.FrmCaixa.recebido.setText("");
+                            vendas.FrmCaixa.troco.setText("");
+                            dispose();
                         }
                     }
                 }
@@ -291,7 +280,5 @@ public class FrmListaAtos extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JTable tabela;
-    private org.bolivia.combo.SComboBoxBlue tipo;
-    private javax.swing.JLabel tipoL;
     // End of variables declaration//GEN-END:variables
 }

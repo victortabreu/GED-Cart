@@ -5,16 +5,21 @@
  */
 package vendas;
 
+import atos.FrmListaAtos;
+import caixa.FrmLivroCaixa;
 import caixa.ServicosSql;
 import despesas.DespesasSql;
+import despesas.FrmDespesas;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import static principal.MenuPrincipal.carregador;
 
 /**
  *
@@ -26,28 +31,38 @@ public class FrmVendas extends javax.swing.JInternalFrame {
      * Creates new form FrmVendas
      */
     public FrmVendas() {
-        
+
         initComponents();
         tabela.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
         tabela.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
-        
+
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabela1.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
         tabela1.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
-        
+
         tabela1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         limparCampos();
-        
-        
-        
+
     }
-    
-    
+
+    public boolean estaFechado(Object obj) {
+        JInternalFrame[] ativos = carregador.getAllFrames();
+        boolean fechado = true;
+        int i = 0;
+        while (i < ativos.length && fechado) {
+            if (ativos[i] == obj) {
+                fechado = false;
+            }
+            i++;
+        }
+        return fechado;
+    }
+
     void limparCampos() {
         if (tabela.getSelectedRow() > -1) {
             tabela.removeRowSelectionInterval(tabela.getSelectedRow(), tabela.getSelectedRow());
         }
-         if (tabela1.getSelectedRow() > -1) {
+        if (tabela1.getSelectedRow() > -1) {
             tabela1.removeRowSelectionInterval(tabela1.getSelectedRow(), tabela1.getSelectedRow());
         }
         data.setDate(null);
@@ -58,37 +73,37 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         calcular();
         calcularDespesas();
     }
-    
-    public void calcularDespesas(){
+
+    public static void calcularDespesas() {
         String dataF;
         String valorS;
         double valor = 0.0;
         double total = 0.0;
-        
         for (int i = 0; i < vendas.FrmVendas.tabela1.getRowCount(); i++) {
-            
-            dataF = vendas.FrmVendas.tabela1.getValueAt(i, 1).toString();
-            SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateF = null;
-            try {
-                dateF = formato.parse(dataF);
-            } catch (ParseException ex) {
-                Logger.getLogger(FrmVendas.class.getName()).log(Level.SEVERE, null, ex);
+            dataF = vendas.FrmVendas.tabela1.getValueAt(i, 0).toString();
+            if (dataF.contains("-")) {
+                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                Date dateF = null;
+                try {
+                    dateF = formato.parse(dataF);
+                } catch (ParseException ex) {
+                    Logger.getLogger(FrmVendas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                dataF = String.valueOf(sdf.format(dateF));
+
+                vendas.FrmVendas.tabela1.setValueAt(dataF, i, 0);
             }
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            dataF = String.valueOf(sdf.format(dateF));
-            
-            vendas.FrmVendas.tabela1.setValueAt(dataF, i, 1);
-            
+
             valorS = vendas.FrmVendas.tabela1.getValueAt(i, 3).toString();
             valor = Double.parseDouble(valorS);
             vendas.FrmVendas.tabela1.setValueAt("R$ " + Math.rint(valor * 100) / 100, i, 3);
-            
+
             total += valor;
         }
         totalDes.setText("R$ " + Math.rint(total * 100) / 100);
     }
-    
+
     public void calcular() {
         String emolBruto;
         String quant;
@@ -119,40 +134,42 @@ public class FrmVendas extends javax.swing.JInternalFrame {
             emolLiquido = vendas.FrmVendas.tabela.getValueAt(i, 7).toString();
             tfj1 = vendas.FrmVendas.tabela.getValueAt(i, 8).toString();
             dataF = vendas.FrmVendas.tabela.getValueAt(i, 0).toString();
-            
-            SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-            Date dateF = null;
-            try {
-                dateF = formato.parse(dataF);
-            } catch (ParseException ex) {
-                Logger.getLogger(FrmVendas.class.getName()).log(Level.SEVERE, null, ex);
+
+            if (dataF.contains("-")) {
+                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                Date dateF = null;
+                try {
+                    dateF = formato.parse(dataF);
+                } catch (ParseException ex) {
+                    Logger.getLogger(FrmVendas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                dataF = String.valueOf(sdf.format(dateF));
+
+                vendas.FrmVendas.tabela.setValueAt(dataF, i, 0);
             }
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            dataF = String.valueOf(sdf.format(dateF));
-            
-            vendas.FrmVendas.tabela.setValueAt(dataF, i, 0);
-            
+
             quantidade = Integer.parseInt(quant);
             bruto = Double.parseDouble(emolBruto);
             recompe = Double.parseDouble(recompeMG);
             liquido = Double.parseDouble(emolLiquido);
             tfj = Double.parseDouble(tfj1);
-            
+
             calcB = bruto * quantidade;
             vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcB * 100) / 100, i, 5);
-            
+
             calcR = recompe * quantidade;
             vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcR * 100) / 100, i, 6);
-            
+
             calcL = liquido * quantidade;
             vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcL * 100) / 100, i, 7);
-            
+
             calcT = tfj * quantidade;
             vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcT * 100) / 100, i, 8);
-            
+
             total = calcR + calcL + calcT;
             vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(total * 100) / 100, i, 9);
-            
+
             totalBruto += calcB;
             totalRecomp += calcR;
             totalLiquido += calcL;
@@ -190,6 +207,12 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        insereDespesa = new javax.swing.JButton();
+        insereDespesa1 = new javax.swing.JButton();
+        insereDespesa2 = new javax.swing.JButton();
+        data1 = new com.toedter.calendar.JDateChooser();
+        data3 = new com.toedter.calendar.JDateChooser();
+        buscF1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabela1 = new javax.swing.JTable();
         emolBrutoT = new javax.swing.JTextField();
@@ -206,6 +229,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         totalDes = new javax.swing.JTextField();
+        livroCaixa = new javax.swing.JButton();
 
         setClosable(true);
         setTitle("Receitas / Despesas");
@@ -281,7 +305,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
                 eliminarActionPerformed(evt);
             }
         });
-        jPanel4.add(eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, -1, -1));
+        jPanel4.add(eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, -1, -1));
 
         limpiar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         limpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/limpar - Copia.png"))); // NOI18N
@@ -349,6 +373,80 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
         jLabel12.setText("Até:");
         jPanel4.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
+
+        insereDespesa.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        insereDespesa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
+        insereDespesa.setText("Inserir Despesa");
+        insereDespesa.setBorder(null);
+        insereDespesa.setBorderPainted(false);
+        insereDespesa.setContentAreaFilled(false);
+        insereDespesa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        insereDespesa.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        insereDespesa.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
+        insereDespesa.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        insereDespesa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insereDespesaActionPerformed(evt);
+            }
+        });
+        jPanel4.add(insereDespesa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, -1, -1));
+
+        insereDespesa1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        insereDespesa1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
+        insereDespesa1.setText("Excluir Despesa");
+        insereDespesa1.setBorder(null);
+        insereDespesa1.setBorderPainted(false);
+        insereDespesa1.setContentAreaFilled(false);
+        insereDespesa1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        insereDespesa1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        insereDespesa1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
+        insereDespesa1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        insereDespesa1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insereDespesa1ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(insereDespesa1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 450, -1, -1));
+
+        insereDespesa2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        insereDespesa2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
+        insereDespesa2.setText("Editar Despesa");
+        insereDespesa2.setBorder(null);
+        insereDespesa2.setBorderPainted(false);
+        insereDespesa2.setContentAreaFilled(false);
+        insereDespesa2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        insereDespesa2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        insereDespesa2.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
+        insereDespesa2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        insereDespesa2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insereDespesa2ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(insereDespesa2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 450, -1, -1));
+
+        data1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jPanel4.add(data1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 150, 30));
+
+        data3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jPanel4.add(data3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 400, 150, 30));
+
+        buscF1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        buscF1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/buscaF1.png"))); // NOI18N
+        buscF1.setToolTipText("Buscar");
+        buscF1.setBorder(null);
+        buscF1.setBorderPainted(false);
+        buscF1.setContentAreaFilled(false);
+        buscF1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        buscF1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        buscF1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/buscaF2.png"))); // NOI18N
+        buscF1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        buscF1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscF1ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(buscF1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 330, -1, -1));
 
         tabela1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -459,6 +557,22 @@ public class FrmVendas extends javax.swing.JInternalFrame {
             }
         });
 
+        livroCaixa.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        livroCaixa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
+        livroCaixa.setText("Livro Caixa");
+        livroCaixa.setBorder(null);
+        livroCaixa.setBorderPainted(false);
+        livroCaixa.setContentAreaFilled(false);
+        livroCaixa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        livroCaixa.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        livroCaixa.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
+        livroCaixa.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        livroCaixa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                livroCaixaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -492,13 +606,18 @@ public class FrmVendas extends javax.swing.JInternalFrame {
                                 .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(receita, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 42, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(totalDes, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 515, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 42, Short.MAX_VALUE)))
+                                .addComponent(totalDes, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(livroCaixa)
+                        .addGap(281, 281, 281)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -528,12 +647,15 @@ public class FrmVendas extends javax.swing.JInternalFrame {
                         .addGap(26, 26, 26)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(totalDes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))
-                        .addGap(59, 59, 59))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(totalDes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9)))
+                            .addComponent(livroCaixa))
+                        .addGap(38, 38, 38))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -564,33 +686,33 @@ public class FrmVendas extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_buscarKeyReleased
 
     private void buscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarKeyTyped
-       
+
     }//GEN-LAST:event_buscarKeyTyped
 
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
-         if (tabela.getRowCount() > 0) {
+        if (tabela.getRowCount() > 0) {
             if (tabela.getSelectedRowCount() > 0) {
                 if (JOptionPane.showConfirmDialog(this, "Deseja realmente excluir esta venda?", "Receitas", JOptionPane.YES_NO_OPTION, 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/erro.png"))) == JOptionPane.YES_OPTION) {
                     int linha = tabela.getSelectedRow();
                     String id = tabela.getValueAt(linha, 1).toString();
                     String ato = tabela.getValueAt(linha, 3).toString();
-                    int elimina = ServicosSql.eliminar(id,ato);
+                    int elimina = ServicosSql.eliminar(id, ato);
                     if (elimina != 0) {
                         limparCampos();
                         JOptionPane.showMessageDialog(this, "Receita Excluída", "Receitas", 0,
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                        
+
                     }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Selecione um Registro", "Receitas", 0,
-                                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             }
 
         } else {
             JOptionPane.showMessageDialog(this, "Não há vendas para excluir", "Vendas", 0,
-                                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
     }//GEN-LAST:event_eliminarActionPerformed
 
@@ -607,7 +729,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
             Date date = data.getDate();
             Date date2 = data2.getDate();
             SimpleDateFormat sdf = new SimpleDateFormat("YYY-MM-dd");
-            ServicosSql.listarData(String.valueOf(sdf.format(date)),String.valueOf(sdf.format(date2)));
+            ServicosSql.listarData(String.valueOf(sdf.format(date)), String.valueOf(sdf.format(date2)));
             calcular();
         }
     }//GEN-LAST:event_buscFActionPerformed
@@ -649,17 +771,61 @@ public class FrmVendas extends javax.swing.JInternalFrame {
     private void totalDesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalDesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_totalDesActionPerformed
+    despesas.FrmDespesas lista;
+    private void insereDespesaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insereDespesaActionPerformed
+        if (estaFechado(lista)) {
+            lista = new FrmDespesas();
+            principal.MenuPrincipal.carregador.add(lista).setLocation(150, 10);
+
+            lista.toFront();
+            lista.setVisible(true);
+        } else {
+            lista.toFront();
+
+        }
+    }//GEN-LAST:event_insereDespesaActionPerformed
+    caixa.FrmLivroCaixa lista1;
+    private void livroCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_livroCaixaActionPerformed
+        if (estaFechado(lista1)) {
+            lista1 = new FrmLivroCaixa();
+            principal.MenuPrincipal.carregador.add(lista1).setLocation(150, 10);
+
+            lista1.toFront();
+            lista1.setVisible(true);
+        } else {
+            lista.toFront();
+
+        }
+    }//GEN-LAST:event_livroCaixaActionPerformed
+
+    private void insereDespesa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insereDespesa1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_insereDespesa1ActionPerformed
+
+    private void insereDespesa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insereDespesa2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_insereDespesa2ActionPerformed
+
+    private void buscF1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscF1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscF1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buscF;
+    private javax.swing.JButton buscF1;
     private app.bolivia.swing.JCTextField buscar;
     private javax.swing.JLabel codigoL1;
     private com.toedter.calendar.JDateChooser data;
+    private com.toedter.calendar.JDateChooser data1;
     private com.toedter.calendar.JDateChooser data2;
+    private com.toedter.calendar.JDateChooser data3;
     private javax.swing.JButton eliminar;
     private javax.swing.JTextField emolBrutoT;
     private javax.swing.JTextField emolLiquidoT;
+    private javax.swing.JButton insereDespesa;
+    private javax.swing.JButton insereDespesa1;
+    private javax.swing.JButton insereDespesa2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -676,12 +842,13 @@ public class FrmVendas extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton limpiar;
+    private javax.swing.JButton livroCaixa;
     private javax.swing.JTextField receita;
     private javax.swing.JTextField recompeT;
     public static javax.swing.JTable tabela;
     public static javax.swing.JTable tabela1;
     private javax.swing.JTextField tfjT;
-    private javax.swing.JTextField totalDes;
+    private static javax.swing.JTextField totalDes;
     private javax.swing.JButton ventasH;
     // End of variables declaration//GEN-END:variables
 }

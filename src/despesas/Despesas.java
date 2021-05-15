@@ -11,8 +11,10 @@ package despesas;
  */
 public class Despesas {
 
-    public static String LISTAR_DES = "SELECT * FROM despesas ORDER BY num_des";
-
+    public static String LISTAR_DES = "SELECT * FROM despesas ORDER BY data_des";
+    
+    public static String LISTAR_DESEespec = "SELECT data_des, historico_des, valor_des from despesas order by data_des";
+    
     public static String REGISTRAR = "INSERT INTO despesas(num_des, data_des, historico_des, valor_des)"
             + "VALUES(?,?,?,?)";
 

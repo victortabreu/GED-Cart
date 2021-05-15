@@ -142,6 +142,11 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         data.setOpaque(false);
         data.setPhColor(new java.awt.Color(255, 255, 255));
         data.setPlaceholder("DATA");
+        data.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dataActionPerformed(evt);
+            }
+        });
         jPanel2.add(data, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 20, 100, -1));
 
         recebido.setBackground(new java.awt.Color(34, 102, 145));
@@ -376,6 +381,11 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
         numFac.setOpaque(false);
         numFac.setPhColor(new java.awt.Color(255, 255, 255));
         numFac.setPlaceholder("FATURA");
+        numFac.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numFacActionPerformed(evt);
+            }
+        });
         jPanel6.add(numFac, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, 130, 30));
 
         codigoL4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/numFac.png"))); // NOI18N
@@ -527,6 +537,14 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
         }
     }//GEN-LAST:event_busca1ActionPerformed
+
+    private void numFacActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numFacActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_numFacActionPerformed
+
+    private void dataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dataActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dataActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

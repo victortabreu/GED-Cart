@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import principal.Conectar;
+import principal.GerarNumero;
 
 /**
  *
@@ -25,6 +26,8 @@ public class DespesasSql {
     static Conectar cc = new Conectar();
     static Connection cn = cc.conexao();
     static PreparedStatement ps;
+     
+    
 
     public static void listarDepesas(String busca) {
         DefaultTableModel modelo = (DefaultTableModel) vendas.FrmVendas.tabela1.getModel();
@@ -45,8 +48,8 @@ public class DespesasSql {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                dados[0] = rs.getString("num_des");
-                dados[1] = rs.getString("data_des");
+                dados[0] = rs.getString("data_des");
+                dados[1] = rs.getString("num_des");                
                 dados[2] = rs.getString("historico_des");
                 dados[3] = rs.getString("valor_des");
                 modelo.addRow(dados);
@@ -89,12 +92,15 @@ public class DespesasSql {
         }
     }
 
-    public static int registrarAto(Atos uc) {
+    public static int registrarDespesa(Despesas uc) {
         int rsu = 0;
-        String sql = Atos.REGISTRAR;
+        String sql = Despesas.REGISTRAR;
         try {
             ps = cn.prepareStatement(sql);
             ps.setString(1, uc.getPrimaryKey());
+            ps.setString(2, uc.getData_des());
+            ps.setString(3, uc.getHistorico_des());
+            ps.setString(4, uc.getValor_des());
 
             //ps.setBytes(4, uc.getScan());
             rsu = ps.executeUpdate();
@@ -110,6 +116,34 @@ public class DespesasSql {
             return Integer.parseInt(n) > 0;
         } catch (NumberFormatException nfe) {
             return false;
+        }
+    }
+    
+     public static void numeros() {
+        int j;
+        int cont = 1;
+        String num = "";
+        String c = "";
+        String SQL = "SELECT MAX(num_des) FROM despesas";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(SQL);
+            if (rs.next()) {
+                c = rs.getString(1);
+            }
+
+            if (c == null) {
+                FrmDespesas.codigo.setText("00000001");
+            } else {
+                j = Integer.parseInt(c);
+                GerarNumero gen = new GerarNumero();
+                gen.gerar(j);
+                FrmDespesas.codigo.setText(gen.serie());
+
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DespesasSql.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
