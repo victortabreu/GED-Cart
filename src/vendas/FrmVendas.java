@@ -208,8 +208,8 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         insereDespesa = new javax.swing.JButton();
-        insereDespesa1 = new javax.swing.JButton();
-        insereDespesa2 = new javax.swing.JButton();
+        excluirDes = new javax.swing.JButton();
+        editarDes = new javax.swing.JButton();
         data1 = new com.toedter.calendar.JDateChooser();
         data3 = new com.toedter.calendar.JDateChooser();
         buscF1 = new javax.swing.JButton();
@@ -375,14 +375,14 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jPanel4.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
         insereDespesa.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        insereDespesa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
+        insereDespesa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/regis1 - Copia.png"))); // NOI18N
         insereDespesa.setText("Inserir Despesa");
         insereDespesa.setBorder(null);
         insereDespesa.setBorderPainted(false);
         insereDespesa.setContentAreaFilled(false);
         insereDespesa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         insereDespesa.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        insereDespesa.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
+        insereDespesa.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/regis2 - Copia.png"))); // NOI18N
         insereDespesa.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         insereDespesa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -391,39 +391,39 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         });
         jPanel4.add(insereDespesa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, -1, -1));
 
-        insereDespesa1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        insereDespesa1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
-        insereDespesa1.setText("Excluir Despesa");
-        insereDespesa1.setBorder(null);
-        insereDespesa1.setBorderPainted(false);
-        insereDespesa1.setContentAreaFilled(false);
-        insereDespesa1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        insereDespesa1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        insereDespesa1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
-        insereDespesa1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        insereDespesa1.addActionListener(new java.awt.event.ActionListener() {
+        excluirDes.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        excluirDes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
+        excluirDes.setText("Excluir Despesa");
+        excluirDes.setBorder(null);
+        excluirDes.setBorderPainted(false);
+        excluirDes.setContentAreaFilled(false);
+        excluirDes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        excluirDes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        excluirDes.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
+        excluirDes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        excluirDes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                insereDespesa1ActionPerformed(evt);
+                excluirDesActionPerformed(evt);
             }
         });
-        jPanel4.add(insereDespesa1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 450, -1, -1));
+        jPanel4.add(excluirDes, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 450, -1, -1));
 
-        insereDespesa2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        insereDespesa2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
-        insereDespesa2.setText("Editar Despesa");
-        insereDespesa2.setBorder(null);
-        insereDespesa2.setBorderPainted(false);
-        insereDespesa2.setContentAreaFilled(false);
-        insereDespesa2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        insereDespesa2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        insereDespesa2.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
-        insereDespesa2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        insereDespesa2.addActionListener(new java.awt.event.ActionListener() {
+        editarDes.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        editarDes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/editar - Copia.png"))); // NOI18N
+        editarDes.setText("Editar Despesa");
+        editarDes.setBorder(null);
+        editarDes.setBorderPainted(false);
+        editarDes.setContentAreaFilled(false);
+        editarDes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        editarDes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        editarDes.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/editar1 - Copia.png"))); // NOI18N
+        editarDes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        editarDes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                insereDespesa2ActionPerformed(evt);
+                editarDesActionPerformed(evt);
             }
         });
-        jPanel4.add(insereDespesa2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 450, -1, -1));
+        jPanel4.add(editarDes, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 450, -1, -1));
 
         data1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jPanel4.add(data1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 150, 30));
@@ -558,14 +558,14 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         });
 
         livroCaixa.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        livroCaixa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
+        livroCaixa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/livro caixa1.png"))); // NOI18N
         livroCaixa.setText("Livro Caixa");
         livroCaixa.setBorder(null);
         livroCaixa.setBorderPainted(false);
         livroCaixa.setContentAreaFilled(false);
         livroCaixa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         livroCaixa.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        livroCaixa.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
+        livroCaixa.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/livro caixa2.png"))); // NOI18N
         livroCaixa.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         livroCaixa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -793,18 +793,76 @@ public class FrmVendas extends javax.swing.JInternalFrame {
             lista1.toFront();
             lista1.setVisible(true);
         } else {
-            lista.toFront();
+            lista1.toFront();
 
         }
     }//GEN-LAST:event_livroCaixaActionPerformed
 
-    private void insereDespesa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insereDespesa1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_insereDespesa1ActionPerformed
+    private void excluirDesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excluirDesActionPerformed
+        if (tabela1.getRowCount() > 0) {
+            if (tabela1.getSelectedRowCount() > 0) {
+                if (JOptionPane.showConfirmDialog(this, "Deseja excluir esta despesa?", "Despesas", JOptionPane.YES_NO_OPTION, 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
+                    int linha = tabela1.getSelectedRow();
+                    String id = tabela1.getValueAt(linha, 1).toString();
+                    int elimina = DespesasSql.eliminarDes(id);
+                    if (elimina != 0) {
+                        limparCampos();
+                        JOptionPane.showMessageDialog(this, "Despesa excluida.", "Despesass", 0,
+                                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecione uma despesa.", "Despesas", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+            }
 
-    private void insereDespesa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insereDespesa2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_insereDespesa2ActionPerformed
+        } else {
+            JOptionPane.showMessageDialog(this, "Não há registros para exclusão.", "Despesas", 0,
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+        }
+    }//GEN-LAST:event_excluirDesActionPerformed
+    FrmEditaDespesa listaDes;
+    private void editarDesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarDesActionPerformed
+         if (tabela1.getRowCount() > 0) {
+            if (tabela1.getSelectedRowCount() > 0) { 
+                if (estaFechado(listaDes)) {
+                    listaDes = new FrmEditaDespesa();
+                    principal.MenuPrincipal.carregador.add(listaDes).setLocation(150, 10);
+
+                    listaDes.toFront();
+                    listaDes.setVisible(true);
+                } else {
+                    listaDes.toFront();
+                }
+                int linha = tabela1.getSelectedRow();                
+                FrmEditaDespesa.codigo.setText(tabela1.getValueAt(linha, 1).toString());
+                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                String dataDes = tabela1.getValueAt(linha, 0).toString();
+                Date date = null;
+                try {
+                    date = formato.parse(dataDes);
+                } catch (ParseException ex) {
+                    Logger.getLogger(FrmVendas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                FrmEditaDespesa.data.setDate(date);
+                FrmEditaDespesa.historico.setText(tabela1.getValueAt(linha, 2).toString());
+                String valor = tabela1.getValueAt(linha, 3).toString();
+                valor = valor.replaceAll("R", "");
+                valor = valor.replaceAll(" ", "");
+                valor = valor.replaceAll("\\$", "");
+                valor = valor.replaceAll("\\.", ",");
+                System.out.println(valor);
+                FrmEditaDespesa.valorDes.setText(valor);
+            }else {
+                JOptionPane.showMessageDialog(this, "Selecione uma despesa.", "Despesas", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+            }
+         }else {
+            JOptionPane.showMessageDialog(this, "Não há despesas para alterar.", "Despesas", 0,
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+        }
+    }//GEN-LAST:event_editarDesActionPerformed
 
     private void buscF1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscF1ActionPerformed
         // TODO add your handling code here:
@@ -820,12 +878,12 @@ public class FrmVendas extends javax.swing.JInternalFrame {
     private com.toedter.calendar.JDateChooser data1;
     private com.toedter.calendar.JDateChooser data2;
     private com.toedter.calendar.JDateChooser data3;
+    private javax.swing.JButton editarDes;
     private javax.swing.JButton eliminar;
     private javax.swing.JTextField emolBrutoT;
     private javax.swing.JTextField emolLiquidoT;
+    private javax.swing.JButton excluirDes;
     private javax.swing.JButton insereDespesa;
-    private javax.swing.JButton insereDespesa1;
-    private javax.swing.JButton insereDespesa2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;

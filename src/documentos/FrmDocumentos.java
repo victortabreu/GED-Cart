@@ -183,7 +183,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         jLabelImagem = new javax.swing.JLabel();
 
         setClosable(true);
-        setPreferredSize(new java.awt.Dimension(1366, 580));
+        setPreferredSize(new java.awt.Dimension(1280, 580));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -463,8 +463,8 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabelImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-                .addGap(122, 122, 122))
+                .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 602, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(96, 96, 96))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

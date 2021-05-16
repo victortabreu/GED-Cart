@@ -3,35 +3,35 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package despesas;
+package vendas;
 
+import despesas.Despesas;
+import despesas.DespesasSql;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
-import vendas.FrmVendas;
 
 /**
  *
  * @author hugov
  */
-public class FrmDespesas extends javax.swing.JInternalFrame {
+public class FrmEditaDespesa extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmListaProd
      */
-    public FrmDespesas() {
+    public FrmEditaDespesa() {
         initComponents();
         limparCampos();
     }
 
     void limparCampos() {
 
-        DespesasSql.numeros();
+        
         DecimalFormat decimal = new DecimalFormat("#,###,###.00");
         NumberFormatter numFormatter = new NumberFormatter(decimal);
         numFormatter.setFormat(decimal);
@@ -72,14 +72,14 @@ public class FrmDespesas extends javax.swing.JInternalFrame {
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         enviar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        enviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/regis1.png"))); // NOI18N
-        enviar.setText("Cadastrar despesa");
+        enviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/editar.png"))); // NOI18N
+        enviar.setText("Atualizar despesa");
         enviar.setBorder(null);
         enviar.setBorderPainted(false);
         enviar.setContentAreaFilled(false);
         enviar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         enviar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        enviar.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/regis2.png"))); // NOI18N
+        enviar.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/editar1.png"))); // NOI18N
         enviar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         enviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -191,11 +191,9 @@ public class FrmDespesas extends javax.swing.JInternalFrame {
     private void historicoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_historicoKeyReleased
 
     }//GEN-LAST:event_historicoKeyReleased
-    int opc;
+    
     private void enviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enviarActionPerformed
         Despesas d = new Despesas();
-        d.setPrimaryKey(codigo.getText());
-
         Date data1 = data.getDate();
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         String dataF = String.valueOf(formato.format(data1));
@@ -207,7 +205,17 @@ public class FrmDespesas extends javax.swing.JInternalFrame {
         valorF = valorF.replaceAll("\\.", "");
         valorF = valorF.replaceAll(",", ".");
         d.setValor_des(valorF);
-        opc = DespesasSql.registrarDespesa(d);
+        d.setPrimaryKey(codigo.getText());
+        int opc = DespesasSql.atualizarDes(d);
+            if (opc == 0) {
+                JOptionPane.showMessageDialog(this, "O documento não foi atualizado.", "Documentos", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+            }
+            if (opc != 0) {
+                JOptionPane.showMessageDialog(this, "Registro Atualizado.", "Documentos", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                limparCampos();
+            }
         DespesasSql.listarDepesas("");
         vendas.FrmVendas.calcularDespesas();
         dispose();
@@ -229,14 +237,14 @@ public class FrmDespesas extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static app.bolivia.swing.JCTextField codigo;
     private javax.swing.JLabel codigoL;
-    private com.toedter.calendar.JDateChooser data;
+    public static com.toedter.calendar.JDateChooser data;
     private javax.swing.JButton enviar;
-    private app.bolivia.swing.JCTextField historico;
+    public static app.bolivia.swing.JCTextField historico;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel nomeL;
     private javax.swing.JLabel nomeL1;
-    private javax.swing.JFormattedTextField valorDes;
+    public static javax.swing.JFormattedTextField valorDes;
     // End of variables declaration//GEN-END:variables
 }

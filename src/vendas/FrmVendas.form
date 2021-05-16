@@ -496,7 +496,7 @@
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/imagens/produtos/apagarT - Copia.png"/>
+                  <Image iconType="3" name="/imagens/produtos/regis1 - Copia.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Inserir Despesa"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -509,7 +509,7 @@
                 </Property>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/imagens/produtos/apagarT1 - Copia.png"/>
+                  <Image iconType="3" name="/imagens/produtos/regis2 - Copia.png"/>
                 </Property>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
@@ -522,7 +522,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JButton" name="insereDespesa1">
+            <Component class="javax.swing.JButton" name="excluirDes">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
@@ -546,7 +546,7 @@
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="insereDespesa1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="excluirDesActionPerformed"/>
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -554,13 +554,13 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JButton" name="insereDespesa2">
+            <Component class="javax.swing.JButton" name="editarDes">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/imagens/produtos/apagarT - Copia.png"/>
+                  <Image iconType="3" name="/imagens/produtos/editar - Copia.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Editar Despesa"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -573,12 +573,12 @@
                 </Property>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/imagens/produtos/apagarT1 - Copia.png"/>
+                  <Image iconType="3" name="/imagens/produtos/editar1 - Copia.png"/>
                 </Property>
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="insereDespesa2ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editarDesActionPerformed"/>
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -891,7 +891,7 @@
               <Font name="Tahoma" size="12" style="1"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/imagens/produtos/apagarT - Copia.png"/>
+              <Image iconType="3" name="/imagens/produtos/livro caixa1.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Livro Caixa"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -904,7 +904,7 @@
             </Property>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/imagens/produtos/apagarT1 - Copia.png"/>
+              <Image iconType="3" name="/imagens/produtos/livro caixa2.png"/>
             </Property>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>

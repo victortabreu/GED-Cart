@@ -4,7 +4,7 @@
   <Properties>
     <Property name="closable" type="boolean" value="true"/>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[1366, 580]"/>
+      <Dimension value="[1280, 580]"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -57,8 +57,8 @@
                       <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jLabelImagem" pref="576" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="122" max="-2" attributes="0"/>
+                  <Component id="jLabelImagem" min="-2" pref="602" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

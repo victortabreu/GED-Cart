@@ -71,6 +71,11 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         emolBrutoT1 = new javax.swing.JTextField();
         emolBrutoT2 = new javax.swing.JTextField();
         insereDespesa1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setClosable(true);
         setPreferredSize(new java.awt.Dimension(805, 500));
@@ -111,7 +116,7 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         jPanel4.add(data1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 150, 30));
 
         data3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jPanel4.add(data3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 150, 30));
+        jPanel4.add(data3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, 150, 30));
 
         buscF1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         buscF1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/buscaF1.png"))); // NOI18N
@@ -128,7 +133,7 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
                 buscF1ActionPerformed(evt);
             }
         });
-        jPanel4.add(buscF1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 40, -1, -1));
+        jPanel4.add(buscF1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 50, -1, -1));
 
         emolBrutoT.setBackground(new java.awt.Color(0, 102, 153));
         emolBrutoT.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -140,7 +145,7 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
                 emolBrutoTActionPerformed(evt);
             }
         });
-        jPanel4.add(emolBrutoT, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 390, 110, -1));
+        jPanel4.add(emolBrutoT, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 390, 110, -1));
 
         emolBrutoT1.setBackground(new java.awt.Color(0, 102, 153));
         emolBrutoT1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -152,7 +157,7 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
                 emolBrutoT1ActionPerformed(evt);
             }
         });
-        jPanel4.add(emolBrutoT1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 390, 110, -1));
+        jPanel4.add(emolBrutoT1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 390, 110, -1));
 
         emolBrutoT2.setBackground(new java.awt.Color(0, 102, 153));
         emolBrutoT2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -164,24 +169,43 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
                 emolBrutoT2ActionPerformed(evt);
             }
         });
-        jPanel4.add(emolBrutoT2, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 390, 110, -1));
+        jPanel4.add(emolBrutoT2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 390, 110, -1));
 
         insereDespesa1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        insereDespesa1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT - Copia.png"))); // NOI18N
-        insereDespesa1.setText("Excluir Despesa");
+        insereDespesa1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/PDF.png"))); // NOI18N
+        insereDespesa1.setText("EXTRAIR PDF");
         insereDespesa1.setBorder(null);
         insereDespesa1.setBorderPainted(false);
         insereDespesa1.setContentAreaFilled(false);
         insereDespesa1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         insereDespesa1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        insereDespesa1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/apagarT1 - Copia.png"))); // NOI18N
         insereDespesa1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         insereDespesa1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 insereDespesa1ActionPerformed(evt);
             }
         });
-        jPanel4.add(insereDespesa1, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 360, -1, -1));
+        jPanel4.add(insereDespesa1, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 30, -1, -1));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("RECEITA LÍQUIDA");
+        jPanel4.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 400, -1, -1));
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setText("RECEITA BRUTA");
+        jPanel4.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 400, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setText("DESPESAS");
+        jPanel4.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 400, -1, -1));
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("DE:");
+        jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, -1, -1));
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setText("ATÉ:");
+        jPanel4.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 70, -1, -1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -246,6 +270,11 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
     private javax.swing.JTextField emolBrutoT1;
     private javax.swing.JTextField emolBrutoT2;
     private javax.swing.JButton insereDespesa1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane2;

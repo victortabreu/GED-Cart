@@ -182,36 +182,37 @@ public class DespesasSql {
 //        }
 //    }
 //
-//    public static int atualizarDocumento(Atos uc) {
-//        int rsu = 0;
-//        String sql = Atos.ATUALIZAR;
-//        try {
-//            ps = cn.prepareStatement(sql);
-//            ps.setString(1, uc.getNome());
-//            ps.setString(2, uc.getTipodoc());
-//            ps.setString(3, uc.getPrimaryKey());
-//            rsu = ps.executeUpdate();
-//        } catch (SQLException ex) {
-//            print(ex);
-//        }
-//        System.out.println(sql);
-//        return rsu;
-//    }
+    public static int atualizarDes(Despesas uc) {
+        int rsu = 0;
+        String sql = Despesas.ATUALIZAR;
+        try {
+            ps = cn.prepareStatement(sql);
+            ps.setString(1, uc.getData_des());
+            ps.setString(2, uc.getHistorico_des());
+            ps.setString(3, uc.getValor_des());
+            ps.setString(4, uc.getPrimaryKey());
+            rsu = ps.executeUpdate();
+        } catch (SQLException ex) {
+            print(ex);
+        }
+        System.out.println(sql);
+        return rsu;
+    }
 //
-//    public static int eliminarDocumento(String id) {
-//        int rsu = 0;
-//        String sql = Atos.ELIMINAR;
-//
-//        try {
-//            ps = cn.prepareStatement(sql);
-//            ps.setString(1, id);
-//            rsu = ps.executeUpdate();
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//        System.out.println(sql);
-//        return rsu;
-//    }
+    public static int eliminarDes(String id) {
+        int rsu = 0;
+        String sql = Despesas.ELIMINAR;
+
+        try {
+            ps = cn.prepareStatement(sql);
+            ps.setString(1, id);
+            rsu = ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println(sql);
+        return rsu;
+    }
 //
 //    public static int eliminaTodos() {
 //        int rsu = 0;
