@@ -5,7 +5,29 @@
  */
 package caixa;
 
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfTable;
+import com.lowagie.text.pdf.PdfWriter;
+
 import despesas.*;
+import java.awt.Desktop;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -36,21 +58,73 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         if (tabela.getSelectedRow() > -1) {
             tabela.removeRowSelectionInterval(tabela.getSelectedRow(), tabela.getSelectedRow());
         }
-        LivroCaixaSql.listarDataRec("","");
-        LivroCaixaSql.listarDataDes("","");
+        //LivroCaixaSql.listarDataRec("","");
+        //LivroCaixaSql.listarDataDes("","");
         DefaultTableModel modelo = (DefaultTableModel) FrmLivroCaixa.tabela.getModel();
         tabela.setRowSorter(new TableRowSorter(modelo));
         tabela.getRowSorter().toggleSortOrder(0);
     }
     
-    public void preencheTabela(){
-        int i;
-        
-        for (i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
+    void buscar(){
+        Date date1 = data1.getDate();
+        Date date2 = data2.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("YYY-MM-dd");
+        LivroCaixaSql.listarDataRec(String.valueOf(sdf.format(date1)), String.valueOf(sdf.format(date2)));
+        LivroCaixaSql.listarDataDes(String.valueOf(sdf.format(date1)), String.valueOf(sdf.format(date2)));
+        calcular();
+    }
+
+    void calcular() {
+        String dataF;
+        String receitaS;
+        double receita = 0.0;
+        double receitaB = 0.0;
+        String despesaS;
+        double despesa = 0.0;
+        double despesaB = 0.0;
+        double receitaL = 0.0;
+        String roud = null;
+        for (int i = 0; i <  FrmLivroCaixa.tabela.getRowCount(); i++) {
+            dataF =  FrmLivroCaixa.tabela.getValueAt(i, 0).toString();
+            if (dataF.contains("-")) {
+                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                Date dateF = null;                
+                try {
+                    dateF = formato.parse(dataF);
+                } catch (ParseException ex) {
+                    Logger.getLogger(FrmLivroCaixa.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                dataF = String.valueOf(sdf.format(dateF));
+
+                FrmLivroCaixa.tabela.setValueAt(dataF, i, 0);
+            }
+            
+            roud = FrmLivroCaixa.tabela.getValueAt(i, 2).toString();
+            if(roud.contains("R")){
+                receitaS = FrmLivroCaixa.tabela.getValueAt(i, 3).toString();
+                String mostra = receitaS;
+                mostra = mostra.replaceAll("\\.", ",");
+                FrmLivroCaixa.tabela.setValueAt("R$ "+mostra, i, 3);
+                receita = Double.parseDouble(receitaS);
+                receitaB += receita;
+            }
+            if(roud.contains("D")){
+                despesaS = FrmLivroCaixa.tabela.getValueAt(i, 3).toString();
+                String mostra = despesaS;
+                mostra = mostra.replaceAll("\\.", ",");
+                FrmLivroCaixa.tabela.setValueAt("R$ "+mostra, i, 3);
+                despesa = Double.parseDouble(despesaS);
+                despesaB += despesa;
+            }
             
         }
+        receitaBruta.setText("R$ " + Math.rint(receitaB * 100) / 100);
+        despesaBruta.setText("R$ " + Math.rint(despesaB * 100) / 100);
+        receitaL = receitaB - despesaB;
+        receitaLiquida.setText("R$ " + Math.rint(receitaL * 100) / 100);
     }
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -65,12 +139,12 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         tabela = new javax.swing.JTable();
         data1 = new com.toedter.calendar.JDateChooser();
-        data3 = new com.toedter.calendar.JDateChooser();
+        data2 = new com.toedter.calendar.JDateChooser();
         buscF1 = new javax.swing.JButton();
-        emolBrutoT = new javax.swing.JTextField();
-        emolBrutoT1 = new javax.swing.JTextField();
-        emolBrutoT2 = new javax.swing.JTextField();
-        insereDespesa1 = new javax.swing.JButton();
+        receitaLiquida = new javax.swing.JTextField();
+        receitaBruta = new javax.swing.JTextField();
+        despesaBruta = new javax.swing.JTextField();
+        extrairPDF = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -115,8 +189,8 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         data1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jPanel4.add(data1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 60, 150, 30));
 
-        data3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jPanel4.add(data3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, 150, 30));
+        data2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jPanel4.add(data2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, 150, 30));
 
         buscF1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         buscF1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/vendas/buscaF1.png"))); // NOI18N
@@ -135,57 +209,57 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         });
         jPanel4.add(buscF1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 50, -1, -1));
 
-        emolBrutoT.setBackground(new java.awt.Color(0, 102, 153));
-        emolBrutoT.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        emolBrutoT.setForeground(new java.awt.Color(255, 255, 255));
-        emolBrutoT.setToolTipText("");
-        emolBrutoT.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        emolBrutoT.addActionListener(new java.awt.event.ActionListener() {
+        receitaLiquida.setBackground(new java.awt.Color(0, 102, 153));
+        receitaLiquida.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        receitaLiquida.setForeground(new java.awt.Color(255, 255, 255));
+        receitaLiquida.setToolTipText("");
+        receitaLiquida.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        receitaLiquida.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                emolBrutoTActionPerformed(evt);
+                receitaLiquidaActionPerformed(evt);
             }
         });
-        jPanel4.add(emolBrutoT, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 390, 110, -1));
+        jPanel4.add(receitaLiquida, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 390, 110, -1));
 
-        emolBrutoT1.setBackground(new java.awt.Color(0, 102, 153));
-        emolBrutoT1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        emolBrutoT1.setForeground(new java.awt.Color(255, 255, 255));
-        emolBrutoT1.setToolTipText("");
-        emolBrutoT1.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        emolBrutoT1.addActionListener(new java.awt.event.ActionListener() {
+        receitaBruta.setBackground(new java.awt.Color(0, 102, 153));
+        receitaBruta.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        receitaBruta.setForeground(new java.awt.Color(255, 255, 255));
+        receitaBruta.setToolTipText("");
+        receitaBruta.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        receitaBruta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                emolBrutoT1ActionPerformed(evt);
+                receitaBrutaActionPerformed(evt);
             }
         });
-        jPanel4.add(emolBrutoT1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 390, 110, -1));
+        jPanel4.add(receitaBruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 390, 110, -1));
 
-        emolBrutoT2.setBackground(new java.awt.Color(0, 102, 153));
-        emolBrutoT2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        emolBrutoT2.setForeground(new java.awt.Color(255, 255, 255));
-        emolBrutoT2.setToolTipText("");
-        emolBrutoT2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        emolBrutoT2.addActionListener(new java.awt.event.ActionListener() {
+        despesaBruta.setBackground(new java.awt.Color(0, 102, 153));
+        despesaBruta.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        despesaBruta.setForeground(new java.awt.Color(255, 255, 255));
+        despesaBruta.setToolTipText("");
+        despesaBruta.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        despesaBruta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                emolBrutoT2ActionPerformed(evt);
+                despesaBrutaActionPerformed(evt);
             }
         });
-        jPanel4.add(emolBrutoT2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 390, 110, -1));
+        jPanel4.add(despesaBruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 390, 110, -1));
 
-        insereDespesa1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        insereDespesa1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/PDF.png"))); // NOI18N
-        insereDespesa1.setText("EXTRAIR PDF");
-        insereDespesa1.setBorder(null);
-        insereDespesa1.setBorderPainted(false);
-        insereDespesa1.setContentAreaFilled(false);
-        insereDespesa1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        insereDespesa1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        insereDespesa1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        insereDespesa1.addActionListener(new java.awt.event.ActionListener() {
+        extrairPDF.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        extrairPDF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/PDF.png"))); // NOI18N
+        extrairPDF.setText("EXTRAIR PDF");
+        extrairPDF.setBorder(null);
+        extrairPDF.setBorderPainted(false);
+        extrairPDF.setContentAreaFilled(false);
+        extrairPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        extrairPDF.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        extrairPDF.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        extrairPDF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                insereDespesa1ActionPerformed(evt);
+                extrairPDFActionPerformed(evt);
             }
         });
-        jPanel4.add(insereDespesa1, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 30, -1, -1));
+        jPanel4.add(extrairPDF, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 30, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("RECEITA LÍQUIDA");
@@ -242,34 +316,99 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buscF1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscF1ActionPerformed
-        // TODO add your handling code here:
+         if (data1.getDate() == null && data1.getDate() == null) {
+            LivroCaixaSql.listarDataRec("","");
+            LivroCaixaSql.listarDataDes("","");
+            calcular();
+        } else {
+            //String formato = data.getDateFormatString();
+            buscar();
+        }
     }//GEN-LAST:event_buscF1ActionPerformed
 
-    private void emolBrutoTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emolBrutoTActionPerformed
+    private void receitaLiquidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_receitaLiquidaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_emolBrutoTActionPerformed
+    }//GEN-LAST:event_receitaLiquidaActionPerformed
 
-    private void emolBrutoT1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emolBrutoT1ActionPerformed
+    private void receitaBrutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_receitaBrutaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_emolBrutoT1ActionPerformed
+    }//GEN-LAST:event_receitaBrutaActionPerformed
 
-    private void emolBrutoT2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emolBrutoT2ActionPerformed
+    private void despesaBrutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_despesaBrutaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_emolBrutoT2ActionPerformed
+    }//GEN-LAST:event_despesaBrutaActionPerformed
 
-    private void insereDespesa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insereDespesa1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_insereDespesa1ActionPerformed
+    private void extrairPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_extrairPDFActionPerformed
+        if(data1.getDate() != null && data2.getDate() != null){
+            Document doc = new Document();
+            String nome = null;
+            try {
+                buscar();
+                Date date1F = data1.getDate();
+                Date date2F = data2.getDate();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                String date1 = String.valueOf(sdf.format(date1F));
+                String date2 = String.valueOf(sdf.format(date2F));
+                nome = "Relatório caixa do período de "+date1+" até "+date2+".pdf"; 
+                PdfWriter.getInstance(doc, new FileOutputStream(nome));
+
+                doc.open();
+                PdfPTable tbl = new PdfPTable(new float[] { 20f, 100f, 30f, 20f });
+                Font fontH1 = new Font(BaseFont.ASCENT, 9, Font.NORMAL);
+                tbl.setTotalWidth(550f);
+                tbl.setLockedWidth(true);
+                PdfPCell cell = new PdfPCell(new Phrase("DATA",fontH1));
+                cell.setBorderWidth(0);
+                tbl.addCell(cell);
+                cell = new PdfPCell(new Phrase("HISTÓRICO",fontH1));
+                cell.setBorderWidth(0);
+                tbl.addCell(cell);
+                cell = new PdfPCell(new Phrase("RECEITA/DESPESA",fontH1));
+                cell.setBorderWidth(0);
+                tbl.addCell(cell);
+                cell = new PdfPCell(new Phrase("VALOR",fontH1));
+                cell.setBorderWidth(0);
+                tbl.addCell(cell);
+                for (int i = 0; i <  FrmLivroCaixa.tabela.getRowCount(); i++) {
+                    cell = new PdfPCell(new Phrase(FrmLivroCaixa.tabela.getValueAt(i, 0).toString(),fontH1));
+                    cell.setBorderWidth(0);
+                    tbl.addCell(cell);
+                    cell = new PdfPCell(new Phrase(FrmLivroCaixa.tabela.getValueAt(i, 1).toString(),fontH1));
+                    cell.setBorderWidth(0);
+                    tbl.addCell(cell);
+                    cell = new PdfPCell(new Phrase(FrmLivroCaixa.tabela.getValueAt(i, 2).toString(),fontH1));
+                    cell.setBorderWidth(0);
+                    cell.setHorizontalAlignment(1);
+                    tbl.addCell(cell);
+                    cell = new PdfPCell(new Phrase(FrmLivroCaixa.tabela.getValueAt(i, 3).toString(),fontH1));
+                    cell.setBorderWidth(0);
+                    tbl.addCell(cell);
+
+                }
+                doc.add(tbl);
+
+            } catch (FileNotFoundException | DocumentException ex) {
+                Logger.getLogger(FrmLivroCaixa.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            doc.close();
+            try {
+                Desktop.getDesktop().open(new java.io.File(nome));
+            } catch (IOException ex) {
+                Logger.getLogger(FrmLivroCaixa.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Insira um período.", "Extrair PDF", 0,
+                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+        }
+    }//GEN-LAST:event_extrairPDFActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buscF1;
     private com.toedter.calendar.JDateChooser data1;
-    private com.toedter.calendar.JDateChooser data3;
-    private javax.swing.JTextField emolBrutoT;
-    private javax.swing.JTextField emolBrutoT1;
-    private javax.swing.JTextField emolBrutoT2;
-    private javax.swing.JButton insereDespesa1;
+    private com.toedter.calendar.JDateChooser data2;
+    private javax.swing.JTextField despesaBruta;
+    private javax.swing.JButton extrairPDF;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -278,6 +417,8 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField receitaBruta;
+    private javax.swing.JTextField receitaLiquida;
     public static javax.swing.JTable tabela;
     // End of variables declaration//GEN-END:variables
 }

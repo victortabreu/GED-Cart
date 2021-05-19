@@ -3,19 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/FrmCaixa.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/caixa/FrmCaixa.java</file>
+            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/documentos/FrmDocumentos.java</file>
             <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/despesas/FrmDespesas.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/caixa/ServicosSql.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/VendasSql.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/atos/FrmListaAtos.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/despesas/Despesas.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/FrmVendas.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/caixa/LivroCaixaSql.java</file>
             <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/caixa/FrmLivroCaixa.java</file>
             <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/despesas/DespesasSql.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/caixa/Servicos.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/Vendas.java</file>
+            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/FrmEditaDespesa.java</file>
+            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/FrmVendas.java</file>
         </group>
     </open-files>
 </project-private>

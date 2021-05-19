@@ -58,6 +58,36 @@ public class DespesasSql {
             Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void listarDataDes(String busca1, String busca2) {
+        DefaultTableModel modelo = (DefaultTableModel) vendas.FrmVendas.tabela1.getModel();
+
+        while (modelo.getRowCount() > 0) {
+            modelo.removeRow(0);
+        }
+        String sql = "";
+        if (busca1.equals("")) {
+            sql = Despesas.LISTAR_DES;
+        } else {
+            sql = "SELECT * FROM despesas WHERE (data_des BETWEEN '" + busca1 + "' AND '"+busca2+"') "
+                    + " order by data_des";
+
+        }
+        String dados[] = new String[4];
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                dados[0] = rs.getString("data_des");
+                dados[1] = rs.getString("num_des");                
+                dados[2] = rs.getString("historico_des");
+                dados[3] = rs.getString("valor_des");
+                modelo.addRow(dados);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Atos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public static void listarCat(String busca) {
         DefaultTableModel modelo = (DefaultTableModel) atos.FrmListaAtos.tabela.getModel();

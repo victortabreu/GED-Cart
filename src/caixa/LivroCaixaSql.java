@@ -121,9 +121,8 @@ public class LivroCaixaSql {
         if (data1.equals("")) {
             sql = Servicos.LISTAR_REC;
         } else {
-            sql = "SELECT data_ser, nome_ato, quant_ser, totalAto_ser FROM `servicos` "+
-                    "INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
-                    "WHERE num_ser like '%" + data1 + "%'order by data_des;";
+            sql = "SELECT data_ser, CONCAT(quant_ser,'x - ',nome_ato), totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
+                    "WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "'order by data_SER;";
             System.out.println(data1);
             System.out.println(data2);
             //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;

@@ -292,7 +292,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
          if(estaFechado(tela3)){
             tela3 = new FrmVendas();
-            carregador.add(tela3).setLocation(15,3);
+            carregador.add(tela3).setLocation(0,0);
             tela3.show();
         }else{            
              tela3.toFront();
