@@ -209,6 +209,7 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         });
         jPanel4.add(buscF1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 50, -1, -1));
 
+        receitaLiquida.setEditable(false);
         receitaLiquida.setBackground(new java.awt.Color(0, 102, 153));
         receitaLiquida.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         receitaLiquida.setForeground(new java.awt.Color(255, 255, 255));
@@ -221,6 +222,7 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         });
         jPanel4.add(receitaLiquida, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 390, 110, -1));
 
+        receitaBruta.setEditable(false);
         receitaBruta.setBackground(new java.awt.Color(0, 102, 153));
         receitaBruta.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         receitaBruta.setForeground(new java.awt.Color(255, 255, 255));
@@ -233,6 +235,7 @@ public class FrmLivroCaixa extends javax.swing.JInternalFrame {
         });
         jPanel4.add(receitaBruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 390, 110, -1));
 
+        despesaBruta.setEditable(false);
         despesaBruta.setBackground(new java.awt.Color(0, 102, 153));
         despesaBruta.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         despesaBruta.setForeground(new java.awt.Color(255, 255, 255));

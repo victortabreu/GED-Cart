@@ -28,7 +28,7 @@ public class FrmListaSelo extends javax.swing.JInternalFrame {
         
         tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
        
-        SelosSql.listarCat("");
+        //SelosSql.listarCat("");
         
         tipo.addItemListener(new ItemListener() {
 
@@ -36,12 +36,12 @@ public class FrmListaSelo extends javax.swing.JInternalFrame {
             public void itemStateChanged(ItemEvent ie) {
                 if (tipo.getSelectedIndex() == 0) {
                    
-                    SelosSql.listarCat("");
+                    //SelosSql.listarCat("");
                 }    
                  
                  if (tipo.getSelectedIndex() != 0) {
                    
-                    SelosSql.listarCat(tipo.getSelectedItem().toString());
+                    //SelosSql.listarCat(tipo.getSelectedItem().toString());
                 }
                 
             }

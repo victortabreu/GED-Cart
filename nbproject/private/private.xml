@@ -4,10 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/documentos/FrmDocumentos.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/despesas/FrmDespesas.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/caixa/FrmLivroCaixa.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/despesas/DespesasSql.java</file>
-            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/FrmEditaDespesa.java</file>
+            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/principal/MenuPrincipal.java</file>
+            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/documentos/FrmListaDoc.java</file>
+            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/documentos/Progresso.java</file>
+            <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/documentos/BarraDeProgresso.java</file>
             <file>file:/D:/Documentos/NetBeansProjects/GEDCart/src/vendas/FrmVendas.java</file>
         </group>
     </open-files>

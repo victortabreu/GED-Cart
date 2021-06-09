@@ -12,14 +12,15 @@ package documentos;
 public class Documentos {
     public static String LISTAR_DOC = "SELECT * FROM documentos ORDER BY codigo_doc";
     
-    public static String REGISTRAR = "INSERT INTO documentos(codigo_doc, nome_doc, tipo_doc, scan, textoOCR ) "
-            + "VALUES(?,?,?,?,?)";
+    public static String REGISTRAR = "INSERT INTO documentos(codigo_doc, nome_doc, tipo_doc, pessoas_doc, scan, textoOCR ) "
+            + "VALUES(?,?,?,?,?,?)";
     
-    public static String ATUALIZAR = "UPDATE documentos SET "
+    public static String ATUALIZAR = "UPDATE `documentos` SET "
                 + "nome_doc=?, "
-                + "tipo_doc=? WHERE codigo_doc=?";
-                //"
-                //+ "scan=? 
+                + "tipo_doc=?, "
+                + "pessoas_doc=?, "
+                + "scan=?, "
+                + "textoOCR=? WHERE codigo_doc=?"; 
     
     public static String ELIMINAR = "DELETE FROM documentos WHERE codigo_doc = ?";
     
@@ -28,6 +29,7 @@ public class Documentos {
     private String primaryKey;
     private String nome;
     private String tipodoc;
+    private String pessoas;
     private String scan;
     private String textoOCR;
 
@@ -55,10 +57,18 @@ public class Documentos {
         return tipodoc;
     }
 
-    public void setTipodoc(String tipouser) {
-        this.tipodoc = tipouser;
+    public void setTipodoc(String tipodoc) {
+        this.tipodoc = tipodoc;
     }
-    
+
+    public String getPessoas() {
+        return pessoas;
+    }
+
+    public void setPessoas(String pessoas) {
+        this.pessoas = pessoas;
+    }
+
     public String getScan() {
         return scan;
     }
@@ -66,13 +76,13 @@ public class Documentos {
     public void setScan(String scan) {
         this.scan = scan;
     }
-    
-     public String getTextoOCR() {
+
+    public String getTextoOCR() {
         return textoOCR;
     }
 
     public void setTextoOCR(String textoOCR) {
         this.textoOCR = textoOCR;
-    }
+    }   
     
 }

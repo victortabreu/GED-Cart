@@ -493,7 +493,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_calculoActionPerformed
     int opc = 0;
     private void venderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_venderActionPerformed
-        if (tabela.getRowCount() < 1) {
+        if (tabela.getRowCount() < 2) {
             JOptionPane.showMessageDialog(this, "Impossível realizar a venda.", "Erro", JOptionPane.ERROR_MESSAGE);
         } else {
             for (int i = 0; i < vendas.FrmCaixa.tabela.getRowCount(); i++) {
@@ -524,7 +524,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
             int linha = tabela.getSelectedRow();
             if (linha >= 0) {
                 modelo.removeRow(linha);
-                FrmListaSelo lp = new FrmListaSelo();
+                FrmListaAtos lp = new FrmListaAtos();
                 lp.calcular();
             } else {
                 JOptionPane.showMessageDialog(this, "Selecionar uma Linha.", "Venda", 0,
@@ -541,15 +541,19 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_cancelarActionPerformed
     documentos.FrmListaDoc lista1;
     private void busca1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_busca1ActionPerformed
-        if (estaFechado(lista1)) {
-            lista1 = new FrmListaDoc();
-            principal.MenuPrincipal.carregador.add(lista1);
+        if (tabela.getRowCount() < 1) {
+            if (estaFechado(lista1)) {
+                lista1 = new FrmListaDoc();
+                principal.MenuPrincipal.carregador.add(lista1);
 
-            lista1.toFront();
-            lista1.setVisible(true);
-        } else {
-            lista1.toFront();
+                lista1.toFront();
+                lista1.setVisible(true);
+            } else {
+                lista1.toFront();
 
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Só é possível cadastrar um documento por vez.\nPara alterar remova primeiro o atual.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_busca1ActionPerformed
 

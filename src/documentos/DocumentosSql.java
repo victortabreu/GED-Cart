@@ -5,6 +5,7 @@
  */
 package documentos;
 
+import static documentos.FrmDocumentos.tabelaPessoas2;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,9 +29,12 @@ public class DocumentosSql {
 
     public static void listarDocumentos(String busca) {
         DefaultTableModel modelo = (DefaultTableModel) documentos.FrmDocumentos.tabelaDocumentos.getModel();
-
+        DefaultTableModel modelo2 = (DefaultTableModel) documentos.FrmDocumentos.tabelaPessoas2.getModel();
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
+        }
+        while (modelo2.getRowCount() > 0) {
+            modelo2.removeRow(0);
         }
         String sql = "";
         if (busca.equals("")) {
@@ -41,6 +45,7 @@ public class DocumentosSql {
 
         }
         String dados[] = new String[5];
+        String dados2[] = new String[2];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
@@ -50,7 +55,9 @@ public class DocumentosSql {
                 dados[2] = rs.getString("tipo_doc");
                 dados[3] = rs.getString("scan");
                 dados[4] = rs.getString("textoOCR");
+                dados2[0] = rs.getString("pessoas_doc");
                 modelo.addRow(dados);
+                modelo2.addRow(dados2);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Documentos.class.getName()).log(Level.SEVERE, null, ex);
@@ -96,8 +103,9 @@ public class DocumentosSql {
             ps.setString(1, uc.getPrimaryKey());
             ps.setString(2, uc.getNome());
             ps.setString(3, uc.getTipodoc());
-            ps.setString(4, uc.getScan());
-            ps.setString(5, uc.getTextoOCR());
+            ps.setString(4, uc.getPessoas());
+            ps.setString(5, uc.getScan());
+            ps.setString(6, uc.getTextoOCR());
             //ps.setBytes(4, uc.getScan());
             rsu = ps.executeUpdate();
         } catch (SQLException ex) {
@@ -128,9 +136,10 @@ public class DocumentosSql {
                 char r2 = c.charAt(4);
                 char r3 = c.charAt(5);
                 char r4 = c.charAt(6);
-                String r = "";
+                String r;
                 r = "" + r1 + r2 + r3 + r4;
                 j = Integer.parseInt(r);
+                //System.out.println(j);
                 GerarCodigos gen = new GerarCodigos();
                 gen.gerar(j);
                 documentos.FrmDocumentos.codigo.setText("DOC" + gen.serie());
@@ -149,7 +158,9 @@ public class DocumentosSql {
             ps = cn.prepareStatement(sql);
             ps.setString(1, uc.getNome());
             ps.setString(2, uc.getTipodoc());
-            ps.setString(3, uc.getPrimaryKey());
+            ps.setString(3, uc.getScan());
+            ps.setString(4, uc.getTextoOCR());
+            ps.setString(5, uc.getPrimaryKey());
             rsu = ps.executeUpdate();
         } catch (SQLException ex) {
             print(ex);

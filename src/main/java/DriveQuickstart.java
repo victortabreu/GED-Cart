@@ -29,13 +29,17 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DriveQuickstart {
     private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
@@ -72,6 +76,26 @@ public class DriveQuickstart {
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
+    
+    static void lista(String nome, String id){
+        FileWriter up = null;
+
+        try {
+            up = new FileWriter("C:\\GedCart\\ids.txt", true);
+        } catch (IOException ex) {
+            Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+            PrintWriter gravarUp = new PrintWriter(up, true);
+            gravarUp.println(nome);
+            gravarUp.println(id);
+
+        try {
+            up.close();
+        } catch (IOException ex) {
+            Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public static void main(String... args) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
@@ -81,29 +105,66 @@ public class DriveQuickstart {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         
-        String teste;
+        String caminho;
         String nome;
         String idPasta;
+        String anterior;
+        String nomeAtt;
+        String caminhoAtt;
         java.io.File arquivo = new java.io.File("C:\\GedCart\\upload.txt");
         Scanner scanner = new Scanner(arquivo,"UTF-8");
-        nome = scanner.nextLine(); 
-        teste = scanner.nextLine();
-        
+        nome = scanner.nextLine();
+
         java.io.File pasta = new java.io.File("C:\\GedCart\\pasta.txt");
         Scanner scan = new Scanner(pasta,"UTF-8");
-        idPasta = scan.nextLine();
+        idPasta = scan.nextLine();        
         
-        String folderId = idPasta;
-        File fileMetadata = new File();
-        fileMetadata.setName(nome);
-        fileMetadata.setParents(Collections.singletonList(folderId));
-        java.io.File filePath = new java.io.File(teste);
-        FileContent mediaContent = new FileContent("image/jpeg", filePath);
-        File file = service.files().create(fileMetadata, mediaContent)
-            .setFields("id, parents")
-            .execute();
-        System.out.println("File ID: " + file.getId());
-        
+        if(nome.equals("1")){
+            java.io.File att = new java.io.File("C:\\GedCart\\atualizar.txt");
+            Scanner sc1 = new Scanner(att,"UTF-8");
+            anterior = sc1.nextLine(); 
+            nomeAtt = sc1.nextLine();
+            caminhoAtt = sc1.nextLine();
+           
+            java.io.File lista = new java.io.File("C:\\GedCart\\ids.txt");
+            Scanner sc2 = new Scanner(lista,"UTF-8");
+            String linha;
+            
+            while (sc2.hasNextLine()) {
+               linha = sc2.nextLine();
+                if(linha.equals(anterior)){
+                    String apagaID = sc2.nextLine();
+                    service.files().delete(idPasta +"/"+ apagaID);
+                }
+            }
+           
+            String folderId = idPasta;
+            File fileMetadata = new File();
+            fileMetadata.setName(nomeAtt);
+            fileMetadata.setParents(Collections.singletonList(folderId));
+            java.io.File filePath = new java.io.File(caminhoAtt);
+            FileContent mediaContent = new FileContent("image/jpeg", filePath);
+            File file = service.files().create(fileMetadata, mediaContent)
+                .setFields("id, parents")
+                .execute();
+            System.out.println("File ID: " + file.getId());
+            lista(nome,file.getId());           
+
+        }else{
+            caminho = scanner.nextLine();           
+
+            String folderId = idPasta;
+            File fileMetadata = new File();
+            fileMetadata.setName(nome);
+            fileMetadata.setParents(Collections.singletonList(folderId));
+            java.io.File filePath = new java.io.File(caminho);
+            FileContent mediaContent = new FileContent("image/jpeg", filePath);
+            File file = service.files().create(fileMetadata, mediaContent)
+                .setFields("id, parents")
+                .execute();
+            System.out.println("File ID: " + file.getId());
+            lista(nome,file.getId());
+        }
     }
 }
 // [END drive_quickstart]

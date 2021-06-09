@@ -58,7 +58,8 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         }
         return fechado;
     }
-
+    String d1 = "";
+    String d2 = "";
     void limparCampos() {
         if (tabela.getSelectedRow() > -1) {
             tabela.removeRowSelectionInterval(tabela.getSelectedRow(), tabela.getSelectedRow());
@@ -66,7 +67,9 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         data.setDate(null);
         data2.setDate(null);
         buscar.setText("");
-        ServicosSql.listar("");
+        if(!d1.equals("") && !d2.equals("")){
+            ServicosSql.listarData(d1,d2);
+        }
         calcular();
     }
     
@@ -503,6 +506,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         tabela1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPane2.setViewportView(tabela1);
 
+        emolBrutoT.setEditable(false);
         emolBrutoT.setBackground(new java.awt.Color(0, 102, 153));
         emolBrutoT.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         emolBrutoT.setForeground(new java.awt.Color(255, 255, 255));
@@ -517,6 +521,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Emol. Bruto");
 
+        recompeT.setEditable(false);
         recompeT.setBackground(new java.awt.Color(0, 102, 153));
         recompeT.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         recompeT.setForeground(new java.awt.Color(255, 255, 255));
@@ -531,6 +536,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Recompe");
 
+        emolLiquidoT.setEditable(false);
         emolLiquidoT.setBackground(new java.awt.Color(0, 102, 153));
         emolLiquidoT.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         emolLiquidoT.setForeground(new java.awt.Color(255, 255, 255));
@@ -548,6 +554,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel5.setText("Total de receitas do período selecionado:");
 
+        tfjT.setEditable(false);
         tfjT.setBackground(new java.awt.Color(0, 102, 153));
         tfjT.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         tfjT.setForeground(new java.awt.Color(255, 255, 255));
@@ -562,6 +569,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel6.setText("TFJ");
 
+        receita.setEditable(false);
         receita.setBackground(new java.awt.Color(0, 102, 153));
         receita.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         receita.setForeground(new java.awt.Color(255, 255, 255));
@@ -582,6 +590,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel9.setText("Total Despesas");
 
+        totalDes.setEditable(false);
         totalDes.setBackground(new java.awt.Color(0, 102, 153));
         totalDes.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         totalDes.setForeground(new java.awt.Color(255, 255, 255));
@@ -718,9 +727,9 @@ public class FrmVendas extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buscarMouseClicked
-        data.setDate(null);
-        ServicosSql.listar("");
-        calcular();
+//        data.setDate(null);
+//        ServicosSql.listar("");
+//        calcular();
     }//GEN-LAST:event_buscarMouseClicked
 
     private void buscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscarKeyReleased
@@ -765,13 +774,15 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
     private void buscarReceitaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarReceitaActionPerformed
         if (data.getDate() == null) {
-            ServicosSql.listar("");
-            calcular();
+            JOptionPane.showMessageDialog(this, "Insira um período", "Relatórios", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         } else {
             //String formato = data.getDateFormatString();
             Date date = data.getDate();
             Date date2 = data2.getDate();
             SimpleDateFormat sdf = new SimpleDateFormat("YYY-MM-dd");
+            d1 = String.valueOf(sdf.format(date));
+            d2 = String.valueOf(sdf.format(date2));
             ServicosSql.listarData(String.valueOf(sdf.format(date)), String.valueOf(sdf.format(date2)));
             calcular();
         }
@@ -782,6 +793,8 @@ public class FrmVendas extends javax.swing.JInternalFrame {
         SimpleDateFormat formato = new SimpleDateFormat("YYY-MM-dd");
         String dataH = formato.format(sistemaData);
         ServicosSql.listarDataH(dataH);
+        d1 = dataH;
+        d2 = dataH;
         calcular();
         data.setDate(null);
         data2.setDate(null);
@@ -907,8 +920,8 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
     private void buscarDespesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarDespesasActionPerformed
         if (data1.getDate() == null) {
-            ServicosSql.listar("");
-            calcular();
+            DespesasSql.listarDepesas("");
+            calcularDespesas();
         } else {
             //String formato = data.getDateFormatString();
             Date date1 = data1.getDate();

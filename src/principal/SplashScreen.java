@@ -24,14 +24,11 @@ public class SplashScreen extends javax.swing.JFrame {
     }
     
     void startThread(){    
-        Thread hi = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                Login log = new Login(spl);
-                log.setLocationRelativeTo(null);
-                log.setVisible(true);
-                dispose();
-            }
+        Thread hi = new Thread(() -> {
+            Login log1 = new Login(spl);
+            log1.setLocationRelativeTo(null);
+            log1.setVisible(true);
+            dispose();
         });
 
         hi.start();
@@ -148,12 +145,10 @@ public class SplashScreen extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                SplashScreen tela = new SplashScreen();
-                tela.setLocationRelativeTo(null);
-                tela.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            SplashScreen tela = new SplashScreen();
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
         });
     }
 

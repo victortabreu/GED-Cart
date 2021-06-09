@@ -17,18 +17,19 @@ public class GerarCodigos {
 
     public void gerar(int dado) {
         this.dado = dado;
-          
-           if((this.dado>=1000) || (this.dado<10000)) 
+          //System.out.println(dado);
+           if((this.dado>=999) && (this.dado<9999)) 
            {
                int can=cont+this.dado;
                num = "" + can; 
            }
-           if((this.dado>=100) || (this.dado<1000))
+           if((this.dado>=99) && (this.dado<999))
            {
                int can=cont+this.dado;
-               num = "0" + can; 
+               num = "0" + can;
+               //System.out.println(num);
            }
-           if((this.dado>=9) || (this.dado<100)) 
+           if((this.dado>=9) && (this.dado<99)) 
            {
                 int can=cont+this.dado;
                num = "00" + can; 
