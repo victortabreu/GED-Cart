@@ -30,22 +30,27 @@ public class DocumentosSql {
     public static void listarDocumentos(String busca) {
         DefaultTableModel modelo = (DefaultTableModel) documentos.FrmDocumentos.tabelaDocumentos.getModel();
         DefaultTableModel modelo2 = (DefaultTableModel) documentos.FrmDocumentos.tabelaPessoas2.getModel();
+        DefaultTableModel modelo3 = (DefaultTableModel) documentos.FrmDocumentos.tabelaScan2.getModel();
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
         while (modelo2.getRowCount() > 0) {
             modelo2.removeRow(0);
         }
+        while (modelo3.getRowCount() > 0) {
+            modelo3.removeRow(0);
+        }
         String sql = "";
         if (busca.equals("")) {
             sql = Documentos.LISTAR_DOC;
         } else {
-            sql = "SELECT * FROM documentos WHERE (codigo_doc like'" + busca + "%' or nome_doc like'%" + busca + "%' or textoOCR like'%" + busca + "%') "
+            sql = "SELECT * FROM documentos WHERE (codigo_doc like'" + busca + "%' or nome_doc like'%" + busca + "%' or textoOCR like'%" + busca + "%" + busca + "%' or pessoas_doc like'%" + busca + "%') "
                     + " order by codigo_doc";
 
         }
         String dados[] = new String[5];
         String dados2[] = new String[2];
+        String dados3[] = new String[1];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
@@ -53,11 +58,13 @@ public class DocumentosSql {
                 dados[0] = rs.getString("codigo_doc");
                 dados[1] = rs.getString("nome_doc");
                 dados[2] = rs.getString("tipo_doc");
-                dados[3] = rs.getString("scan");
+                //dados[3] = rs.getString("scan");
                 dados[4] = rs.getString("textoOCR");
                 dados2[0] = rs.getString("pessoas_doc");
+                dados3[0] = rs.getString("scan");
                 modelo.addRow(dados);
                 modelo2.addRow(dados2);
+                modelo3.addRow(dados3);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Documentos.class.getName()).log(Level.SEVERE, null, ex);
