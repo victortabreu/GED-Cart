@@ -5,7 +5,7 @@
  */
 package documentos;
 
-import despesas.FrmDespesas;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -18,18 +18,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import static java.lang.Thread.sleep;
-import java.time.Clock;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
@@ -38,6 +38,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import static org.apache.commons.io.FileUtils.copyDirectory;
+import static org.apache.commons.io.FileUtils.copyFile;
 import static principal.MenuPrincipal.carregador;
 
 /**
@@ -49,6 +51,33 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     /**
      * Creates new form FrmProdutos
      */
+    // Variáveis:
+    public String documento;
+    String pastaDoSistema;
+    String anterior = null;
+    String nomeImagem;
+    String texto;
+    String path;
+    String novaPasta = null;
+
+    ImageIcon imagem;
+    ImageIcon icone1;
+    ImageIcon imagemAtualizada;
+    Image scan1;
+
+    Scanner scanner;
+
+    BarraDeProgresso barra;
+
+    boolean selecionarRegistro = false;
+
+    int img;
+
+    JFileChooser fc;
+
+    FrmPessoas lista;
+
+    //Funções e Métodos:
     public FrmDocumentos() {
         initComponents();
         tabelaDocumentos.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
@@ -58,12 +87,20 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         tabelaPessoas.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
         tabelaPessoas.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
         tabelaPessoas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         tabelaPessoas2.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
         tabelaPessoas2.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
         tabelaPessoas2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabelaPessoas2.setVisible(false);
-        atualizarTabelaPessoas();
+
+        tabelaScan.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
+        tabelaScan.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
+        tabelaScan.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        tabelaScan2.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
+        tabelaScan2.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
+        tabelaScan2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabelaScan2.setVisible(false);
 
         limparCampos();
 
@@ -77,6 +114,22 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             }
         });
 
+        tabelaScan.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                if (tabelaScan.getSelectedRow() != -1) {
+                    atualizarDadosScan();
+                    //selecionarRegistro = true;
+                }
+            }
+        });
+
+    }
+
+    void atualizarDadosScan() {
+        int linha = tabelaScan.getSelectedRow();
+        imagem = new ImageIcon(tabelaScan.getValueAt(linha, 0).toString());
+        redmensionarImagem();
     }
 
     void redmensionarImagem() {
@@ -111,16 +164,9 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     novaImgLargura = (novaImgAltura * imgProporcao);
                 }
             }
-            Image img = imagem.getImage().getScaledInstance(novaImgLargura.intValue(), novaImgAltura.intValue(), Image.SCALE_SMOOTH);
-            jLabelImagem.setIcon(new ImageIcon(img));
+            Image imge = imagem.getImage().getScaledInstance(novaImgLargura.intValue(), novaImgAltura.intValue(), Image.SCALE_SMOOTH);
+            jLabelImagem.setIcon(new ImageIcon(imge));
         }
-    }
-
-    ImageIcon imagem;
-    public String documento;
-
-    void atualizarTabelaPessoas() {
-//        
     }
 
     void atualizarDados() {
@@ -128,32 +174,42 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         codigo.setText(tabelaDocumentos.getValueAt(linha, 0).toString());
         nome.setText(tabelaDocumentos.getValueAt(linha, 1).toString());
         tipo.setSelectedItem(tabelaDocumentos.getValueAt(linha, 2).toString());
-        scan.setText(tabelaDocumentos.getValueAt(linha, 3).toString());
-        caminho.setText("C:\\GedCart\\GedCartImagens/" + scan.getText());
-        imagem = new ImageIcon(caminho.getText());
-        redmensionarImagem();
+
+        DefaultTableModel tabelaS = (DefaultTableModel) tabelaScan.getModel();
+        String[] dado1 = new String[1];
+        while (tabelaS.getRowCount() > 0) {
+            tabelaS.removeRow(0);
+        }
+        String dividirScan = tabelaScan2.getValueAt(linha, 0).toString();
+        for (String div : dividirScan.split("\\*", 0)) {
+            dado1[0] = pastaDoSistema + "\\GedCartImagens/" + div;
+            tabelaS.addRow(dado1);
+        }
+
+        tabelaScan.setModel(tabelaS);
+        caminho.setText(tabelaScan.getValueAt(0, 0).toString());
         documento = caminho.getText();
-        
-        int k=0;
+
+        int k = 0;
         String dividirPessoas = tabelaPessoas2.getValueAt(linha, 0).toString();
         DefaultTableModel tabeladet = (DefaultTableModel) tabelaPessoas.getModel();
         String[] dado = new String[2];
+
         while (tabeladet.getRowCount() > 0) {
             tabeladet.removeRow(0);
         }
-        for (String retval: dividirPessoas.split("\\*", 0)) {
-          dado[k] = retval;          
-          if(k==0){
-            k=1;
-          }else{
-            k=0;
-            tabeladet.addRow(dado);            
-          }
+        for (String retval : dividirPessoas.split("\\*", 0)) {
+            dado[k] = retval;
+            if (k == 0) {
+                k = 1;
+            } else {
+                k = 0;
+                tabeladet.addRow(dado);
+            }
         }
         tabelaPessoas.setModel(tabeladet);
+        tabelaScan.addRowSelectionInterval(0, 0);
     }
-    Scanner scanner;
-    BarraDeProgresso barra;
 
     void limparCampos() {
         if (tabelaDocumentos.getSelectedRow() > -1) {
@@ -175,13 +231,23 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         Image i = im.getImage().getScaledInstance(500, 510, Image.SCALE_SMOOTH);
         jLabelImagem.setIcon(new ImageIcon(i));
         imagem = null;
-        java.io.File pasta = new java.io.File("C:\\GedCart\\pasta.txt");
+
+        java.io.File pastaT = new java.io.File("pastaUp.txt");
         try {
-            scanner = new Scanner(pasta, "UTF-8");
+            scanner = new Scanner(pastaT, "UTF-8");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
         }
         nomePasta.setText(scanner.nextLine());
+
+        java.io.File pastaS = new java.io.File("pastaSys.txt");
+        try {
+            scanner = new Scanner(pastaS, "UTF-8");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        pastaDoSistema = scanner.nextLine();
+        System.out.println(pastaDoSistema);
 
         DefaultTableModel modelo = (DefaultTableModel) tabelaPessoas.getModel();
 
@@ -189,6 +255,50 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             modelo.removeRow(0);
         }
 
+        DefaultTableModel modelo2 = (DefaultTableModel) tabelaScan.getModel();
+
+        while (modelo2.getRowCount() > 0) {
+            modelo2.removeRow(0);
+        }
+    }
+
+    JDialog dlg;
+    int progresso = 0;
+
+    void prog(String titulo) {
+        progresso = 0;
+        JFrame parentFrame = new JFrame();
+        JLabel jl = new JLabel();
+        jl.setText("Count : 0");
+
+        dlg = new JDialog(parentFrame, "Progress Dialog", true);
+        JProgressBar dpb = new JProgressBar(0, 100);
+        dpb.setStringPainted(true);
+        dlg.add(BorderLayout.CENTER, dpb);
+        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dlg.setSize(600, 70);
+        dlg.setLocationRelativeTo(parentFrame);
+        dlg.setTitle(titulo);
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dlg.setVisible(true);
+            }
+        });
+        t.start();
+        while (dpb.getValue() < 100 && progresso != 1) {
+            try {
+                sleep(100);
+                dpb.setValue(dpb.getValue() + 2);
+                if (dpb.getValue() == 100) {
+                    dpb.setValue(0);
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(BarraDeProgresso.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        dlg.dispose();
     }
 
     void selecionarLinha(String id) {
@@ -200,24 +310,22 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         }
 
     }
-    String anterior = null;
-    String nomeImagem;
 
     void salvaImagem(String nome, ImageIcon imagem) {
-        File file1 = new File("C:\\GedCart/");
+        File file1 = new File(pastaDoSistema);
         if (!file1.exists()) {
             file1.mkdirs();
         }
-        File file = new File("C:\\GedCart\\GedCartImagens/");
+        File file = new File(pastaDoSistema + "\\GedCartImagens/");
         if (!file.exists()) {
             file.mkdirs();
         }
-        File novaImagem = new File("C:\\GedCart\\GedCartImagens/" + nome);
+        File novaImagem = new File(pastaDoSistema + "\\GedCartImagens/" + nome);
 
         BufferedImage bi = new BufferedImage(imagem.getIconWidth(), imagem.getIconHeight(), BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2d = bi.createGraphics();
-        g2d.drawImage(scan1, null, null);
+        g2d.drawImage(imagem.getImage(), null, null);
         try {
             ImageIO.write(bi, "JPG", novaImagem);
         } catch (IOException ex) {
@@ -229,7 +337,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     void upload() {
         FileWriter up = null;
         try {
-            up = new FileWriter("C:\\GedCart\\upload.bat");
+            up = new FileWriter("upload.bat");
         } catch (IOException ex) {
             Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -244,7 +352,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         }
 
         try {
-            Desktop.getDesktop().open(new java.io.File("C:\\GedCart\\upload.bat"));
+            Desktop.getDesktop().open(new java.io.File("upload.bat"));
             System.out.println("Chegou aqui");
         } catch (IOException ex) {
             Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
@@ -264,6 +372,59 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         return fechado;
     }
 
+    void addScan() {
+        fc = new JFileChooser();
+        anterior = scan.getText();
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                String name = f.getAbsolutePath();
+                return name.endsWith(".jpg") | name.endsWith(".JPG") | name.endsWith(".png") | name.endsWith(".PNG") | name.endsWith(".bmp") | f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Imagem";
+            }
+        });
+
+        if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            path = fc.getSelectedFile().getAbsolutePath();
+            imagem = new ImageIcon(path);
+            redmensionarImagem();
+
+            DefaultTableModel tabelaS = (DefaultTableModel) tabelaScan.getModel();
+            String[] dado1 = new String[1];
+            dado1[0] = path;
+            tabelaS.addRow(dado1);
+
+            scan1 = imagem.getImage();
+            nomeImagem = System.currentTimeMillis() + ".jpg";
+            File file;
+            file = fc.getSelectedFile();
+            String fileName = file.getAbsolutePath();
+            caminho.setText(fileName);
+            scan.setText(nomeImagem);
+            System.out.println(anterior + "\n" + scan.getText());
+            imagemAtualizada = new ImageIcon(caminho.getText());
+
+            FileWriter arq = null;
+            try {
+                arq = new FileWriter("upload.txt");
+            } catch (IOException ex) {
+                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            PrintWriter gravarArq = new PrintWriter(arq);
+            gravarArq.println("1");
+            try {
+                arq.close();
+            } catch (IOException ex) {
+                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -280,13 +441,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         nome = new app.bolivia.swing.JCTextField();
         nomeL = new javax.swing.JLabel();
         tipo = new org.bolivia.combo.SComboBoxBlue();
-        jButtonInserirScanner = new javax.swing.JButton();
-        caminho = new javax.swing.JTextField();
-        scan = new javax.swing.JTextField();
         pasta = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        nomePasta = new javax.swing.JTextField();
-        inserePasta = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         tabelaPessoas = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
@@ -294,6 +449,13 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         addPessoas = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         tabelaPessoas2 = new javax.swing.JTable();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tabelaScan = new javax.swing.JTable();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        tabelaScan2 = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        addScanner = new javax.swing.JButton();
+        rmScanner = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelaDocumentos = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
@@ -306,12 +468,16 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         buscar = new app.bolivia.swing.JCTextField();
         codigoL1 = new javax.swing.JLabel();
         jLabelImagem = new javax.swing.JLabel();
-        jProgressBar = new javax.swing.JProgressBar();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        inserePasta = new javax.swing.JButton();
+        nomePasta = new javax.swing.JTextField();
+        caminho = new javax.swing.JTextField();
+        scan = new javax.swing.JTextField();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+        setBorder(null);
         setClosable(true);
-        setResizable(true);
         setPreferredSize(new java.awt.Dimension(1280, 580));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -357,23 +523,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         tipo.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jPanel2.add(tipo, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 30, 330, -1));
 
-        jButtonInserirScanner.setBackground(new java.awt.Color(34, 102, 145));
-        jButtonInserirScanner.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jButtonInserirScanner.setForeground(new java.awt.Color(255, 255, 255));
-        jButtonInserirScanner.setText("INSERIR SCANNER");
-        jButtonInserirScanner.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonInserirScannerActionPerformed(evt);
-            }
-        });
-        jPanel2.add(jButtonInserirScanner, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 90, -1, 40));
-
-        caminho.setEditable(false);
-        jPanel2.add(caminho, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 140, 210, -1));
-
-        scan.setEditable(false);
-        jPanel2.add(scan, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 140, 210, -1));
-
         pasta.setCursor(new Cursor(Cursor.HAND_CURSOR));
         pasta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/pasta.png"))); // NOI18N
         pasta.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -381,37 +530,14 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 pastaMouseClicked(evt);
             }
         });
-        jPanel2.add(pasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 80, -1, -1));
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel1.setText("PASTA DE UPLOAD");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 90, -1, -1));
-
-        nomePasta.setEditable(false);
-        nomePasta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nomePastaActionPerformed(evt);
-            }
-        });
-        jPanel2.add(nomePasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 110, 200, -1));
-
-        inserePasta.setBackground(new java.awt.Color(34, 102, 145));
-        inserePasta.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        inserePasta.setForeground(new java.awt.Color(255, 255, 255));
-        inserePasta.setText("ALTERAR PASTA");
-        inserePasta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inserePastaActionPerformed(evt);
-            }
-        });
-        jPanel2.add(inserePasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 140, 130, -1));
+        jPanel2.add(pasta, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 100, -1, -1));
 
         tabelaPessoas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "NOME", "DOCUMENTO"
+                "NOME", "DOCUMENTOS"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -424,11 +550,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         });
         jScrollPane3.setViewportView(tabelaPessoas);
 
-        jPanel2.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 250, 90));
+        jPanel2.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 280, 90));
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel2.setText("PESSOAS");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
+        jLabel2.setText("SCANNERS");
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 80, -1, -1));
 
         rmPessoas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/menos.png"))); // NOI18N
         rmPessoas.addActionListener(new java.awt.event.ActionListener() {
@@ -436,7 +562,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 rmPessoasActionPerformed(evt);
             }
         });
-        jPanel2.add(rmPessoas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 30, -1));
+        jPanel2.add(rmPessoas, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 30, -1));
 
         addPessoas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/mais.png"))); // NOI18N
         addPessoas.addActionListener(new java.awt.event.ActionListener() {
@@ -444,7 +570,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 addPessoasActionPerformed(evt);
             }
         });
-        jPanel2.add(addPessoas, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 30, -1));
+        jPanel2.add(addPessoas, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 30, -1));
 
         tabelaPessoas2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -466,16 +592,76 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 
         jPanel2.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 250, 90));
 
+        tabelaScan.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "CAMINHO"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane5.setViewportView(tabelaScan);
+
+        jPanel2.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 80, 290, 90));
+
+        tabelaScan2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "NOME"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane6.setViewportView(tabelaScan2);
+
+        jPanel2.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, 230, 70));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setText("PESSOAS");
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
+
+        addScanner.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/mais.png"))); // NOI18N
+        addScanner.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addScannerActionPerformed(evt);
+            }
+        });
+        jPanel2.add(addScanner, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 100, 30, -1));
+
+        rmScanner.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/menos.png"))); // NOI18N
+        rmScanner.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rmScannerActionPerformed(evt);
+            }
+        });
+        jPanel2.add(rmScanner, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 130, 30, -1));
+
         tabelaDocumentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "CÓDIGO", "NOME", "TIPO DO DOCUMENTO", "SCANNERS"
+                "CÓDIGO", "NOME", "TIPO DO DOCUMENTO"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -489,6 +675,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             }
         });
         jScrollPane1.setViewportView(tabelaDocumentos);
+        if (tabelaDocumentos.getColumnModel().getColumnCount() > 0) {
+            tabelaDocumentos.getColumnModel().getColumn(0).setMinWidth(10);
+            tabelaDocumentos.getColumnModel().getColumn(0).setPreferredWidth(70);
+            tabelaDocumentos.getColumnModel().getColumn(0).setMaxWidth(100);
+        }
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "OPÇÕES", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
@@ -613,7 +804,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         buscar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         buscar.setOpaque(false);
         buscar.setPhColor(new java.awt.Color(255, 255, 255));
-        buscar.setPlaceholder("CÓDIGO/NOME");
+        buscar.setPlaceholder("CÓD/NOME/DOCUMENTO");
         buscar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 buscarMouseClicked(evt);
@@ -629,7 +820,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 buscarKeyReleased(evt);
             }
         });
-        jPanel4.add(buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 180, -1));
+        jPanel4.add(buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 190, -1));
 
         codigoL1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         codigoL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/buscarL.png"))); // NOI18N
@@ -659,64 +850,110 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "BUSCAR", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        jPanel5.setMinimumSize(new java.awt.Dimension(600, 82));
+        jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "PASTA DE UPLOAD", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+
+        inserePasta.setBackground(new java.awt.Color(34, 102, 145));
+        inserePasta.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        inserePasta.setForeground(new java.awt.Color(255, 255, 255));
+        inserePasta.setText("ALTERAR PASTA");
+        inserePasta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inserePastaActionPerformed(evt);
             }
-        ));
-        jScrollPane2.setViewportView(jTable1);
+        });
+
+        nomePasta.setEditable(false);
+        nomePasta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nomePastaActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nomePasta)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(inserePasta, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(nomePasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(inserePasta)
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
+        caminho.setEditable(false);
+
+        scan.setEditable(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(303, 303, 303)
+                        .addComponent(scan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(caminho, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(101, 101, 101))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(438, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(632, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabelImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                    .addComponent(jLabelImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(caminho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(scan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(400, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(62, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -743,54 +980,44 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private void nomeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nomeKeyTyped
 
     }//GEN-LAST:event_nomeKeyTyped
-    boolean selecionarRegistro = false;
-    String texto;
-    int img;
+
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
         img = 0;
         UIManager.put("nimbusOrange", new Color(0, 204, 0));
-        barra = new BarraDeProgresso();
         //barra.dispose();
         Thread sa = new Thread(() -> {
-            barra.executa();
             if (selecionarRegistro) {
-                barra.fechar();
                 JOptionPane.showMessageDialog(this, "O código: " + FrmDocumentos.codigo.getText() + "\n já está registrado.", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
             } else {
-                if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO") || caminho.getText().equals("")) {
-                    barra.fechar();
+                if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO") || caminho.getText().equals("") || tabelaScan.getRowCount() == 0) {
                     JOptionPane.showMessageDialog(this, "Todos os campos\nsão obrigatórios.", "Usuarios", 0,
                             new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
                 } else {
-                    nome.setEditable(false);
-                    tipo.setEnabled(false);
-                    nomePasta.setEditable(false);
-                    jButtonInserirScanner.setEnabled(false);
-                    inserePasta.setEnabled(false);
-                    uploadSelected.setEnabled(false);
-                    registrar.setEnabled(false);
-                    atualizar.setEnabled(false);
-                    excluir.setEnabled(false);
-                    limpar.setEnabled(false);
-                    buscar.setEditable(false);
-                    tabelaDocumentos.setEnabled(false);
-                    jLabelImagem.setEnabled(false);
-                    img = 1;
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            prog("Extraindo texto da imagem");
+                        }
+                    });
+                    t.start();
+//                    
 
                     //Transformar imagem em texto
-                    texto = null;
+                    texto = "";
 
-                    Tesseract tesseract = new Tesseract();
-                    try {
-                        texto = tesseract.doOCR(new File(path));
-                    } catch (TesseractException ex) {
-                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+                        Tesseract tesseract = new Tesseract();
+                        try {
+                            texto += tesseract.doOCR(new File(tabelaScan.getValueAt(i, 0).toString())) + "\n";
+                        } catch (TesseractException ex) {
+                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                     System.out.println(texto);
-
+                    dlg.setTitle("Salvando documento");
                     //Salvar documento
                     documentos.Documentos doc = new Documentos();
                     doc.setPrimaryKey(codigo.getText());
@@ -805,58 +1032,50 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 
                     doc.setPessoas(pessoas);
                     doc.setTextoOCR(texto);
-                    doc.setScan(nomeImagem);
+                    dlg.setTitle("Salvando imagem na pasta do sistema");
 
                     //Salvar imagem na pasta do sistema
-                    salvaImagem(nomeImagem, imagem);
-
-                    int op = DocumentosSql.registrarDocumento(doc);
-                    //barra.dispose();
-                    //Documento inseridocom sucesso
-                    if (op != 0) {
-                        String id = codigo.getText();
-                        selecionarLinha(id);
-                        barra.dispose();
-                        nome.setEditable(true);
-                        tipo.setEnabled(true);
-                        nomePasta.setEditable(true);
-                        jButtonInserirScanner.setEnabled(true);
-                        inserePasta.setEnabled(true);
-                        uploadSelected.setEnabled(true);
-                        registrar.setEnabled(true);
-                        atualizar.setEnabled(true);
-                        excluir.setEnabled(true);
-                        limpar.setEnabled(true);
-                        buscar.setEditable(true);
-                        tabelaDocumentos.setEnabled(true);
-                        jLabelImagem.setEnabled(true);
-                        img = 0;
-                        JOptionPane.showMessageDialog(this, "Documento Inserido com Sucesso.", "Documentos", 0,
-                                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-
-                        limparCampos();
-                    }
-
-                    Documentos document = new Documentos();
-                    document.setScan(nomeImagem);
-                    System.out.println(document.getScan());
-                    documento = "C:\\GedCart\\GedCartImagens/" + nomeImagem;
-                    System.out.println(documento);
                     FileWriter arq = null;
                     try {
-                        arq = new FileWriter("C:\\GedCart\\upload.txt");
+                        arq = new FileWriter("upload.txt");
                     } catch (IOException ex) {
                         Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     PrintWriter gravarArq = new PrintWriter(arq);
-                    gravarArq.println(document.getScan());
-                    gravarArq.println(documento);
+
+                    String stImagens = "";
+
+                    for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+                        imagem = new ImageIcon(tabelaScan.getValueAt(i, 0).toString());
+                        nomeImagem = System.currentTimeMillis() + ".jpg";
+                        salvaImagem(nomeImagem, imagem);
+                        stImagens += nomeImagem + "*";
+
+                        String caminhoScan = tabelaScan.getValueAt(i, 0).toString();
+                        gravarArq.println(nomeImagem);
+                        gravarArq.println(caminhoScan);
+
+                    }
+
                     try {
                         arq.close();
                     } catch (IOException ex) {
                         Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    upload();
+
+                    doc.setScan(stImagens);
+
+                    int op = DocumentosSql.registrarDocumento(doc);
+                    //Documento inseridocom sucesso
+                    if (op != 0) {
+//                       
+                        progresso = 1;
+                        JOptionPane.showMessageDialog(this, "Documento Inserido com Sucesso.", "Documentos", 0,
+                                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+
+                        limparCampos();
+                        upload();
+                    }
                 }
             }
 
@@ -902,7 +1121,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
                         if (!anterior.equals(scan.getText())) {
-                            File file = new File("C:\\GedCart\\GedCartImagens/" + anterior);
+                            File file = new File(pastaDoSistema + "\\GedCartImagens/" + anterior);
                             file.delete();
                             System.out.println(nomeImagem);
                             salvaImagem(nomeImagem, imagemAtualizada);
@@ -910,14 +1129,14 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                             String nom;
 
                             try {
-                                arq = new FileWriter("C:\\GedCart\\atualizar.txt");
+                                arq = new FileWriter("atualizar.txt");
                             } catch (IOException ex) {
                                 Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             PrintWriter gravarArq = new PrintWriter(arq);
                             gravarArq.println(anterior);
                             gravarArq.println(scan.getText());
-                            gravarArq.println("C:\\GedCart\\GedCartImagens/" + nomeImagem);
+                            gravarArq.println(pastaDoSistema + "GedCartImagens/" + nomeImagem);
                             try {
                                 arq.close();
                             } catch (IOException ex) {
@@ -980,60 +1199,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         buscar.setText(buscar.getText().toUpperCase());
         DocumentosSql.listarDocumentos(buscar.getText());
     }//GEN-LAST:event_buscarKeyReleased
-    Image scan1;
-    JFileChooser fc;
-    ImageIcon icone1;
-    String path;
-    ImageIcon imagemAtualizada;
-
-    private void jButtonInserirScannerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInserirScannerActionPerformed
-
-        fc = new JFileChooser();
-        anterior = scan.getText();
-        fc.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                String name = f.getAbsolutePath();
-                return name.endsWith(".jpg") | name.endsWith(".png") | name.endsWith(".bmp") | f.isDirectory();
-            }
-
-            @Override
-            public String getDescription() {
-                return "Imagem";
-            }
-        });
-
-        if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            path = fc.getSelectedFile().getAbsolutePath();
-            imagem = new ImageIcon(path);
-            redmensionarImagem();
-
-            scan1 = imagem.getImage();
-            nomeImagem = System.currentTimeMillis() + ".jpg";
-            File file;
-            file = fc.getSelectedFile();
-            String fileName = file.getAbsolutePath();
-            caminho.setText(fileName);
-            scan.setText(nomeImagem);
-            System.out.println(anterior + "\n" + scan.getText());
-            imagemAtualizada = new ImageIcon(caminho.getText());
-
-            FileWriter arq = null;
-            try {
-                arq = new FileWriter("C:\\GedCart\\upload.txt");
-            } catch (IOException ex) {
-                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            PrintWriter gravarArq = new PrintWriter(arq);
-            gravarArq.println("1");
-            try {
-                arq.close();
-            } catch (IOException ex) {
-                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-    }//GEN-LAST:event_jButtonInserirScannerActionPerformed
 
     private void jLabelImagemMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelImagemMousePressed
 
@@ -1044,9 +1209,8 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jLabelImagemMouseExited
 
     private void jLabelImagemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelImagemMouseClicked
-        if (caminho.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Nenhuma imagem selecionada!", "Documentos", 0,
-                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+        if (imagem == null) {
+            addScan();
         } else {
             try {
                 if (img != 1) {
@@ -1073,20 +1237,83 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         //        }
 //      
     }//GEN-LAST:event_jLabelImagemMouseDragged
-
+    String pastaSys;
     private void pastaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pastaMouseClicked
-        try {
-            Desktop.getDesktop().open(new java.io.File("C:\\GedCart\\GedCartImagens/"));
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Não foi possível abrir a pasta.", "Documentos", 0,
-                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-        }
+        fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setDialogTitle("Escolher pasta de salvamento");
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    Thread t2 = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            prog("Copiando arquivos para a nova pasta");
+                        }
+                    });
+                    t2.start();
+
+                    pastaSys = fc.getSelectedFile().getAbsolutePath();
+                    System.out.println(pastaSys);
+                    FileWriter pastaS = null;
+                    try {
+                        pastaS = new FileWriter("pastaSys.txt");
+                    } catch (IOException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    PrintWriter gravarPasta = new PrintWriter(pastaS);
+                    gravarPasta.println(pastaSys);
+                    try {
+                        pastaS.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if (!pastaDoSistema.equals(pastaSys)) {
+                        File srcDir = new File(pastaDoSistema);
+                        File dstDir = new File(pastaSys);
+
+                        if (srcDir.isDirectory()) {
+                            if (!dstDir.exists()) {
+                                dstDir.mkdir();
+                            }
+                            String[] children = srcDir.list();
+                            for (String children1 : children) {
+                                try {
+                                    copyDirectory(new File(srcDir, children1), new File(dstDir, children1));
+                                } catch (IOException ex) {
+                                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        } else {
+                            try {
+                                // Este método está implementado na dica – Copiando um arquivo utilizando o Java
+                                copyFile(srcDir, dstDir);
+                            } catch (IOException ex) {
+                                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+
+                        pastaDoSistema = pastaSys;
+                    }
+                    progresso = 1;
+                }
+            }
+        });
+        t1.start();
+
+//        try {
+//            Desktop.getDesktop().open(new java.io.File("C:\\GedCart\\GedCartImagens/"));
+//        } catch (IOException ex) {
+//            JOptionPane.showMessageDialog(this, "Não foi possível abrir a pasta.", "Documentos", 0,
+//                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+//        }
     }//GEN-LAST:event_pastaMouseClicked
 
     private void nomePastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nomePastaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_nomePastaActionPerformed
-    String novaPasta = null;
+
     private void inserePastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inserePastaActionPerformed
         novaPasta = JOptionPane.showInputDialog(this, "Nova Pasta:", "Alterar Pasta", JOptionPane.INFORMATION_MESSAGE);
         String n = nomePasta.getText();
@@ -1102,7 +1329,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 nomePasta.setText(novaPasta);
                 FileWriter pastaU = null;
                 try {
-                    pastaU = new FileWriter("C:\\GedCart\\pasta.txt");
+                    pastaU = new FileWriter("pastaUp.txt");
                 } catch (IOException ex) {
                     Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1137,7 +1364,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         } else {
             FileWriter arq = null;
             try {
-                arq = new FileWriter("C:\\GedCart\\upload.txt");
+                arq = new FileWriter("upload.txt");
             } catch (IOException ex) {
                 Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1153,7 +1380,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             upload();
         }
     }//GEN-LAST:event_uploadSelectedActionPerformed
-    FrmPessoas lista;
+
     private void addPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPessoasActionPerformed
         if (estaFechado(lista)) {
             lista = new FrmPessoas();
@@ -1182,9 +1409,41 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_rmPessoasActionPerformed
 
+    private void addScannerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addScannerActionPerformed
+        addScan();
+    }//GEN-LAST:event_addScannerActionPerformed
+
+    private void rmScannerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rmScannerActionPerformed
+        if (tabelaScan.getRowCount() > 0) {
+            DefaultTableModel modelo = (DefaultTableModel) tabelaScan.getModel();
+            int linha = tabelaScan.getSelectedRow();
+            if (linha >= 0) {
+                modelo.removeRow(linha);
+                if (tabelaScan.getRowCount() == 0) {
+                    ImageIcon im = new ImageIcon(getClass().getResource("/imagens/rescan-document.png"));
+                    Image i = im.getImage().getScaledInstance(500, 510, Image.SCALE_SMOOTH);
+                    jLabelImagem.setIcon(new ImageIcon(i));
+                    imagem = null;
+                }
+                if (tabelaScan.getRowCount() > 0) {
+                    tabelaScan.addRowSelectionInterval(0, 0);
+                    int a = tabelaScan.getRowCount();
+                    System.out.println(a);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecionar uma Linha.", "Venda", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Não há scanners para excluir.", "Venda", 0,
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+        }
+    }//GEN-LAST:event_rmScannerActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addPessoas;
+    private javax.swing.JButton addScanner;
     private javax.swing.JButton atualizar;
     private app.bolivia.swing.JCTextField buscar;
     private javax.swing.JTextField caminho;
@@ -1193,20 +1452,20 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private javax.swing.JLabel codigoL1;
     private javax.swing.JButton excluir;
     private javax.swing.JButton inserePasta;
-    private javax.swing.JButton jButtonInserirScanner;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabelImagem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JProgressBar jProgressBar;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JButton limpar;
     private app.bolivia.swing.JCTextField nome;
     private javax.swing.JLabel nomeL;
@@ -1214,10 +1473,13 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private javax.swing.JLabel pasta;
     private javax.swing.JButton registrar;
     private javax.swing.JButton rmPessoas;
+    private javax.swing.JButton rmScanner;
     private javax.swing.JTextField scan;
     public static javax.swing.JTable tabelaDocumentos;
     public static javax.swing.JTable tabelaPessoas;
     public static javax.swing.JTable tabelaPessoas2;
+    public static javax.swing.JTable tabelaScan;
+    public static javax.swing.JTable tabelaScan2;
     private org.bolivia.combo.SComboBoxBlue tipo;
     private javax.swing.JButton uploadSelected;
     // End of variables declaration//GEN-END:variables

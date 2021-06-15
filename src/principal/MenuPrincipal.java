@@ -85,7 +85,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GEDCart - Administrador");
-        setPreferredSize(new java.awt.Dimension(1140, 750));
+        setPreferredSize(new java.awt.Dimension(1140, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);

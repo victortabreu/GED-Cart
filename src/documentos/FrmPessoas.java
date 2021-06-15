@@ -151,7 +151,7 @@ public class FrmPessoas extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_nomeActionPerformed
 
     private void nomeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nomeKeyReleased
-        // TODO add your handling code here:
+         nome.setText(nome.getText().toUpperCase());
     }//GEN-LAST:event_nomeKeyReleased
 
     private void rgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rgActionPerformed
@@ -159,7 +159,7 @@ public class FrmPessoas extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_rgActionPerformed
 
     private void rgKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_rgKeyReleased
-        // TODO add your handling code here:
+        rg.setText(rg.getText().toUpperCase());
     }//GEN-LAST:event_rgKeyReleased
 
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
