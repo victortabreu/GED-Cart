@@ -50,7 +50,7 @@ public class DocumentosSql {
         }
         String dados[] = new String[5];
         String dados2[] = new String[2];
-        String dados3[] = new String[1];
+        String dados3[] = new String[2];
         try {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
@@ -59,9 +59,10 @@ public class DocumentosSql {
                 dados[1] = rs.getString("nome_doc");
                 dados[2] = rs.getString("tipo_doc");
                 //dados[3] = rs.getString("scan");
-                dados[4] = rs.getString("textoOCR");
+               // dados[4] = rs.getString("textoOCR");
                 dados2[0] = rs.getString("pessoas_doc");
                 dados3[0] = rs.getString("scan");
+                dados3[1] = rs.getString("textoOCR");
                 modelo.addRow(dados);
                 modelo2.addRow(dados2);
                 modelo3.addRow(dados3);
@@ -165,9 +166,10 @@ public class DocumentosSql {
             ps = cn.prepareStatement(sql);
             ps.setString(1, uc.getNome());
             ps.setString(2, uc.getTipodoc());
-            ps.setString(3, uc.getScan());
-            ps.setString(4, uc.getTextoOCR());
-            ps.setString(5, uc.getPrimaryKey());
+            ps.setString(3, uc.getPessoas());
+            ps.setString(4, uc.getScan());
+            ps.setString(5, uc.getTextoOCR());
+            ps.setString(6, uc.getPrimaryKey());
             rsu = ps.executeUpdate();
         } catch (SQLException ex) {
             print(ex);

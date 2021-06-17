@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,8 +18,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.Thread.sleep;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -39,7 +40,6 @@ import javax.swing.table.DefaultTableModel;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import static org.apache.commons.io.FileUtils.copyDirectory;
-import static org.apache.commons.io.FileUtils.copyFile;
 import static principal.MenuPrincipal.carregador;
 
 /**
@@ -53,7 +53,8 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
      */
     // Variáveis:
     public String documento;
-    String pastaDoSistema;
+    String raiz;
+    String pastaDoSistema = "";
     String anterior = null;
     String nomeImagem;
     String texto;
@@ -76,6 +77,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     JFileChooser fc;
 
     FrmPessoas lista;
+
+    String nomeAntigo;
+    String tipoAntigo;
+    String pessoasAntigo;
+    String scannerTbl;
 
     //Funções e Métodos:
     public FrmDocumentos() {
@@ -209,9 +215,17 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         }
         tabelaPessoas.setModel(tabeladet);
         tabelaScan.addRowSelectionInterval(0, 0);
+        scannerTbl = "";
+        for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+            scannerTbl += tabelaScan.getValueAt(i, 0).toString();
+        }
+        nomeAntigo = nome.getText();
+        tipoAntigo = tipo.getSelectedItem().toString();
+        pessoasAntigo = tabelaPessoas2.getValueAt(linha, 0).toString();
     }
 
-    void limparCampos() {
+    final void limparCampos() {
+        //Limpa todos os campos:
         if (tabelaDocumentos.getSelectedRow() > -1) {
             tabelaDocumentos.removeRowSelectionInterval(tabelaDocumentos.getSelectedRow(), tabelaDocumentos.getSelectedRow());
         }
@@ -232,23 +246,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         jLabelImagem.setIcon(new ImageIcon(i));
         imagem = null;
 
-        java.io.File pastaT = new java.io.File("pastaUp.txt");
-        try {
-            scanner = new Scanner(pastaT, "UTF-8");
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        nomePasta.setText(scanner.nextLine());
-
-        java.io.File pastaS = new java.io.File("pastaSys.txt");
-        try {
-            scanner = new Scanner(pastaS, "UTF-8");
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        pastaDoSistema = scanner.nextLine();
-        System.out.println(pastaDoSistema);
-
+        //Limpa a tabela de Pessoas e a tabela de Scanners:
         DefaultTableModel modelo = (DefaultTableModel) tabelaPessoas.getModel();
 
         while (modelo.getRowCount() > 0) {
@@ -260,6 +258,21 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         while (modelo2.getRowCount() > 0) {
             modelo2.removeRow(0);
         }
+
+        //Define a pasta de upload:
+        java.io.File pastaT = new java.io.File("pastaUp.txt");
+        try {
+            scanner = new Scanner(pastaT, "UTF-8");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        nomePasta.setText(scanner.nextLine());
+
+        //Cria as pastas do sistema caso não existirem:
+        pastasSystem();
+
+        raiz = System.getProperty("user.dir");
+        System.out.println(raiz);
     }
 
     JDialog dlg;
@@ -289,7 +302,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         t.start();
         while (dpb.getValue() < 100 && progresso != 1) {
             try {
-                sleep(100);
+                TimeUnit.MILLISECONDS.sleep(100);
                 dpb.setValue(dpb.getValue() + 2);
                 if (dpb.getValue() == 100) {
                     dpb.setValue(0);
@@ -311,7 +324,39 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 
     }
 
-    void salvaImagem(String nome, ImageIcon imagem) {
+    void pastasSystem() {
+        java.io.File rPastaS = new java.io.File("pastaSys.txt");
+
+        try {
+            scanner = new Scanner(rPastaS, "UTF-8");
+        } catch (FileNotFoundException ex) {
+            FileWriter pastaS = null;
+            try {
+                pastaS = new FileWriter("pastaSys.txt");
+            } catch (IOException e) {
+                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, e);
+            }
+            PrintWriter gravarPasta = new PrintWriter(pastaS);
+            gravarPasta.println("C:\\GedCart");
+            pastaDoSistema = "C:\\GedCart";
+            try {
+                if (pastaS != null) {
+                    pastaS.close();
+                }
+            } catch (IOException exe) {
+                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, exe);
+            }
+        }
+        try {
+            scanner = new Scanner(rPastaS, "UTF-8");
+        } catch (FileNotFoundException ex1) {
+            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex1);
+        }
+        pastaDoSistema = scanner.nextLine();
+        scanner.close();
+
+        System.out.println(pastaDoSistema);
+
         File file1 = new File(pastaDoSistema);
         if (!file1.exists()) {
             file1.mkdirs();
@@ -320,6 +365,14 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         if (!file.exists()) {
             file.mkdirs();
         }
+        File file2 = new File(pastaDoSistema + "\\UserData/");
+        if (!file2.exists()) {
+            file2.mkdirs();
+        }
+    }
+
+    void salvaImagem(String nome, ImageIcon imagem) {
+
         File novaImagem = new File(pastaDoSistema + "\\GedCartImagens/" + nome);
 
         BufferedImage bi = new BufferedImage(imagem.getIconWidth(), imagem.getIconHeight(), BufferedImage.TYPE_INT_RGB);
@@ -342,11 +395,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
         }
         PrintWriter gravarUp = new PrintWriter(up);
-        gravarUp.println("d:");
-        gravarUp.println("cd Documentos\\NetBeansProjects\\GEDCart");
         gravarUp.println("gradle run");
         try {
-            up.close();
+            if (up != null) {
+                up.close();
+            }
         } catch (IOException ex) {
             Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -407,21 +460,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             scan.setText(nomeImagem);
             System.out.println(anterior + "\n" + scan.getText());
             imagemAtualizada = new ImageIcon(caminho.getText());
-
-            FileWriter arq = null;
-            try {
-                arq = new FileWriter("upload.txt");
-            } catch (IOException ex) {
-                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            PrintWriter gravarArq = new PrintWriter(arq);
-            gravarArq.println("1");
-            try {
-                arq.close();
-            } catch (IOException ex) {
-                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
         }
     }
 
@@ -617,11 +655,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "NOME"
+                "NOME", "OCR"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -629,6 +667,10 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             }
         });
         jScrollPane6.setViewportView(tabelaScan2);
+        if (tabelaScan2.getColumnModel().getColumnCount() > 0) {
+            tabelaScan2.getColumnModel().getColumn(0).setResizable(false);
+            tabelaScan2.getColumnModel().getColumn(1).setResizable(false);
+        }
 
         jPanel2.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, 230, 70));
 
@@ -1003,7 +1045,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                         }
                     });
                     t.start();
-//                    
 
                     //Transformar imagem em texto
                     texto = "";
@@ -1042,6 +1083,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                         Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     PrintWriter gravarArq = new PrintWriter(arq);
+                    gravarArq.println("1");
 
                     String stImagens = "";
 
@@ -1058,7 +1100,9 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     }
 
                     try {
-                        arq.close();
+                        if (arq != null) {
+                            arq.close();
+                        }
                     } catch (IOException ex) {
                         Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -1086,69 +1130,119 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_registrarActionPerformed
 
     private void atualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_atualizarActionPerformed
+        String nomeNovo = nome.getText();
+        String tipoNovo = tipo.getSelectedItem().toString();
+        String pessoas = "";
+        for (int i = 0; i < tabelaPessoas.getRowCount(); i++) {
+            pessoas += tabelaPessoas.getValueAt(i, 0).toString();
+            pessoas += "*" + tabelaPessoas.getValueAt(i, 1).toString() + "*";
+        }
+        String novas = "";
+        for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+            novas += tabelaScan.getValueAt(i, 0).toString();
+        }
         if (tabelaDocumentos.getRowCount() > 0) {
             if (tabelaDocumentos.getSelectedRowCount() > 0) {
-                if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO")) {
-                    JOptionPane.showMessageDialog(this, "Preecha os campos.", "Documentos", 0,
+                if (nomeNovo.equals(nomeAntigo) && tipoNovo.equals(tipoAntigo) && pessoas.equals(pessoasAntigo) && novas.equals(scannerTbl)) {
+                    JOptionPane.showMessageDialog(this, "Nada foi alterado.", "Documentos", 0,
                             new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                } else if (JOptionPane.showConfirmDialog(this, "Deseja alterar o registro?", "Documentos", JOptionPane.YES_NO_OPTION, 0,
-                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
-                    documentos.Documentos doc = new Documentos();
-
-                    Tesseract tesseract = new Tesseract();
-                    try {
-                        texto = tesseract.doOCR(new File(caminho.getText()));
-                    } catch (TesseractException ex) {
-                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    System.out.println(texto);
-
-                    doc.setPrimaryKey(codigo.getText());
-                    doc.setNome(nome.getText());
-                    doc.setTipodoc(tipo.getSelectedItem().toString());
-                    doc.setScan(scan.getText());
-                    doc.setTextoOCR(texto);
-                    System.out.println(codigo.getText() + "\n" + nome.getText() + "\n" + tipo.getSelectedItem().toString() + "\n" + scan.getText());
-                    int opc = DocumentosSql.atualizarDocumento(doc);
-                    if (opc == 0) {
-                        JOptionPane.showMessageDialog(this, "O documento não foi atualizado.", "Documentos", 0,
+                } else {
+                    if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO")) {
+                        JOptionPane.showMessageDialog(this, "Preecha os campos em branco.", "Documentos", 0,
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                    }
-                    if (opc != 0) {
-                        String id = codigo.getText();
-                        selecionarLinha(id);
-                        JOptionPane.showMessageDialog(this, "Registro Atualizado.", "Documentos", 0,
-                                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                    } else if (JOptionPane.showConfirmDialog(this, "Deseja alterar o registro?", "Documentos", JOptionPane.YES_NO_OPTION, 0,
+                            new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
+                        documentos.Documentos doc = new Documentos();
 
-                        if (!anterior.equals(scan.getText())) {
-                            File file = new File(pastaDoSistema + "\\GedCartImagens/" + anterior);
-                            file.delete();
-                            System.out.println(nomeImagem);
-                            salvaImagem(nomeImagem, imagemAtualizada);
+                        texto = "";
+                        String stImagens = "";
+
+                        if (novas.equals(scannerTbl)) {
+                            int linha = tabelaDocumentos.getSelectedRow();
+                            texto = tabelaScan2.getValueAt(linha, 1).toString();
+                            stImagens = tabelaScan2.getValueAt(linha, 0).toString();
+                            System.out.println(texto);
+                        } else {
+                            for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+                                Tesseract tesseract = new Tesseract();
+                                try {
+                                    texto += tesseract.doOCR(new File(tabelaScan.getValueAt(i, 0).toString())) + "\n";
+                                } catch (TesseractException ex) {
+                                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            System.out.println(texto);
+
                             FileWriter arq = null;
-                            String nom;
-
                             try {
-                                arq = new FileWriter("atualizar.txt");
+                                arq = new FileWriter("upload.txt");
                             } catch (IOException ex) {
                                 Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             PrintWriter gravarArq = new PrintWriter(arq);
-                            gravarArq.println(anterior);
-                            gravarArq.println(scan.getText());
-                            gravarArq.println(pastaDoSistema + "GedCartImagens/" + nomeImagem);
+                            gravarArq.println("2");
+
+                            int select = tabelaDocumentos.getSelectedRow();
+                            String nomes = "";
+                            nomes += tabelaScan2.getValueAt(select, 0).toString();
+                            for (String div : nomes.split("\\*", 0)) {
+                                gravarArq.println(div);
+                            }
+
+                            gravarArq.println("Novas");
+
+                            for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+                                imagem = new ImageIcon(tabelaScan.getValueAt(i, 0).toString());
+                                nomeImagem = System.currentTimeMillis() + ".jpg";
+                                salvaImagem(nomeImagem, imagem);
+                                stImagens += nomeImagem + "*";
+
+                                String caminhoScan = pastaDoSistema + "\\GedCartImagens\\" + nomeImagem;
+                                gravarArq.println(nomeImagem);
+                                gravarArq.println(caminhoScan);
+
+                            }
+
                             try {
-                                arq.close();
+                                if (arq != null) {
+                                    arq.close();
+                                }
                             } catch (IOException ex) {
                                 Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            upload();
                         }
 
-                        limparCampos();
-                    }
+                        pessoas = "";
+                        for (int i = 0; i < tabelaPessoas.getRowCount(); i++) {
+                            pessoas += tabelaPessoas.getValueAt(i, 0).toString();
+                            pessoas += "*" + tabelaPessoas.getValueAt(i, 1).toString() + "*";
+                        }
 
+                        doc.setPessoas(pessoas);
+                        doc.setPrimaryKey(codigo.getText());
+                        doc.setNome(nome.getText());
+                        doc.setTipodoc(tipo.getSelectedItem().toString());
+                        doc.setScan(stImagens);
+                        doc.setTextoOCR(texto);
+
+                        int opc = DocumentosSql.atualizarDocumento(doc);
+                        if (opc == 0) {
+                            JOptionPane.showMessageDialog(this, "O documento não foi atualizado.", "Documentos", 0,
+                                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                        }
+                        if (opc != 0) {
+                            String id = codigo.getText();
+                            selecionarLinha(id);
+                            JOptionPane.showMessageDialog(this, "Registro Atualizado.", "Documentos", 0,
+                                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                            if (!novas.equals(scannerTbl)) {
+                                upload();
+                            }
+                            limparCampos();
+                        }
+                    }
                 }
+
             } else {
                 JOptionPane.showMessageDialog(this, "Selecione um registro.", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
@@ -1166,14 +1260,37 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 if (JOptionPane.showConfirmDialog(this, "Deseja Excluir?", "Documentos", JOptionPane.YES_NO_OPTION, 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
                     int linha = tabelaDocumentos.getSelectedRow();
+                    String excluirScan = tabelaScan2.getValueAt(linha, 0).toString();
                     String id = tabelaDocumentos.getValueAt(linha, 0).toString();
                     int elimina = DocumentosSql.eliminarDocumento(id);
-                    File file = new File(caminho.getText());
-                    file.delete();
+
                     if (elimina != 0) {
                         limparCampos();
                         JOptionPane.showMessageDialog(this, "Registro excluido.", "Documentos", 0,
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+
+                        FileWriter arq = null;
+                        try {
+                            arq = new FileWriter("upload.txt");
+                        } catch (IOException ex) {
+                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        PrintWriter gravarArq = new PrintWriter(arq);
+                        gravarArq.println("3");
+
+                        for (String div : excluirScan.split("\\*", 0)) {
+                            gravarArq.println(div);
+                            File file = new File(pastaDoSistema + "\\GedCartImagens\\" + div);
+                            file.delete();
+                        }
+                        try {
+                            if (arq != null) {
+                                arq.close();
+                            }
+                        } catch (IOException ex) {
+                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        upload();
                     }
                 }
             } else {
@@ -1238,10 +1355,12 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 //      
     }//GEN-LAST:event_jLabelImagemMouseDragged
     String pastaSys;
+    File antiga;
     private void pastaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pastaMouseClicked
         fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setDialogTitle("Escolher pasta de salvamento");
+
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1265,37 +1384,34 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     PrintWriter gravarPasta = new PrintWriter(pastaS);
                     gravarPasta.println(pastaSys);
                     try {
-                        pastaS.close();
+                        if (pastaS != null) {
+                            pastaS.close();
+                        }
                     } catch (IOException ex) {
                         Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     if (!pastaDoSistema.equals(pastaSys)) {
                         File srcDir = new File(pastaDoSistema);
                         File dstDir = new File(pastaSys);
-
-                        if (srcDir.isDirectory()) {
-                            if (!dstDir.exists()) {
-                                dstDir.mkdir();
-                            }
-                            String[] children = srcDir.list();
-                            for (String children1 : children) {
-                                try {
-                                    copyDirectory(new File(srcDir, children1), new File(dstDir, children1));
-                                } catch (IOException ex) {
-                                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-                        } else {
-                            try {
-                                // Este método está implementado na dica – Copiando um arquivo utilizando o Java
-                                copyFile(srcDir, dstDir);
-                            } catch (IOException ex) {
-                                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                        try {
+                            copyDirectory(new File(srcDir, "\\GedCartImagens"), new File(dstDir, "\\GedCartImagens"));
+                        } catch (IOException ex) {
+                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                         }
-
+//                        try {
+//                            copyDirectory(new File(srcDir, "\\DadosDoUsuario"), new File(dstDir, "\\DadosDoUsuario"));
+//                        } catch (IOException ex) {
+//                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+                        antiga = new File(pastaDoSistema + "\\GedCartImagens");
                         pastaDoSistema = pastaSys;
                     }
+                    String[] entries = antiga.list();
+                    for (String s : entries) {
+                        File currentFile = new File(antiga.getPath(), s);
+                        currentFile.delete();
+                    }
+                    antiga.delete();
                     progresso = 1;
                 }
             }
@@ -1315,7 +1431,12 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_nomePastaActionPerformed
 
     private void inserePastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inserePastaActionPerformed
-        novaPasta = JOptionPane.showInputDialog(this, "Nova Pasta:", "Alterar Pasta", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            novaPasta = JOptionPane.showInputDialog(this, "Nova Pasta:", "Alterar Pasta", JOptionPane.INFORMATION_MESSAGE);
+        } catch (HeadlessException headlessException) {
+            JOptionPane.showMessageDialog(this, "Nome de pasta inválido", "Documentos", 0,
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+        }
         String n = nomePasta.getText();
         if (n.equals(novaPasta)) {
             JOptionPane.showMessageDialog(this, "Essa pasta já está sendo usada", "Documentos", 0,
@@ -1336,7 +1457,9 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 PrintWriter gravarPasta = new PrintWriter(pastaU);
                 gravarPasta.println(nomePasta.getText());
                 try {
-                    pastaU.close();
+                    if (pastaU != null) {
+                        pastaU.close();
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1372,7 +1495,9 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             gravarArq.println(scan.getText());
             gravarArq.println(caminho.getText());
             try {
-                arq.close();
+                if (arq != null) {
+                    arq.close();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
             }

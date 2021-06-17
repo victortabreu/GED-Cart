@@ -27,13 +27,12 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
@@ -79,25 +78,8 @@ public class DriveQuickstart {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    static void lista(String nome, String id) {
-        FileWriter up = null;
-
-        try {
-            up = new FileWriter("ids.txt", true);
-        } catch (IOException ex) {
-            Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        PrintWriter gravarUp = new PrintWriter(up, true);
-        gravarUp.println(nome);
-        gravarUp.println(id);
-
-        try {
-            up.close();
-        } catch (IOException ex) {
-            Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    public static String lista = "";
+    public static String nome;
 
     public static void main(String... args) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
@@ -108,66 +90,113 @@ public class DriveQuickstart {
                 .build();
 
         String caminho;
-        String nome = "0";
+        String modo;
         String idPasta;
-        String anterior;
-        String nomeAtt;
-        String caminhoAtt;
+
         java.io.File arquivo = new java.io.File("upload.txt");
         Scanner scanner = new Scanner(arquivo, "UTF-8");
+        modo = scanner.nextLine();
 
         java.io.File pasta = new java.io.File("pastaUp.txt");
         Scanner scan = new Scanner(pasta, "UTF-8");
         idPasta = scan.nextLine();
 
-        if (nome.equals("1")) {
-            java.io.File att = new java.io.File("atualizar.txt");
-            Scanner sc1 = new Scanner(att, "UTF-8");
-            anterior = sc1.nextLine();
-            nomeAtt = sc1.nextLine();
-            caminhoAtt = sc1.nextLine();
+        int op = Integer.parseInt(modo);
+        String pageToken = null;
+        
+        switch (op) {
+            case 1:
+                while (scanner.hasNextLine()) {
+                    nome = scanner.nextLine();
+                    caminho = scanner.nextLine();
 
-            java.io.File lista = new java.io.File("ids.txt");
-            Scanner sc2 = new Scanner(lista, "UTF-8");
-            String linha;
-
-            while (sc2.hasNextLine()) {
-                linha = sc2.nextLine();
-                if (linha.equals(anterior)) {
-                    String apagaID = sc2.nextLine();
-                    service.files().delete(idPasta + "/" + apagaID);
+                    String folderId = idPasta;
+                    File fileMetadata = new File();
+                    fileMetadata.setName(nome);
+                    fileMetadata.setParents(Collections.singletonList(folderId));
+                    java.io.File filePath = new java.io.File(caminho);
+                    FileContent mediaContent = new FileContent("image/jpeg", filePath);
+                    File file = service.files().create(fileMetadata, mediaContent)
+                            .setFields("id, parents")
+                            .execute();
+                    System.out.println("ARQUIVO ENVIADO:" + nome + " ID: " + file.getId());
                 }
-            }
+                break;
+            case 2:
+                int i = 0;
+                while (i == 0) {
+                    nome = scanner.nextLine();
+                    if (nome.equals("Novas")) {
+                        i = 1;
+                    } else {
+                        do {
+                            FileList result = service.files().list()
+                                    .setQ("'" + idPasta + "' in parents")
+                                    .setSpaces("drive")
+                                    .setFields("nextPageToken, files(id, name)")
+                                    .setPageToken(pageToken)
+                                    .execute();
+                            result.getFiles().forEach((file) -> {
+                                if (file.getName().equals(nome)) {
+                                    try {
+                                        service.files().delete(file.getId()).execute();
+                                        System.out.printf("EXCLUIDO DO DRIVE: %s (%s)\n",
+                                                file.getName(), file.getId());
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
+                                        System.out.println("NÃO DEU CERTO");
+                                    }
+                                }
+                            });
+                            pageToken = result.getNextPageToken();
+                        } while (pageToken != null);
+                    }
+                }
 
-            String folderId = idPasta;
-            File fileMetadata = new File();
-            fileMetadata.setName(nomeAtt);
-            fileMetadata.setParents(Collections.singletonList(folderId));
-            java.io.File filePath = new java.io.File(caminhoAtt);
-            FileContent mediaContent = new FileContent("image/jpeg", filePath);
-            File file = service.files().create(fileMetadata, mediaContent)
-                    .setFields("id, parents")
-                    .execute();
-            System.out.println("File ID: " + file.getId());
-            lista(nome, file.getId());
+                while (scanner.hasNextLine()) {
+                    nome = scanner.nextLine();
+                    caminho = scanner.nextLine();
 
-        } else {
-            while (scanner.hasNextLine()) {
-                nome = scanner.nextLine();
-                caminho = scanner.nextLine();
+                    String folderId = idPasta;
+                    File fileMetadata = new File();
+                    fileMetadata.setName(nome);
+                    fileMetadata.setParents(Collections.singletonList(folderId));
+                    java.io.File filePath = new java.io.File(caminho);
+                    FileContent mediaContent = new FileContent("image/jpeg", filePath);
+                    File file = service.files().create(fileMetadata, mediaContent)
+                            .setFields("id, parents")
+                            .execute();
+                    System.out.println("ARQUIVO ATUALIZADO:" + nome + " ID: " + file.getId());
+                }
+                break;
+            case 3:
+                while (scanner.hasNextLine()) {
+                    nome = scanner.nextLine();
+                    do {
+                        FileList result = service.files().list()
+                                .setQ("'" + idPasta + "' in parents")
+                                .setSpaces("drive")
+                                .setFields("nextPageToken, files(id, name)")
+                                .setPageToken(pageToken)
+                                .execute();
+                        result.getFiles().forEach((file) -> {
+                            if (file.getName().equals(nome)) {
+                                try {
+                                    service.files().delete(file.getId()).execute();
+                                    System.out.printf("EXCLUIDO DO DRIVE: %s (%s)\n",
+                                            file.getName(), file.getId());
+                                } catch (IOException ex) {
+                                    Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
+                                    System.out.println("NÃO DEU CERTO");
+                                }
+                            }
+                        });
+                        pageToken = result.getNextPageToken();
+                    } while (pageToken != null);
+                }
+                break;
+            default:
 
-                String folderId = idPasta;
-                File fileMetadata = new File();
-                fileMetadata.setName(nome);
-                fileMetadata.setParents(Collections.singletonList(folderId));
-                java.io.File filePath = new java.io.File(caminho);
-                FileContent mediaContent = new FileContent("image/jpeg", filePath);
-                File file = service.files().create(fileMetadata, mediaContent)
-                        .setFields("id, parents")
-                        .execute();
-                System.out.println("File ID: " + file.getId());
-                lista(nome, file.getId());
-            }
         }
     }
 }
