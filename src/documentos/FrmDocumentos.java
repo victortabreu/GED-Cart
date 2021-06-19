@@ -9,30 +9,37 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.GeneralSecurityException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -59,7 +66,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     String nomeImagem;
     String texto;
     String path;
-    String novaPasta = null;
+    String novaPasta = "";
 
     ImageIcon imagem;
     ImageIcon icone1;
@@ -85,6 +92,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 
     //Funções e Métodos:
     public FrmDocumentos() {
+        UIManager.put("nimbusOrange", new Color(0, 204, 0));
         initComponents();
         tabelaDocumentos.getTableHeader().setDefaultRenderer(new principal.EstiloTabelaHeader());
         tabelaDocumentos.setDefaultRenderer(Object.class, new principal.EstiloTabelaRenderer());
@@ -461,6 +469,156 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             System.out.println(anterior + "\n" + scan.getText());
             imagemAtualizada = new ImageIcon(caminho.getText());
         }
+    }
+    public static JDialog impede;
+    public static int finaliza = 0;
+
+    void mudaPasta() {
+        fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setDialogTitle("Escolher pasta de salvamento");
+
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    Thread t2 = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            prog("Copiando arquivos para a nova pasta");
+                        }
+                    });
+                    t2.start();
+
+                    pastaSys = fc.getSelectedFile().getAbsolutePath();
+                    System.out.println(pastaSys);
+                    FileWriter pastaS = null;
+                    try {
+                        pastaS = new FileWriter("pastaSys.txt");
+                    } catch (IOException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    PrintWriter gravarPasta = new PrintWriter(pastaS);
+                    gravarPasta.println(pastaSys);
+                    try {
+                        if (pastaS != null) {
+                            pastaS.close();
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    if (!pastaDoSistema.equals(pastaSys)) {
+                        File srcDir = new File(pastaDoSistema);
+                        File dstDir = new File(pastaSys);
+                        try {
+                            copyDirectory(new File(srcDir, "\\GedCartImagens"), new File(dstDir, "\\GedCartImagens"));
+                        } catch (IOException ex) {
+                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+//                        try {
+//                            copyDirectory(new File(srcDir, "\\DadosDoUsuario"), new File(dstDir, "\\DadosDoUsuario"));
+//                        } catch (IOException ex) {
+//                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+                        antiga = new File(pastaDoSistema + "\\GedCartImagens");
+                        pastaDoSistema = pastaSys;
+                    }
+                    String[] entries = antiga.list();
+                    for (String s : entries) {
+                        File currentFile = new File(antiga.getPath(), s);
+                        currentFile.delete();
+                    }
+                    antiga.delete();
+                    progresso = 1;
+                }
+            }
+        });
+        t1.start();
+    }
+
+    void pastaMensagem() {
+        Thread mod = new Thread(() -> {
+            JFrame frame = new JFrame();
+
+            impede = new JDialog(frame, "cancelar", true);
+
+            JPanel mainGui = new JPanel(new BorderLayout());
+            mainGui.setBorder(new EmptyBorder(20, 20, 20, 20));
+            mainGui.add(new JLabel("Você pode abrir a pasta raiz ou aterá-la"), BorderLayout.CENTER);
+
+            JPanel buttonPanel = new JPanel(new FlowLayout());
+            mainGui.add(buttonPanel, BorderLayout.SOUTH);
+
+            JButton close = new JButton("Abrir Pasta");
+            JButton close2 = new JButton("Alterar Pasta");
+            close.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        Desktop.getDesktop().open(new java.io.File(pastaDoSistema + "\\GedCartImagens"));
+                    } catch (IOException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    impede.dispose();
+                }
+            });
+
+            close2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mudaPasta();
+                    impede.dispose();
+                }
+            });
+            impede.setSize(400, 200);
+            frame.setLocationRelativeTo(null);
+            impede.setLocationRelativeTo(null);
+            buttonPanel.add(close);
+            buttonPanel.add(close2);
+            frame.setVisible(false);
+            impede.setContentPane(mainGui);
+            impede.pack();
+            impede.setVisible(true);
+
+        });
+        mod.start();
+    }
+
+    void dialogoDeEspera() {
+        finaliza = 0;
+        Thread mod = new Thread(() -> {
+            JFrame frame = new JFrame();
+
+            impede = new JDialog(frame, "cancelar", true);
+
+            JPanel mainGui = new JPanel(new BorderLayout());
+            mainGui.setBorder(new EmptyBorder(20, 20, 20, 20));
+            mainGui.add(new JLabel("Você pode cancelar esta operação ou aguardar até finalizar"), BorderLayout.CENTER);
+
+            JPanel buttonPanel = new JPanel(new FlowLayout());
+            mainGui.add(buttonPanel, BorderLayout.SOUTH);
+
+            JButton close = new JButton("Cancelar");
+            close.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    impede.dispose();
+                    finaliza = 1;
+                    listaUp.dispose();
+                }
+            });
+            impede.setSize(-300, 300);
+            frame.setLocationRelativeTo(null);
+            impede.setLocationRelativeTo(null);
+            buttonPanel.add(close);
+            frame.setVisible(false);
+            impede.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            impede.setContentPane(mainGui);
+            impede.pack();
+            impede.setVisible(true);
+
+        });
+        mod.start();
     }
 
     /**
@@ -1022,11 +1180,10 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private void nomeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nomeKeyTyped
 
     }//GEN-LAST:event_nomeKeyTyped
+    public static String stImagens = "";
 
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
         img = 0;
-        UIManager.put("nimbusOrange", new Color(0, 204, 0));
-        //barra.dispose();
         Thread sa = new Thread(() -> {
             if (selecionarRegistro) {
                 JOptionPane.showMessageDialog(this, "O código: " + FrmDocumentos.codigo.getText() + "\n já está registrado.", "Documentos", 0,
@@ -1057,6 +1214,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                             Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+
                     System.out.println(texto);
                     dlg.setTitle("Salvando documento");
                     //Salvar documento
@@ -1075,18 +1233,8 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     doc.setTextoOCR(texto);
                     dlg.setTitle("Salvando imagem na pasta do sistema");
 
-                    //Salvar imagem na pasta do sistema
-                    FileWriter arq = null;
-                    try {
-                        arq = new FileWriter("upload.txt");
-                    } catch (IOException ex) {
-                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    PrintWriter gravarArq = new PrintWriter(arq);
-                    gravarArq.println("1");
-
-                    String stImagens = "";
-
+                    //Salvar imagem na pasta do sistema                  
+                    stImagens = "";
                     for (int i = 0; i < tabelaScan.getRowCount(); i++) {
                         imagem = new ImageIcon(tabelaScan.getValueAt(i, 0).toString());
                         nomeImagem = System.currentTimeMillis() + ".jpg";
@@ -1094,22 +1242,12 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                         stImagens += nomeImagem + "*";
 
                         String caminhoScan = tabelaScan.getValueAt(i, 0).toString();
-                        gravarArq.println(nomeImagem);
-                        gravarArq.println(caminhoScan);
-
-                    }
-
-                    try {
-                        if (arq != null) {
-                            arq.close();
-                        }
-                    } catch (IOException ex) {
-                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     doc.setScan(stImagens);
 
                     int op = DocumentosSql.registrarDocumento(doc);
+
                     //Documento inseridocom sucesso
                     if (op != 0) {
 //                       
@@ -1118,7 +1256,63 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
                         limparCampos();
-                        upload();
+
+                        if (estaFechado(listaUp)) {
+                            listaUp = new FrmUpload();
+                            principal.MenuPrincipal.carregador.add(listaUp).setLocation(150, 10);
+
+                            listaUp.toFront();
+                            listaUp.setVisible(true);
+                        } else {
+                            listaUp.toFront();
+                        }
+
+                        dialogoDeEspera();
+
+                        Thread up = new Thread(() -> {
+                            String upScan = stImagens;
+
+                            listaUp.tipo.setText("ENVIAR PARA O DRIVE");
+                            DefaultTableModel modelo = (DefaultTableModel) listaUp.tabelaUpload.getModel();
+                            while (modelo.getRowCount() > 0) {
+                                modelo.removeRow(0);
+                            }
+                            String dados[] = new String[1];
+
+                            DriveCadastrar drive = null;
+                            try {
+                                drive = new DriveCadastrar();
+                            } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            for (String div : upScan.split("\\*", 0)) {
+                                if (finaliza == 1) {
+                                    break;
+                                }
+                                if (!div.equals("")) {
+                                    listaUp.barra();
+                                    if (drive != null) {
+
+                                        try {
+                                            dados[0] = drive.executar(div, pastaDoSistema + "\\GedCartImagens\\" + div);
+                                        } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                            dados[0] = "NADA ENCONTRADO";
+                                        }
+
+                                    }
+
+                                    modelo.addRow(dados);
+                                    listaUp.confere = 1;
+                                }
+                            }
+                            impede.dispose();
+                            if (finaliza == 0) {
+                                listaUp.mensagem();
+                            }
+                        });
+                        up.start();
+                        //upload();
                     }
                 }
             }
@@ -1128,130 +1322,186 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         sa.start();
 
     }//GEN-LAST:event_registrarActionPerformed
-
+    public static String nomes = "";
     private void atualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_atualizarActionPerformed
-        String nomeNovo = nome.getText();
-        String tipoNovo = tipo.getSelectedItem().toString();
-        String pessoas = "";
-        for (int i = 0; i < tabelaPessoas.getRowCount(); i++) {
-            pessoas += tabelaPessoas.getValueAt(i, 0).toString();
-            pessoas += "*" + tabelaPessoas.getValueAt(i, 1).toString() + "*";
-        }
-        String novas = "";
-        for (int i = 0; i < tabelaScan.getRowCount(); i++) {
-            novas += tabelaScan.getValueAt(i, 0).toString();
-        }
-        if (tabelaDocumentos.getRowCount() > 0) {
-            if (tabelaDocumentos.getSelectedRowCount() > 0) {
-                if (nomeNovo.equals(nomeAntigo) && tipoNovo.equals(tipoAntigo) && pessoas.equals(pessoasAntigo) && novas.equals(scannerTbl)) {
-                    JOptionPane.showMessageDialog(this, "Nada foi alterado.", "Documentos", 0,
-                            new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                } else {
-                    if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO")) {
-                        JOptionPane.showMessageDialog(this, "Preecha os campos em branco.", "Documentos", 0,
+        Thread up = new Thread(() -> {
+            String nomeNovo = nome.getText();
+            String tipoNovo = tipo.getSelectedItem().toString();
+            String pessoas = "";
+            for (int i = 0; i < tabelaPessoas.getRowCount(); i++) {
+                pessoas += tabelaPessoas.getValueAt(i, 0).toString();
+                pessoas += "*" + tabelaPessoas.getValueAt(i, 1).toString() + "*";
+            }
+            String novas = "";
+            for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+                novas += tabelaScan.getValueAt(i, 0).toString();
+            }
+            if (tabelaDocumentos.getRowCount() > 0) {
+                if (tabelaDocumentos.getSelectedRowCount() > 0) {
+                    if (nomeNovo.equals(nomeAntigo) && tipoNovo.equals(tipoAntigo) && pessoas.equals(pessoasAntigo) && novas.equals(scannerTbl)) {
+                        JOptionPane.showMessageDialog(this, "Nada foi alterado.", "Documentos", 0,
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                    } else if (JOptionPane.showConfirmDialog(this, "Deseja alterar o registro?", "Documentos", JOptionPane.YES_NO_OPTION, 0,
-                            new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
-                        documentos.Documentos doc = new Documentos();
+                    } else {
+                        if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO")) {
+                            JOptionPane.showMessageDialog(this, "Preecha os campos em branco.", "Documentos", 0,
+                                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                        } else if (JOptionPane.showConfirmDialog(this, "Deseja alterar o registro?", "Documentos", JOptionPane.YES_NO_OPTION, 0,
+                                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
+                            documentos.Documentos doc = new Documentos();
 
-                        texto = "";
-                        String stImagens = "";
+                            Thread t = new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    prog("Extraindo texto da imagem");
+                                }
+                            });
+                            t.start();
 
-                        if (novas.equals(scannerTbl)) {
-                            int linha = tabelaDocumentos.getSelectedRow();
-                            texto = tabelaScan2.getValueAt(linha, 1).toString();
-                            stImagens = tabelaScan2.getValueAt(linha, 0).toString();
-                            System.out.println(texto);
-                        } else {
-                            for (int i = 0; i < tabelaScan.getRowCount(); i++) {
-                                Tesseract tesseract = new Tesseract();
-                                try {
-                                    texto += tesseract.doOCR(new File(tabelaScan.getValueAt(i, 0).toString())) + "\n";
-                                } catch (TesseractException ex) {
-                                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                            texto = "";
+                            stImagens = "";
+                            nomes = "";
+
+                            if (novas.equals(scannerTbl)) {
+                                int linha = tabelaDocumentos.getSelectedRow();
+                                texto = tabelaScan2.getValueAt(linha, 1).toString();
+                                stImagens = tabelaScan2.getValueAt(linha, 0).toString();
+                                System.out.println(texto);
+                            } else {
+                                for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+                                    Tesseract tesseract = new Tesseract();
+                                    try {
+                                        texto += tesseract.doOCR(new File(tabelaScan.getValueAt(i, 0).toString())) + "\n";
+                                    } catch (TesseractException ex) {
+                                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                                System.out.println(texto);
+
+                                int select = tabelaDocumentos.getSelectedRow();
+
+                                nomes += tabelaScan2.getValueAt(select, 0).toString();
+
+                                for (int i = 0; i < tabelaScan.getRowCount(); i++) {
+                                    imagem = new ImageIcon(tabelaScan.getValueAt(i, 0).toString());
+                                    nomeImagem = System.currentTimeMillis() + ".jpg";
+                                    salvaImagem(nomeImagem, imagem);
+                                    stImagens += nomeImagem + "*";
                                 }
                             }
-                            System.out.println(texto);
 
-                            FileWriter arq = null;
-                            try {
-                                arq = new FileWriter("upload.txt");
-                            } catch (IOException ex) {
-                                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            PrintWriter gravarArq = new PrintWriter(arq);
-                            gravarArq.println("2");
-
-                            int select = tabelaDocumentos.getSelectedRow();
-                            String nomes = "";
-                            nomes += tabelaScan2.getValueAt(select, 0).toString();
-                            for (String div : nomes.split("\\*", 0)) {
-                                gravarArq.println(div);
+                            pessoas = "";
+                            for (int i = 0; i < tabelaPessoas.getRowCount(); i++) {
+                                pessoas += tabelaPessoas.getValueAt(i, 0).toString();
+                                pessoas += "*" + tabelaPessoas.getValueAt(i, 1).toString() + "*";
                             }
 
-                            gravarArq.println("Novas");
+                            doc.setPessoas(pessoas);
+                            doc.setPrimaryKey(codigo.getText());
+                            doc.setNome(nome.getText());
+                            doc.setTipodoc(tipo.getSelectedItem().toString());
+                            doc.setScan(stImagens);
+                            doc.setTextoOCR(texto);
 
-                            for (int i = 0; i < tabelaScan.getRowCount(); i++) {
-                                imagem = new ImageIcon(tabelaScan.getValueAt(i, 0).toString());
-                                nomeImagem = System.currentTimeMillis() + ".jpg";
-                                salvaImagem(nomeImagem, imagem);
-                                stImagens += nomeImagem + "*";
-
-                                String caminhoScan = pastaDoSistema + "\\GedCartImagens\\" + nomeImagem;
-                                gravarArq.println(nomeImagem);
-                                gravarArq.println(caminhoScan);
-
+                            int opc = DocumentosSql.atualizarDocumento(doc);
+                            if (opc == 0) {
+                                JOptionPane.showMessageDialog(this, "O documento não foi atualizado.", "Documentos", 0,
+                                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
                             }
+                            if (opc != 0) {
+                                String id = codigo.getText();
+                                selecionarLinha(id);
+                                progresso = 1;
+                                JOptionPane.showMessageDialog(this, "Registro Atualizado.", "Documentos", 0,
+                                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                                limparCampos();
 
-                            try {
-                                if (arq != null) {
-                                    arq.close();
+                                if (!novas.equals(scannerTbl)) {
+                                    if (estaFechado(listaUp)) {
+                                        listaUp = new FrmUpload();
+                                        principal.MenuPrincipal.carregador.add(listaUp).setLocation(150, 10);
+
+                                        listaUp.toFront();
+                                        listaUp.setVisible(true);
+                                    } else {
+                                        listaUp.toFront();
+                                    }
+
+                                    dialogoDeEspera();
+                                    Thread sa = new Thread(() -> {
+
+                                        listaUp.tipo.setText("ATUALIZAR DO DRIVE");
+                                        DefaultTableModel modelo = (DefaultTableModel) listaUp.tabelaUpload.getModel();
+                                        while (modelo.getRowCount() > 0) {
+                                            modelo.removeRow(0);
+                                        }
+                                        String dados[] = new String[1];
+
+                                        DriveDelete drive = null;
+                                        try {
+                                            drive = new DriveDelete();
+                                        } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        for (String div : nomes.split("\\*", 0)) {
+                                            if (drive != null) {
+                                                try {
+                                                    String a = drive.executar(div);
+                                                    System.out.println(a);
+                                                } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                                }
+                                            }
+                                        }
+                                        DriveCadastrar drive2 = null;
+                                        try {
+                                            drive2 = new DriveCadastrar();
+                                        } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        int l = 0;
+                                        for (String div : stImagens.split("\\*", 0)) {
+                                            listaUp.barra();
+                                            if (drive2 != null) {
+                                                String result = "";
+                                                try {
+                                                    result = drive2.executar(div, pastaDoSistema + "\\GedCartImagens\\" + div);
+                                                } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                                }
+                                                if (result.contains("ENVIADO")) {
+                                                    result = result.replaceAll("ARQUIVO ENVIADO:", "ARQUIVO ATUALIZADO:");
+                                                }
+                                                dados[0] = result;
+                                            }
+                                            modelo.addRow(dados);
+                                            listaUp.confere = 1;
+                                            listaUp.tabelaUpload.scrollRectToVisible(listaUp.tabelaUpload.getCellRect(l, 0, true));
+                                            l++;
+                                        }
+                                        impede.dispose();
+                                        if (finaliza == 0) {
+                                            listaUp.mensagem();
+                                        }
+
+                                    });
+                                    sa.start();
                                 }
-                            } catch (IOException ex) {
-                                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        }
-
-                        pessoas = "";
-                        for (int i = 0; i < tabelaPessoas.getRowCount(); i++) {
-                            pessoas += tabelaPessoas.getValueAt(i, 0).toString();
-                            pessoas += "*" + tabelaPessoas.getValueAt(i, 1).toString() + "*";
-                        }
-
-                        doc.setPessoas(pessoas);
-                        doc.setPrimaryKey(codigo.getText());
-                        doc.setNome(nome.getText());
-                        doc.setTipodoc(tipo.getSelectedItem().toString());
-                        doc.setScan(stImagens);
-                        doc.setTextoOCR(texto);
-
-                        int opc = DocumentosSql.atualizarDocumento(doc);
-                        if (opc == 0) {
-                            JOptionPane.showMessageDialog(this, "O documento não foi atualizado.", "Documentos", 0,
-                                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                        }
-                        if (opc != 0) {
-                            String id = codigo.getText();
-                            selecionarLinha(id);
-                            JOptionPane.showMessageDialog(this, "Registro Atualizado.", "Documentos", 0,
-                                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                            if (!novas.equals(scannerTbl)) {
-                                upload();
-                            }
-                            limparCampos();
                         }
                     }
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "Selecione um registro.", "Documentos", 0,
+                            new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
                 }
 
             } else {
-                JOptionPane.showMessageDialog(this, "Selecione um registro.", "Documentos", 0,
+                JOptionPane.showMessageDialog(this, "Não há registro para alterar.", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             }
+        });
 
-        } else {
-            JOptionPane.showMessageDialog(this, "Não há registro para alterar.", "Documentos", 0,
-                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-        }
+        up.start();
     }//GEN-LAST:event_atualizarActionPerformed
 
     private void excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excluirActionPerformed
@@ -1269,28 +1519,70 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                         JOptionPane.showMessageDialog(this, "Registro excluido.", "Documentos", 0,
                                 new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
-                        FileWriter arq = null;
-                        try {
-                            arq = new FileWriter("upload.txt");
-                        } catch (IOException ex) {
-                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        PrintWriter gravarArq = new PrintWriter(arq);
-                        gravarArq.println("3");
-
                         for (String div : excluirScan.split("\\*", 0)) {
-                            gravarArq.println(div);
-                            File file = new File(pastaDoSistema + "\\GedCartImagens\\" + div);
-                            file.delete();
-                        }
-                        try {
-                            if (arq != null) {
-                                arq.close();
+                            if (!div.equals("")) {
+                                File file = new File(pastaDoSistema + "\\GedCartImagens\\" + div);
+                                file.delete();
                             }
-                        } catch (IOException ex) {
-                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        upload();
+
+                        if (estaFechado(listaUp)) {
+                            listaUp = new FrmUpload();
+                            principal.MenuPrincipal.carregador.add(listaUp).setLocation(150, 10);
+
+                            listaUp.toFront();
+                            listaUp.setVisible(true);
+                        } else {
+                            listaUp.toFront();
+                        }
+
+                        dialogoDeEspera();
+
+                        Thread sa = new Thread(() -> {
+
+                            listaUp.tipo.setText("EXCLUIR DO DRIVE");
+                            DefaultTableModel modelo = (DefaultTableModel) listaUp.tabelaUpload.getModel();
+                            while (modelo.getRowCount() > 0) {
+                                modelo.removeRow(0);
+                            }
+                            String dados[] = new String[1];
+
+                            DriveDelete drive = null;
+                            try {
+                                drive = new DriveDelete();
+                            } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            int l = 0;
+                            for (String div : excluirScan.split("\\*", 0)) {
+                                if (finaliza == 1) {
+                                    break;
+                                }
+                                if (!div.equals("")) {
+                                    listaUp.barra();
+                                    if (drive != null) {
+
+                                        try {
+                                            dados[0] = drive.executar(div);
+                                            File file = new File(pastaDoSistema + "\\GedCartImagens\\" + div);
+                                            file.delete();
+                                        } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                    }
+                                    //listaUp.progresso.setValue(100);
+                                    modelo.addRow(dados);
+                                    listaUp.confere = 1;
+                                    listaUp.tabelaUpload.scrollRectToVisible(listaUp.tabelaUpload.getCellRect(l, 0, true));
+                                    l++;
+                                }
+                            }
+                            impede.dispose();
+                            if (finaliza == 0) {
+                                listaUp.mensagem();
+                            }
+                        });
+                        sa.start();
                     }
                 }
             } else {
@@ -1357,73 +1649,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     String pastaSys;
     File antiga;
     private void pastaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pastaMouseClicked
-        fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setDialogTitle("Escolher pasta de salvamento");
-
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    Thread t2 = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            prog("Copiando arquivos para a nova pasta");
-                        }
-                    });
-                    t2.start();
-
-                    pastaSys = fc.getSelectedFile().getAbsolutePath();
-                    System.out.println(pastaSys);
-                    FileWriter pastaS = null;
-                    try {
-                        pastaS = new FileWriter("pastaSys.txt");
-                    } catch (IOException ex) {
-                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    PrintWriter gravarPasta = new PrintWriter(pastaS);
-                    gravarPasta.println(pastaSys);
-                    try {
-                        if (pastaS != null) {
-                            pastaS.close();
-                        }
-                    } catch (IOException ex) {
-                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    if (!pastaDoSistema.equals(pastaSys)) {
-                        File srcDir = new File(pastaDoSistema);
-                        File dstDir = new File(pastaSys);
-                        try {
-                            copyDirectory(new File(srcDir, "\\GedCartImagens"), new File(dstDir, "\\GedCartImagens"));
-                        } catch (IOException ex) {
-                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-//                        try {
-//                            copyDirectory(new File(srcDir, "\\DadosDoUsuario"), new File(dstDir, "\\DadosDoUsuario"));
-//                        } catch (IOException ex) {
-//                            Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-                        antiga = new File(pastaDoSistema + "\\GedCartImagens");
-                        pastaDoSistema = pastaSys;
-                    }
-                    String[] entries = antiga.list();
-                    for (String s : entries) {
-                        File currentFile = new File(antiga.getPath(), s);
-                        currentFile.delete();
-                    }
-                    antiga.delete();
-                    progresso = 1;
-                }
-            }
-        });
-        t1.start();
-
-//        try {
-//            Desktop.getDesktop().open(new java.io.File("C:\\GedCart\\GedCartImagens/"));
-//        } catch (IOException ex) {
-//            JOptionPane.showMessageDialog(this, "Não foi possível abrir a pasta.", "Documentos", 0,
-//                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-//        }
+        pastaMensagem();
     }//GEN-LAST:event_pastaMouseClicked
 
     private void nomePastaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nomePastaActionPerformed
@@ -1437,37 +1663,39 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Nome de pasta inválido", "Documentos", 0,
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
-        String n = nomePasta.getText();
-        if (n.equals(novaPasta)) {
-            JOptionPane.showMessageDialog(this, "Essa pasta já está sendo usada", "Documentos", 0,
-                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-        }
-        if (novaPasta.equals("") || novaPasta == null) {
-            JOptionPane.showMessageDialog(this, "Nome de pasta inválido", "Documentos", 0,
-                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-        } else {
-            if (!n.equals(novaPasta)) {
-                nomePasta.setText(novaPasta);
-                FileWriter pastaU = null;
-                try {
-                    pastaU = new FileWriter("pastaUp.txt");
-                } catch (IOException ex) {
-                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                PrintWriter gravarPasta = new PrintWriter(pastaU);
-                gravarPasta.println(nomePasta.getText());
-                try {
-                    if (pastaU != null) {
-                        pastaU.close();
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                File file = new File("D:\\Documentos\\NetBeansProjects\\GEDCart\\tokens\\StoredCredential");
-                file.delete();
-                JOptionPane.showMessageDialog(this, "Pasta atualizada com sucesso!", "Documentos", 0,
+        if (novaPasta != null) {
+            String n = nomePasta.getText();
+            if (n.equals(novaPasta)) {
+                JOptionPane.showMessageDialog(this, "Essa pasta já está sendo usada", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                limparCampos();
+            }
+            if (novaPasta.equals("") || novaPasta == null) {
+                JOptionPane.showMessageDialog(this, "Nome de pasta inválido", "Documentos", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+            } else {
+                if (!n.equals(novaPasta)) {
+                    nomePasta.setText(novaPasta);
+                    FileWriter pastaU = null;
+                    try {
+                        pastaU = new FileWriter("pastaUp.txt");
+                    } catch (IOException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    PrintWriter gravarPasta = new PrintWriter(pastaU);
+                    gravarPasta.println(nomePasta.getText());
+                    try {
+                        if (pastaU != null) {
+                            pastaU.close();
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    File file = new File(raiz + "\\tokens\\StoredCredential");
+                    file.delete();
+                    JOptionPane.showMessageDialog(this, "Pasta atualizada com sucesso!", "Documentos", 0,
+                            new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+                    limparCampos();
+                }
             }
         }
     }//GEN-LAST:event_inserePastaActionPerformed
@@ -1479,30 +1707,128 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private void tabelaDocumentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaDocumentosMouseClicked
         anterior = scan.getText();
     }//GEN-LAST:event_tabelaDocumentosMouseClicked
-
+    FrmUpload listaUp;
     private void uploadSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadSelectedActionPerformed
-        if (caminho.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Selecione um registro!", "Documentos", 0,
-                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-        } else {
-            FileWriter arq = null;
-            try {
-                arq = new FileWriter("upload.txt");
-            } catch (IOException ex) {
-                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            PrintWriter gravarArq = new PrintWriter(arq);
-            gravarArq.println(scan.getText());
-            gravarArq.println(caminho.getText());
-            try {
-                if (arq != null) {
-                    arq.close();
+        if (tabelaDocumentos.getSelectedRow() < 0) {
+            if (JOptionPane.showConfirmDialog(this, "Nenhum registro selecionado!\nDeseja Fazer o upload de todos os arquivos\nque ainda não foram enviados para o Drive?\n(Esse processo pode demorar um pouco)", "Documentos", JOptionPane.YES_NO_OPTION, 0,
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png"))) == JOptionPane.YES_OPTION) {
+
+                if (estaFechado(listaUp)) {
+                    listaUp = new FrmUpload();
+                    principal.MenuPrincipal.carregador.add(listaUp).setLocation(150, 10);
+
+                    listaUp.toFront();
+                    listaUp.setVisible(true);
+                } else {
+                    listaUp.toFront();
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+
+                dialogoDeEspera();
+
+                Thread sa = new Thread(() -> {
+                    String upScan = "";
+                    for (int i = 0; i < tabelaScan2.getRowCount(); i++) {
+                        upScan += tabelaScan2.getValueAt(i, 0).toString() + "*";
+                    }
+                    listaUp.tipo.setText("CONFERIR TODOS OS ARQUIVOS");
+                    DefaultTableModel modelo = (DefaultTableModel) listaUp.tabelaUpload.getModel();
+                    while (modelo.getRowCount() > 0) {
+                        modelo.removeRow(0);
+                    }
+                    String dados[] = new String[1];
+
+                    DriveIndividual drive = null;
+                    try {
+                        drive = new DriveIndividual();
+                    } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                        Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    int l = 0;
+                    for (String div : upScan.split("\\*", 0)) {
+                        if (finaliza == 1) {
+                            break;
+                        }
+                        if (!div.equals("")) {
+                            listaUp.barra();
+                            if (drive != null) {
+
+                                try {
+                                    dados[0] = drive.executar(div, pastaDoSistema + "\\GedCartImagens\\" + div);
+                                } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
+                            }
+                            //listaUp.progresso.setValue(100);
+                            modelo.addRow(dados);
+                            listaUp.confere = 1;
+                            listaUp.tabelaUpload.scrollRectToVisible(listaUp.tabelaUpload.getCellRect(l, 0, true));
+                            l++;
+                        }
+                    }
+                    impede.dispose();
+                    if (finaliza == 0) {
+                        listaUp.mensagem();
+                    }
+                });
+                sa.start();
             }
 
-            upload();
+        } else {
+
+            if (estaFechado(listaUp)) {
+                listaUp = new FrmUpload();
+                principal.MenuPrincipal.carregador.add(listaUp).setLocation(150, 10);
+
+                listaUp.toFront();
+                listaUp.setVisible(true);
+            } else {
+                listaUp.toFront();
+            }
+
+            dialogoDeEspera();
+
+            Thread sa = new Thread(() -> {
+                listaUp.tipo.setText("UPLOAD INDIVIDUAL");
+                DefaultTableModel modelo = (DefaultTableModel) listaUp.tabelaUpload.getModel();
+                while (modelo.getRowCount() > 0) {
+                    modelo.removeRow(0);
+                }
+                String dados[] = new String[1];
+
+                int linha = tabelaDocumentos.getSelectedRow();
+                String upScan = tabelaScan2.getValueAt(linha, 0).toString();
+
+                DriveIndividual drive = null;
+                try {
+                    drive = new DriveIndividual();
+                } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                    Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                for (String div : upScan.split("\\*", 0)) {
+                    if (finaliza == 1) {
+                        break;
+                    }
+                    listaUp.barra();
+                    if (!div.equals("")) {
+                        if (drive != null) {
+                            try {
+                                dados[0] = drive.executar(div, pastaDoSistema + "\\GedCartImagens\\" + div);
+                            } catch (IOException | GeneralSecurityException | InterruptedException ex) {
+                                Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        modelo.addRow(dados);
+                        listaUp.confere = 1;
+                    }
+                }
+                impede.dispose();
+                if (finaliza == 0) {
+                    listaUp.mensagem();
+                }
+            });
+            sa.start();
         }
     }//GEN-LAST:event_uploadSelectedActionPerformed
 
@@ -1525,11 +1851,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             if (linha >= 0) {
                 modelo.removeRow(linha);
             } else {
-                JOptionPane.showMessageDialog(this, "Selecionar uma Linha.", "Venda", 0,
+                JOptionPane.showMessageDialog(this, "Selecionar uma Linha.", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Não há pessoas para excluir.", "Venda", 0,
+            JOptionPane.showMessageDialog(this, "Não há pessoas para excluir.", "Documentos", 0,
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
     }//GEN-LAST:event_rmPessoasActionPerformed
@@ -1556,11 +1882,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     System.out.println(a);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Selecionar uma Linha.", "Venda", 0,
+                JOptionPane.showMessageDialog(this, "Selecionar uma Linha.", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Não há scanners para excluir.", "Venda", 0,
+            JOptionPane.showMessageDialog(this, "Não há scanners para excluir.", "Documentos", 0,
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
     }//GEN-LAST:event_rmScannerActionPerformed

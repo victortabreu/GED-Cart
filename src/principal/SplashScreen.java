@@ -5,8 +5,10 @@
  */
 package principal;
 
+import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
 
 /**
  *
@@ -19,6 +21,7 @@ public class SplashScreen extends javax.swing.JFrame {
      * Creates new form SplashScreen
      */
     public SplashScreen() {
+        UIManager.put("nimbusOrange", new Color(0, 204, 0));
         initComponents();
         startThread();
     }

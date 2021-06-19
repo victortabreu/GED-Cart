@@ -13,6 +13,7 @@
 // limitations under the License.
 
 // [START drive_quickstart]
+package documentos;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -40,9 +41,14 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DriveQuickstart {
 
-    private static final String APPLICATION_NAME = "Google Drive API Java Quickstart";
+public class DriveG {
+    
+    public DriveG() throws IOException, GeneralSecurityException, InterruptedException{
+        executa();
+    }
+
+    private static final String APPLICATION_NAME = "GEDCart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
@@ -51,7 +57,7 @@ public class DriveQuickstart {
      * these scopes, delete your previously saved tokens/ folder.
      */
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "credentials.json";
 
     /**
      * Creates an authorized Credential object.
@@ -60,9 +66,11 @@ public class DriveQuickstart {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
+    
+    
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
-        InputStream in = DriveQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in = DriveG.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
@@ -81,15 +89,8 @@ public class DriveQuickstart {
     public static String lista = "";
     public static String nome;
     public static int a = 0;
-    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
-    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
-    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
-    public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
-    public static final String ANSI_BLACK = "\u001B[30m";
 
-    public static void main(String... args) throws IOException, GeneralSecurityException, InterruptedException {
+    public static void executa() throws IOException, GeneralSecurityException, InterruptedException {
         // Build a new authorized API client service.
 
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -112,13 +113,9 @@ public class DriveQuickstart {
         int op = Integer.parseInt(modo);
         String pageToken = null;
 
-        for (int i = 0; i < 3; ++i) {
-            System.out.println();
-        }
-
         switch (op) {
             case 1:
-                System.out.println(ANSI_BLACK + ANSI_CYAN_BACKGROUND + "FAZENDO UPLOAD DOS ARQUIVOS:\n\n" + ANSI_RESET);
+                System.out.println("FAZENDO UPLOAD DOS ARQUIVOS:\n");
                 while (scanner.hasNextLine()) {
                     nome = scanner.nextLine();
                     caminho = scanner.nextLine();
@@ -129,14 +126,14 @@ public class DriveQuickstart {
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     java.io.File filePath = new java.io.File(caminho);
                     FileContent mediaContent = new FileContent("image/jpeg", filePath);
-                    File file = null;
+                    File file;
                     try {
                         file = service.files().create(fileMetadata, mediaContent)
                                 .setFields("id, parents")
                                 .execute();
-                        System.out.println(ANSI_BLACK + ANSI_GREEN_BACKGROUND + "ARQUIVO ENVIADO:" + nome + " ID: " + file.getId() + ANSI_RESET);
+                        System.out.println("ARQUIVO ENVIADO:" + nome + " ID: " + file.getId());
                     } catch (IOException iOException) {
-                        System.out.println(ANSI_RED_BACKGROUND + "ARQUIVO NAO EXISTE" + ANSI_RESET);
+                        System.out.println("ARQUIVO NAO EXISTE");
                     }
                 }
                 for (int i = 0; i < 2; ++i) {
@@ -145,7 +142,7 @@ public class DriveQuickstart {
                 break;
 
             case 2:
-                System.out.println(ANSI_BLACK + ANSI_CYAN_BACKGROUND + "ATUALIZANDO OS ARQUIVOS:\n\n" + ANSI_RESET);
+                System.out.println("ATUALIZANDO OS ARQUIVOS:\n");
                 int i = 0;
                 while (i == 0) {
                     nome = scanner.nextLine();
@@ -163,11 +160,11 @@ public class DriveQuickstart {
                                 if (file.getName().equals(nome)) {
                                     try {
                                         service.files().delete(file.getId()).execute();
-                                        System.out.println(ANSI_RED_BACKGROUND + "EXCLUIDO DO DRIVE: "
-                                                + file.getName() + " ID: " + file.getId() + ANSI_RESET);
+                                        System.out.println("EXCLUIDO DO DRIVE: "
+                                                + file.getName() + " ID: " + file.getId());
                                     } catch (IOException ex) {
-                                        Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
-                                        System.out.println(ANSI_RED_BACKGROUND + "ARQUIVO NAO EXISTE" + ANSI_RESET);
+                                        Logger.getLogger(DriveG.class.getName()).log(Level.SEVERE, null, ex);
+                                        System.out.println("ARQUIVO NAO EXISTE");
                                     }
                                 }
                             });
@@ -186,14 +183,14 @@ public class DriveQuickstart {
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     java.io.File filePath = new java.io.File(caminho);
                     FileContent mediaContent = new FileContent("image/jpeg", filePath);
-                    File file = null;
+                    File file;
                     try {
                         file = service.files().create(fileMetadata, mediaContent)
                                 .setFields("id, parents")
                                 .execute();
-                        System.out.println(ANSI_BLACK + ANSI_GREEN_BACKGROUND + "ARQUIVO ATUALIZADO:" + nome + " ID: " + file.getId() + ANSI_RESET);
+                        System.out.println("ARQUIVO ATUALIZADO:" + nome + " ID: " + file.getId());
                     } catch (IOException iOException) {
-                        System.out.println(ANSI_RED_BACKGROUND + "ARQUIVO NAO EXISTE" + ANSI_RESET);
+                        System.out.println("ARQUIVO NAO EXISTE");
                     }
 
                 }
@@ -203,7 +200,7 @@ public class DriveQuickstart {
                 break;
 
             case 3:
-                System.out.println(ANSI_RED_BACKGROUND + "EXCLUINDO OS ARQUIVOS:\n\n" + ANSI_RESET);
+                System.out.println("EXCLUINDO OS ARQUIVOS:\n");
                 while (scanner.hasNextLine()) {
                     nome = scanner.nextLine();
                     do {
@@ -217,11 +214,11 @@ public class DriveQuickstart {
                             if (file.getName().equals(nome)) {
                                 try {
                                     service.files().delete(file.getId()).execute();
-                                    System.out.println(ANSI_RED_BACKGROUND + "EXCLUIDO DO DRIVE: "
-                                            + file.getName() + " ID: " + file.getId() + ANSI_RESET);
+                                    System.out.println("EXCLUIDO DO DRIVE: "
+                                            + file.getName() + " ID: " + file.getId());
                                 } catch (IOException ex) {
-                                    Logger.getLogger(DriveQuickstart.class.getName()).log(Level.SEVERE, null, ex);
-                                    System.out.println(ANSI_RED_BACKGROUND + "ARQUIVO NAO EXISTE" + ANSI_RESET);
+                                    Logger.getLogger(DriveG.class.getName()).log(Level.SEVERE, null, ex);
+                                    System.out.println("ARQUIVO NAO EXISTE");
                                 }
                             }
                         });
@@ -234,7 +231,7 @@ public class DriveQuickstart {
                 break;
 
             case 4:
-                System.out.println(ANSI_BLACK + ANSI_CYAN_BACKGROUND + "FAZENDO UPLOAD DOS ARQUIVOS:\n\n" + ANSI_RESET);
+                System.out.println("FAZENDO UPLOAD DOS ARQUIVOS:\n");
                 while (scanner.hasNextLine()) {
                     a = 0;
                     nome = scanner.nextLine();
@@ -266,28 +263,19 @@ public class DriveQuickstart {
                             file = service.files().create(fileMetadata, mediaContent)
                                     .setFields("id, parents")
                                     .execute();
-                            System.out.println(ANSI_BLACK + ANSI_GREEN_BACKGROUND + "ARQUIVO ENVIADO:" + nome + " ID: " + file.getId() + ANSI_RESET);
+                            System.out.println("ARQUIVO ENVIADO:" + nome + " ID: " + file.getId());
                         } catch (IOException iOException) {
-                            System.out.println(ANSI_RED_BACKGROUND + "ARQUIVO NAO EXISTE" + ANSI_RESET);
+                            System.out.println("ARQUIVO NAO EXISTE");
                         }
                     } else {
-                        System.out.println(ANSI_BLACK + ANSI_YELLOW_BACKGROUND + "ARQUIVO JA FOI ENVIADO ANTERIORMENTE: " + nome + ANSI_RESET);
+                        System.out.println("ARQUIVO JA FOI ENVIADO ANTERIORMENTE: ");
                     }
-                }
-                for (int j = 0; j < 2; ++j) {
-                    System.out.println();
                 }
                 break;
             default:
 
         }
-        System.out.println(ANSI_BLACK + ANSI_GREEN_BACKGROUND + "------- OPERACAO REALIZADA COM SUCESSO -------" + ANSI_RESET + " 100%\n");
-        System.out.println(ANSI_BLUE_BACKGROUND + "---------- APERTE ENTER PARA SAIR ----------" + ANSI_RESET);
-        System.out.println(ANSI_BLUE_BACKGROUND + "---------- APERTE ENTER PARA SAIR ----------" + ANSI_RESET);
-        System.out.println(ANSI_BLUE_BACKGROUND + "---------- APERTE ENTER PARA SAIR ----------" + ANSI_RESET + "\n");
-        Scanner sc = new Scanner(System.in);
-        String fim = sc.nextLine();
-        System.out.println(fim);
+        System.out.println("\n------- OPERACAO REALIZADA COM SUCESSO ------- 100%");
 
     }
 }
