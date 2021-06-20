@@ -201,8 +201,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         }
 
         tabelaScan.setModel(tabelaS);
-        caminho.setText(tabelaScan.getValueAt(0, 0).toString());
-        documento = caminho.getText();
 
         int k = 0;
         String dividirPessoas = tabelaPessoas2.getValueAt(linha, 0).toString();
@@ -240,7 +238,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         if (tabelaPessoas.getSelectedRow() > -1) {
             tabelaPessoas.removeRowSelectionInterval(tabelaPessoas.getSelectedRow(), tabelaPessoas.getSelectedRow());
         }
-        documento = caminho.getText();
         codigo.setText("");
         nome.setText("");
         tipo.setSelectedItem("TIPO");
@@ -248,7 +245,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         DocumentosSql.listarDocumentos("");
         DocumentosSql.gerarId();
         selecionarRegistro = false;
-        caminho.setText("");
         ImageIcon im = new ImageIcon(getClass().getResource("/imagens/rescan-document.png"));
         Image i = im.getImage().getScaledInstance(500, 510, Image.SCALE_SMOOTH);
         jLabelImagem.setIcon(new ImageIcon(i));
@@ -435,7 +431,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
 
     void addScan() {
         fc = new JFileChooser();
-        anterior = scan.getText();
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -464,10 +459,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             File file;
             file = fc.getSelectedFile();
             String fileName = file.getAbsolutePath();
-            caminho.setText(fileName);
-            scan.setText(nomeImagem);
-            System.out.println(anterior + "\n" + scan.getText());
-            imagemAtualizada = new ImageIcon(caminho.getText());
         }
     }
     public static JDialog impede;
@@ -668,8 +659,9 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         jPanel6 = new javax.swing.JPanel();
         inserePasta = new javax.swing.JButton();
         nomePasta = new javax.swing.JTextField();
-        caminho = new javax.swing.JTextField();
-        scan = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(null);
@@ -990,11 +982,11 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     .addComponent(excluir)
                     .addComponent(limpar)
                     .addComponent(uploadSelected))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "BUSCAR", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "BUSCAR POR DOCUMENTO", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         jPanel4.setMinimumSize(new java.awt.Dimension(600, 82));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -1075,6 +1067,12 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel1.setText("Crie uma pasta no Google Drive.");
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Google-Drive-icon.png"))); // NOI18N
+
+        jLabel5.setText("Insira o link aqui:");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -1084,52 +1082,52 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(nomePasta)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(inserePasta, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(inserePasta, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4))
+                            .addComponent(jLabel5))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(2, 2, 2)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nomePasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(inserePasta)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(inserePasta)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18))
         );
-
-        caminho.setEditable(false);
-
-        scan.setEditable(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(303, 303, 303)
-                        .addComponent(scan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(caminho, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(101, 101, 101))
         );
@@ -1137,22 +1135,23 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabelImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
+                    .addComponent(jLabelImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(caminho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(scan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(215, 215, 215))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
 
@@ -1190,7 +1189,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
             } else {
-                if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO") || caminho.getText().equals("") || tabelaScan.getRowCount() == 0) {
+                if (codigo.getText().equals("") || nome.getText().equals("") || tipo.getSelectedItem().equals("TIPO") || tabelaScan.getRowCount() == 0) {
                     JOptionPane.showMessageDialog(this, "Todos os campos\nsão obrigatórios.", "Usuarios", 0,
                             new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
 
@@ -1451,6 +1450,8 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                                                     Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                                                 }
                                             }
+                                            File file = new File(pastaDoSistema + "\\GedCartImagens\\" + div);
+                                            file.delete();
                                         }
                                         DriveCadastrar drive2 = null;
                                         try {
@@ -1623,7 +1624,9 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
         } else {
             try {
                 if (img != 1) {
-                    Desktop.getDesktop().open(new java.io.File(caminho.getText()));
+                    int linha = tabelaScan.getSelectedRow();
+                    String abrirImagem = tabelaScan.getValueAt(linha, 0).toString();
+                    Desktop.getDesktop().open(new java.io.File(abrirImagem));
                 }
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Não foi possível abrir a imagem.", "Documentos", 0,
@@ -1664,17 +1667,21 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
         if (novaPasta != null) {
-            String n = nomePasta.getText();
-            if (n.equals(novaPasta)) {
+            String nova = novaPasta;
+            String n = "";
+            for (String div : nova.split("/", 0)) {
+                n = div;
+            }
+            if (n.equals(nomePasta.getText())) {
                 JOptionPane.showMessageDialog(this, "Essa pasta já está sendo usada", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             }
-            if (novaPasta.equals("") || novaPasta == null) {
+            if (n.equals("") || n.contains(" ")) {
                 JOptionPane.showMessageDialog(this, "Nome de pasta inválido", "Documentos", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             } else {
-                if (!n.equals(novaPasta)) {
-                    nomePasta.setText(novaPasta);
+                if (!n.equals(nomePasta.getText())) {
+                    nomePasta.setText(n);
                     FileWriter pastaU = null;
                     try {
                         pastaU = new FileWriter("pastaUp.txt");
@@ -1682,7 +1689,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
                         Logger.getLogger(FrmDocumentos.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     PrintWriter gravarPasta = new PrintWriter(pastaU);
-                    gravarPasta.println(nomePasta.getText());
+                    gravarPasta.println(n);
                     try {
                         if (pastaU != null) {
                             pastaU.close();
@@ -1705,7 +1712,7 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_buscarActionPerformed
 
     private void tabelaDocumentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaDocumentosMouseClicked
-        anterior = scan.getText();
+
     }//GEN-LAST:event_tabelaDocumentosMouseClicked
     FrmUpload listaUp;
     private void uploadSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadSelectedActionPerformed
@@ -1897,14 +1904,16 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private javax.swing.JButton addScanner;
     private javax.swing.JButton atualizar;
     private app.bolivia.swing.JCTextField buscar;
-    private javax.swing.JTextField caminho;
     public static app.bolivia.swing.JCTextField codigo;
     private javax.swing.JLabel codigoL;
     private javax.swing.JLabel codigoL1;
     private javax.swing.JButton excluir;
     private javax.swing.JButton inserePasta;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelImagem;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -1925,7 +1934,6 @@ public class FrmDocumentos extends javax.swing.JInternalFrame {
     private javax.swing.JButton registrar;
     private javax.swing.JButton rmPessoas;
     private javax.swing.JButton rmScanner;
-    private javax.swing.JTextField scan;
     public static javax.swing.JTable tabelaDocumentos;
     public static javax.swing.JTable tabelaPessoas;
     public static javax.swing.JTable tabelaPessoas2;
