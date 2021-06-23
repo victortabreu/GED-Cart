@@ -5,43 +5,41 @@
  */
 package principal;
 
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-
-
+import usuarios.UsuariosSql;
 
 /**
  *
  * @author hugov
  */
-public class Login extends javax.swing.JFrame {
-    
+public final class Login extends javax.swing.JFrame {
+
     SplashScreen inicio;
+
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
-              
+
     }
-    
-    public Login(SplashScreen inicio){
+
+    public Login(SplashScreen inicio) {
         this.inicio = inicio;
-        setProgress(0,"Carregando componentes do sistema");
+        setProgress(0, "Carregando componentes do sistema");
         initComponents();
-        //this.setSize(410,500);
-        setProgress(20,"Conectando ao banco de dados");
-        setProgress(40,"Carregando os módulos");
-        setProgress(60,"Carregamento de módulos concluído");
-        setProgress(80,"Carregando interface");
-        setProgress(100,"Bem vindo ao sistema");
-        
+        setProgress(20, "Conectando ao banco de dados");
+        setProgress(40, "Carregando os módulos");
+        setProgress(60, "Carregamento de módulos concluído");
+        setProgress(80, "Carregando interface");
+        setProgress(100, "Bem vindo ao sistema");
+
     }
-    
-    void setProgress(int percent, String informacao){
+
+    void setProgress(int percent, String informacao) {
         inicio.getJLabel().setText(informacao);
         inicio.getProgressBar().setValue(percent);
         try {
@@ -50,85 +48,58 @@ public class Login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Não foi possível carregar a inicialização");
         }
     }
-    
+
     Conectar con = new Conectar();
     Connection cn = con.conexao();
-    
-    public void Logar(String id, String senha){
-        String dado = null;   
-        try {
-            String sql = "SELECT nome_us FROM usuarios WHERE nome_us = '" +id+ "' ";
-            Statement st = cn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
-            
-            if(rs.first()){
-                String sql1 = "SELECT senha FROM usuarios WHERE senha = '" +senha+ "' ";
-                Statement st1 = cn.createStatement();
-                ResultSet rs1 = st1.executeQuery(sql1);
-                if(rs1.first()){
-                    String sql2 = "SELECT tipo_us FROM usuarios WHERE nome_us = '" +id+ "' "
-                            + "and senha = '" +senha+ "' ";
-                    Statement st2 = cn.createStatement();
-                    ResultSet rs2 = st2.executeQuery(sql2);
-                    
-                    while(rs2.next()){
-                        dado = rs2.getString(1);
-                    }
-                    
-                    if(dado.equals("ADMINISTRADOR")){
-                        String sql3 = "SELECT nome_us FROM usuarios WHERE nome_us = '" +id+ "' ";
-                        Statement st3 = cn.createStatement();
-                        ResultSet rs3 = st3.executeQuery(sql3);      
-                        
-                        while(rs3.next()){
-                            dado = rs3.getString(1);
-                        }
-                        
-                        dispose();
-                        MenuPrincipal menu = new MenuPrincipal();
-                        JOptionPane.showMessageDialog(this, "Bem vindo ao sistema " + dado, "Administrador", 0,
-                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                        
-                        menu.userConect.setText(dado);
-                        menu.setLocationRelativeTo(null);
-                        menu.setVisible(true);
-                        menu.setExtendedState(menu.MAXIMIZED_BOTH);
-                        
-                    }else{
-                        String sql4 = "SELECT nome_us FROM usuarios WHERE nome_us = '" +id+ "' ";
-                        Statement st4 = cn.createStatement();
-                        ResultSet rs4 = st4.executeQuery(sql4);      
-                        
-                        while(rs4.next()){
-                            dado = rs4.getString(1);
-                        }
-                        
-                        dispose();
-                        MenuPrincipalP menuP = new MenuPrincipalP();
-                        JOptionPane.showMessageDialog(this, "Bem vindo ao sistema " + dado, "Usuário padrão", 0,
-                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-                        
-                        menuP.userConect.setText(dado);
-                        menuP.setLocationRelativeTo(null);
-                        menuP.setVisible(true);
-                        menuP.setExtendedState(menuP.MAXIMIZED_BOTH);
-                    }
-                    
-                }else{
-                    JOptionPane.showMessageDialog(this, "Senha incorreta", "Administrador", 0,
-                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+
+    public void Logar(String id, String senha) {
+        
+        //senha = MD5.md5(senha);
+
+        String nome[] = UsuariosSql.loginNome(id);
+        String dados[] = UsuariosSql.login(id, senha);
+
+        if (nome[0].equals(id)) {
+
+            if (dados[0].equals(id) && dados[1].equals(senha)) {
+
+                if (dados[2].equals("ADMINISTRADOR")) {
+                    dispose();
+                    MenuPrincipal menu = new MenuPrincipal();
+                    MenuPrincipal.userConect.setText(dados[0]);
+                    menu.setLocationRelativeTo(null);
+                    menu.setVisible(true);
+                    //menu.setExtendedState(MenuPrincipal.MAXIMIZED_BOTH);
+                    JOptionPane.showMessageDialog(this, "Bem vindo ao sistema, " + dados[0], "Administrador", 0,
+                            new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+
+                } else {
+                    dispose();
+                    MenuPrincipal menu = new MenuPrincipal();
+                    MenuPrincipal.userConect.setText(dados[0]);
+                    menu.setLocationRelativeTo(null);
+
+                    menu.user(2);
+                    menu.setVisible(true);
+                    //menu.setExtendedState(MenuPrincipal.MAXIMIZED_BOTH);
+                    JOptionPane.showMessageDialog(this, "Bem vindo ao sistema, " + dados[0], "Usuário padrão", 0,
+                            new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
                 }
-            }else{
-                JOptionPane.showMessageDialog(this, "O usuário não exite no banco de dados", "Login", 0,
-                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Senha incorreta", "Login", 0,
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             }
-        } catch (Exception e) {
+
+        } else {
+            JOptionPane.showMessageDialog(this, "O usuário não existe", "Login", 0,
+                    new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         }
     }
-    
-    void getJLabel(){
+
+    void getJLabel() {
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -284,13 +255,13 @@ public class Login extends javax.swing.JFrame {
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
         String us = usuario.getText();
         String pass = senha.getText();
-        if(us.equals("") || pass.equals("")){
-             JOptionPane.showMessageDialog(this, "Preencha os Campos", "Login", 0,
+        if (us.equals("") || pass.equals("")) {
+            JOptionPane.showMessageDialog(this, "Preencha os Campos", "Login", 0,
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-        }else{
+        } else {
             Logar(us, pass);
         }
-        
+
     }//GEN-LAST:event_btnEntrarActionPerformed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
@@ -298,27 +269,27 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void senhaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_senhaKeyPressed
-        if (evt.getKeyCode() == evt.VK_ENTER) {                    
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             String us = usuario.getText();
             String pass = senha.getText();
-            if(us.equals("") || pass.equals("")){
+            if (us.equals("") || pass.equals("")) {
                 JOptionPane.showMessageDialog(this, "Preencha os Campos", "Login", 0,
-                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-            }else{
-            Logar(us, pass);
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+            } else {
+                Logar(us, pass);
             }
         }
     }//GEN-LAST:event_senhaKeyPressed
 
     private void usuarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_usuarioKeyPressed
-        if (evt.getKeyCode() == evt.VK_ENTER) {                    
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             String us = usuario.getText();
             String pass = senha.getText();
-            if(us.equals("") || pass.equals("")){
+            if (us.equals("") || pass.equals("")) {
                 JOptionPane.showMessageDialog(this, "Preencha os Campos", "Login", 0,
-                new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
-            }else{
-            Logar(us, pass);
+                        new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
+            } else {
+                Logar(us, pass);
             }
         }
     }//GEN-LAST:event_usuarioKeyPressed
@@ -339,19 +310,16 @@ public class Login extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 Login tela = new Login();
                 tela.setLocationRelativeTo(null);

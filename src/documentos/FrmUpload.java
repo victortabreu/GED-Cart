@@ -29,7 +29,6 @@ public class FrmUpload extends javax.swing.JInternalFrame {
     }
 
     public int confere;
-   
 
     public final void barra() {
         confere = 0;
@@ -53,25 +52,25 @@ public class FrmUpload extends javax.swing.JInternalFrame {
         });
         hi.start();
     }
-    
-    void mensagem(){
+
+    void mensagem() {
         int a = 0;
-         for (int i = 0; i < tabelaUpload.getRowCount(); i++) {
-             String c = tabelaUpload.getValueAt(i, 0).toString();
-             if(c.contains("EXISTE")){
-                 a = 1;
-                 break;
-             }
-             if(c.contains("ENCONTRADO") || c.equals("") || c.contains("POSSÍVEL")){
-                 a = 2;
-                 break;
-             }
-             if(c.contains("EXCLUÍDO")){
-                 a = 3;
-                 break;
-             }
-         }
-         
+        for (int i = 0; i < tabelaUpload.getRowCount(); i++) {
+            String c = tabelaUpload.getValueAt(i, 0).toString();
+            if (c.contains("EXISTE")) {
+                a = 1;
+                break;
+            }
+            if (c.contains("ENCONTRADO") || c.equals("") || c.contains("POSSÍVEL")) {
+                a = 2;
+                break;
+            }
+            if (c.contains("EXCLUÍDO")) {
+                a = 3;
+                break;
+            }
+        }
+
         switch (a) {
             case 1:
                 JOptionPane.showMessageDialog(this, "Algumas imagens não foram encontradoas na pasta do sistema.\nVocê pode tentar atualizar as imagens do documeto.", "Upload", 0,

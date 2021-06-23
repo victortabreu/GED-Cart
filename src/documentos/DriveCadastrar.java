@@ -85,38 +85,41 @@ public class DriveCadastrar {
     public static int a = 0;
 
     public String executar(String nome, String caminho) throws IOException, GeneralSecurityException, InterruptedException {
+        MostraDrive.dados.setText("CONECTANDO AO DRIVE...");
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        String modo;
-        String idPasta;
+        String idPasta = "";
         nomeFile = nome;
 
         java.io.File pasta = new java.io.File("pastaUp.txt");
         Scanner scan = new Scanner(pasta, "UTF-8");
-        idPasta = scan.nextLine();
+        if (scan.hasNextLine()) {
+            idPasta = scan.nextLine();
+            String pageToken = null;
+            MostraDrive.dados.setText("FAZENDO UPLOAD DO ARQUIVO: "+ nomeFile+"...");
+            System.out.println("FAZENDO UPLOAD DOS ARQUIVOS:\n");
+            a = 0;
 
-        String pageToken = null;
-
-        System.out.println("FAZENDO UPLOAD DOS ARQUIVOS:\n");
-        a = 0;
-
-        String folderId = idPasta;
-        File fileMetadata = new File();
-        fileMetadata.setName(nomeFile);
-        fileMetadata.setParents(Collections.singletonList(folderId));
-        java.io.File filePath = new java.io.File(caminho);
-        FileContent mediaContent = new FileContent("image/jpeg", filePath);
-        File file;
-        try {
-            file = service.files().create(fileMetadata, mediaContent)
-                    .setFields("id, parents")
-                    .execute();
-            return ("ARQUIVO ENVIADO:" + nomeFile);
-        } catch (IOException iOException) {
-            return ("ARQUIVO NAO EXISTE");
+            String folderId = idPasta;
+            File fileMetadata = new File();
+            fileMetadata.setName(nomeFile);
+            fileMetadata.setParents(Collections.singletonList(folderId));
+            java.io.File filePath = new java.io.File(caminho);
+            FileContent mediaContent = new FileContent("image/jpeg", filePath);
+            File file;
+            try {
+                file = service.files().create(fileMetadata, mediaContent)
+                        .setFields("id, parents")
+                        .execute();
+                return ("ARQUIVO ENVIADO:" + nomeFile);
+            } catch (IOException iOException) {
+                return ("ARQUIVO NAO EXISTE");
+            }
+        }else{
+            return("DEFINA A PASTA DE UPLOAD CORRETAMENTE");
         }
 
     }

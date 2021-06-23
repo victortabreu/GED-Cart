@@ -26,6 +26,8 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmCaixa
+     * @param obj
+     * @return 
      */
     public boolean estaFechado(Object obj) {
         JInternalFrame[] ativos = carregador.getAllFrames();
@@ -56,7 +58,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
 
     }
 
-    void limparCampos() {
+    final void limparCampos() {
         DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 
         while (modelo.getRowCount() > 0) {
@@ -476,7 +478,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Valor Inválido para essa venda", "Compra", 0,
                         new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
             } else {
-                this.troco.setText(String.valueOf(recebi - tot));
+                FrmCaixa.troco.setText(String.valueOf(recebi - tot));
             }
         }
     }//GEN-LAST:event_calculoActionPerformed

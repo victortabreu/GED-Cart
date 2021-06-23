@@ -44,7 +44,7 @@ public class DocumentosSql {
         if (busca.equals("")) {
             sql = Documentos.LISTAR_DOC;
         } else {
-            sql = "SELECT * FROM documentos WHERE (codigo_doc like'" + busca + "%' or nome_doc like'%" + busca + "%' or textoOCR like'%" + busca + "%" + busca + "%' or pessoas_doc like'%" + busca + "%') "
+            sql = "SELECT * FROM documentos WHERE (codigo_doc like '" + busca + "%' or UPPER(nome_doc) like '%" + busca + "%' or UPPER(textoOCR) like '%" + busca + "%' or pessoas_doc like '%" + busca + "%') "
                     + " order by codigo_doc";
 
         }
@@ -59,7 +59,7 @@ public class DocumentosSql {
                 dados[1] = rs.getString("nome_doc");
                 dados[2] = rs.getString("tipo_doc");
                 //dados[3] = rs.getString("scan");
-               // dados[4] = rs.getString("textoOCR");
+                // dados[4] = rs.getString("textoOCR");
                 dados2[0] = rs.getString("pessoas_doc");
                 dados3[0] = rs.getString("scan");
                 dados3[1] = rs.getString("textoOCR");
@@ -219,7 +219,7 @@ public class DocumentosSql {
     }
 
     private static void print(SQLException ex) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet." + ex); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -15,6 +15,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import documentos.FrmDocumentos;
+import java.awt.Toolkit;
 import usuarios.FrmUsuarios;
 import vendas.FrmCaixa;
 import vendas.FrmVendas;
@@ -24,25 +25,26 @@ import vendas.FrmVendas;
  * @author hugov
  */
 public class MenuPrincipal extends javax.swing.JFrame {
-    
-    public boolean estaFechado(Object obj){
+
+    public boolean estaFechado(Object obj) {
         JInternalFrame[] ativo = carregador.getAllFrames();
         boolean fechado = true;
         int i = 0;
-        while(i < ativo.length && fechado){
-            if(ativo[i] == obj){
+        while (i < ativo.length && fechado) {
+            if (ativo[i] == obj) {
                 fechado = false;
-                
+
             }
-            
+
             i++;
         }
-        
+
         return fechado;
     }
-    
+
     class horas implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             Date sistemaHora = new Date();
             String pmAm = "HH:mm:ss a";
@@ -57,6 +59,16 @@ public class MenuPrincipal extends javax.swing.JFrame {
      */
     public MenuPrincipal() {
         initComponents();
+     
+        Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration()); 
+        getGraphicsConfiguration().getBounds();
+    }
+
+    public void user(int tipoUser) {
+        if (tipoUser == 2) {
+            btnUsuarios.setVisible(false);
+            setTitle("GEDCart - Usuário Padrão");
+        }
     }
 
     /**
@@ -85,7 +97,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GEDCart - Administrador");
-        setPreferredSize(new java.awt.Dimension(1140, 600));
+        setPreferredSize(new java.awt.Dimension(1290, 750));
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -214,7 +227,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 btnVendasActionPerformed(evt);
             }
         });
-        painelCabecalho.add(btnVendas, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 0, -1, 120));
+        painelCabecalho.add(btnVendas, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 0, -1, 120));
 
         btnCaixa.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         btnCaixa.setForeground(new java.awt.Color(255, 255, 255));
@@ -233,7 +246,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
                 btnCaixaActionPerformed(evt);
             }
         });
-        painelCabecalho.add(btnCaixa, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 0, -1, 120));
+        painelCabecalho.add(btnCaixa, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 0, -1, 120));
 
         painelPrincipal.add(painelCabecalho, java.awt.BorderLayout.PAGE_START);
 
@@ -243,91 +256,92 @@ public class MenuPrincipal extends javax.swing.JFrame {
         getContentPane().add(painelPrincipal);
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void descMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_descMouseClicked
         if (JOptionPane.showConfirmDialog(this, "Deseja fechar a sessão do usuário?", "Fechar Sessão", JOptionPane.YES_NO_OPTION, 0,
                 new ImageIcon(getClass().getResource("/imagens/principal/info.png"))) == JOptionPane.YES_OPTION) {
-            this.dispose(); 
+            this.dispose();
             Login login = new Login();
             login.setLocationRelativeTo(null);
-            login.setVisible(true);             
-         }
+            login.setVisible(true);
+        }
     }//GEN-LAST:event_descMouseClicked
     FrmDocumentos tela;
     private void btnProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutoActionPerformed
-        if(estaFechado(tela)){
+        if (estaFechado(tela)) {
             tela = new FrmDocumentos();
-            carregador.add(tela).setLocation(0,0);
+            carregador.add(tela).setLocation(0, 0);
             tela.show();
-        }else{            
-             tela.toFront();
-             tela.show();
+        } else {
+            tela.toFront();
+            tela.show();
         }
     }//GEN-LAST:event_btnProdutoActionPerformed
-    
+
     usuarios.FrmUsuarios tela1;
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
-        if(estaFechado(tela1)){
+        if (estaFechado(tela1)) {
             tela1 = new FrmUsuarios();
-            carregador.add(tela1).setLocation(150,3);
+            carregador.add(tela1).setLocation(150, 3);
             tela1.show();
-        }else{            
-             tela1.toFront();
-             tela1.show();
+        } else {
+            tela1.toFront();
+            tela1.show();
         }
     }//GEN-LAST:event_btnUsuariosActionPerformed
     vendas.FrmCaixa tela2;
     private void btnCaixaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixaActionPerformed
-         if(estaFechado(tela2)){
+        if (estaFechado(tela2)) {
             tela2 = new FrmCaixa();
-            carregador.add(tela2).setLocation(20,3);
+            carregador.add(tela2).setLocation(20, 3);
             tela2.show();
-        }else{            
-             tela2.toFront();
-             tela2.show();
+        } else {
+            tela2.toFront();
+            tela2.show();
         }
     }//GEN-LAST:event_btnCaixaActionPerformed
     vendas.FrmVendas tela3;
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-         if(estaFechado(tela3)){
+        if (estaFechado(tela3)) {
             tela3 = new FrmVendas();
-            carregador.add(tela3).setLocation(0,0);
+            carregador.add(tela3).setLocation(0, 0);
             tela3.show();
-        }else{            
-             tela3.toFront();
-             tela3.show();
+        } else {
+            tela3.toFront();
+            tela3.show();
         }
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void logodesconectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logodesconectMouseClicked
-         if (JOptionPane.showConfirmDialog(this, "Deseja fechar a sessão do usuário?", "Fechar Sessão", JOptionPane.YES_NO_OPTION, 0,
+        if (JOptionPane.showConfirmDialog(this, "Deseja fechar a sessão do usuário?", "Fechar Sessão", JOptionPane.YES_NO_OPTION, 0,
                 new ImageIcon(getClass().getResource("/imagens/principal/info.png"))) == JOptionPane.YES_OPTION) {
-            this.dispose(); 
+            this.dispose();
             Login login = new Login();
             login.setLocationRelativeTo(null);
-            login.setVisible(true);             
-         }
+            login.setVisible(true);
+        }
     }//GEN-LAST:event_logodesconectMouseClicked
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         Date sistemaData = new Date();
         SimpleDateFormat formato = new SimpleDateFormat("dd MMMM YYYY");
         data.setText(formato.format(sistemaData));
-        
+
         //Hora do sistema
         Timer hr = new Timer(100, new MenuPrincipal.horas());
         hr.start();
     }//GEN-LAST:event_formWindowOpened
     documentos.info tela4;
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(estaFechado(tela4)){
+        if (estaFechado(tela4)) {
             tela4 = new documentos.info();
-            carregador.add(tela4).setLocation(250,0);
+            carregador.add(tela4).setLocation(250, 0);
             tela4.show();
-        }else{            
-             tela4.toFront();
-             tela4.show();
+        } else {
+            tela4.toFront();
+            tela4.show();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

@@ -85,9 +85,9 @@ public class LivroCaixaSql {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
             sql = "SELECT data_ser, quant_ser, emol_bruto,"+
-                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` "+
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM servicos "+
                     "INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
-                    "WHERE num_ser like '%" + busca + "%' order by data_ser;";
+                    "WHERE num_ser like '%" + busca + "%' order by data_ser";
         }
         String dados[] = new String[9];
         try {
@@ -121,11 +121,11 @@ public class LivroCaixaSql {
         if (data1.equals("")) {
             sql = Servicos.LISTAR_REC;
         } else {
-            sql = "SELECT data_ser, CONCAT(quant_ser,'x - ',nome_ato), totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
-                    "WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "'order by data_SER;";
+            sql = "SELECT data_ser, quant_ser || nome_ato AS qn, totalAto_ser FROM servicos INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
+                    "WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "'order by data_SER";
             System.out.println(data1);
             System.out.println(data2);
-            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
+            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM servicos INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
         }
         String dados[] = new String[5];
         try {
@@ -133,7 +133,7 @@ public class LivroCaixaSql {
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 dados[0] = rs.getString("data_ser");
-                dados[1] = rs.getString("CONCAT(quant_ser,'x - ',nome_ato)");
+                dados[1] = rs.getString("qn");
                 dados[2] = "R";
                 dados[3] = rs.getString("totalAto_ser");
                 modelo.addRow(dados);
@@ -157,7 +157,7 @@ public class LivroCaixaSql {
                     "WHERE data_des BETWEEN '" + data1 + "' AND '" + data2 + "';";
             System.out.println(data1);
             System.out.println(data2);
-            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
+            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM servicos INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
         }
         String dados[] = new String[5];
         try {
@@ -187,11 +187,11 @@ public class LivroCaixaSql {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
             sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto," + 
-                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos`"+
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM servicos"+
                     " INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
-                    "WHERE data_ser LIKE '" + dataH + "';";
+                    "WHERE data_ser LIKE '" + dataH + "'";
             System.out.println(dataH);
-            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
+            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM servicos INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
         }
         String dados[] = new String[9];
         try {

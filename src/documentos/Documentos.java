@@ -15,7 +15,7 @@ public class Documentos {
     public static String REGISTRAR = "INSERT INTO documentos(codigo_doc, nome_doc, tipo_doc, pessoas_doc, scan, textoOCR ) "
             + "VALUES(?,?,?,?,?,?)";
     
-    public static String ATUALIZAR = "UPDATE `documentos` SET "
+    public static String ATUALIZAR = "UPDATE documentos SET "
                 + "nome_doc=?, "
                 + "tipo_doc=?, "
                 + "pessoas_doc=?, "

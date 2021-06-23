@@ -86,6 +86,9 @@ public class DriveIndividual {
     public static int a = 0;
 
     public String executar(String nome, String caminho) throws IOException, GeneralSecurityException, InterruptedException {
+        
+        MostraDrive.dados.setText("CONECTANDO AO DRIVE...");
+        
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
@@ -105,6 +108,7 @@ public class DriveIndividual {
 
         do {
             FileList result;
+            MostraDrive.dados.setText("PESQUISANDO POR ARQUIVO: "+ nomeFile +"...");
             try {
                 result = service.files().list()
                         .setQ("'" + idPasta + "' in parents")
@@ -127,6 +131,7 @@ public class DriveIndividual {
         } while (pageToken != null);
 
         if (a == 0) {
+            MostraDrive.dados.setText("ENVIANDO ARQUIVO: "+ nomeFile +"...");
             String folderId = idPasta;
             File fileMetadata = new File();
             fileMetadata.setName(nomeFile);
@@ -139,10 +144,12 @@ public class DriveIndividual {
                         .setFields("id, parents")
                         .execute();
                 return ("ARQUIVO ENVIADO:" + nomeFile);
-            } catch (IOException iOException) {
+            } catch (IOException e) {
+                System.out.println(e);
                 return ("ARQUIVO NAO EXISTE");
             }
         } else {
+            MostraDrive.dados.setText("ARQUIVO: "+ nomeFile +" JÁ EXISTE NO DRIVE...");
             return ("ARQUIVO JÁ FOI ENVIADO ANTERIORMENTE: " + nomeFile);
         }
 

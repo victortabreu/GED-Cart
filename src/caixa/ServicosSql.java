@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import principal.Conectar;
 import principal.GerarNumero;
@@ -85,9 +86,9 @@ public class ServicosSql {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
             sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto,"+
-                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` "+
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM servicos "+
                     "INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
-                    "WHERE num_ser like '%" + busca + "%';";
+                    "WHERE num_ser like '%" + busca + "%'";
         }
         String dados[] = new String[9];
         try {
@@ -121,12 +122,12 @@ public class ServicosSql {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
             sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto,"+
-                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos` "+
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM servicos "+
                     "INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
-                    "WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "';";
+                    "WHERE data_ser BETWEEN '" + data1 + "' AND '" + data2 + "'";
             System.out.println(data1);
             System.out.println(data2);
-            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
+            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM servicos INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
         }
         String dados[] = new String[9];
         try {
@@ -160,11 +161,11 @@ public class ServicosSql {
             sql = Servicos.LISTAR_ESPECIAL;
         } else {
             sql = "SELECT data_ser, numDoc_ser, numAto_ser, quant_ser, emol_bruto," + 
-                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM `servicos`"+
+                    " recompe_mg, emol_Liquido, taxa_fiscal,num_ser FROM servicos"+
                     " INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato "+
-                    "WHERE data_ser LIKE '" + dataH + "';";
+                    "WHERE data_ser = '" + dataH + "'";
             System.out.println(dataH);
-            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM `servicos` INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
+            //SELECT numAto_ser, quant_ser, emol_bruto, recompe_mg, emol_Liquido, taxa_fiscal, valor_final, totalAto_ser FROM servicos INNER JOIN atos ON servicos.numAto_ser = atos.codigo_ato WHERE totalAto_ser <> "----" GROUP BY numAto_ser;
         }
         String dados[] = new String[9];
         try {
@@ -183,7 +184,8 @@ public class ServicosSql {
                 modelo.addRow(dados);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ServicosSql.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Você não fez nenhuma venda hoje!");
+            System.out.println(ex.getMessage());
         }
     }
 

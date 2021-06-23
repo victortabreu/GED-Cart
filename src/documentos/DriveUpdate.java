@@ -88,12 +88,13 @@ public class DriveUpdate {
     public static int a = 0;
 
     public String executar(String nomeAntigo, String nome, String caminho) throws IOException, GeneralSecurityException, InterruptedException {
+        MostraDrive.dados.setText("CONCETANDO AO DRIVE... ");
+
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        String modo;
         String idPasta;
         nomeFile = nomeAntigo;
 
@@ -104,6 +105,7 @@ public class DriveUpdate {
         String pageToken = null;
         a = 0;
 
+        MostraDrive.dados.setText("PESQUISANDO POR ARQUIVOS...");
         System.out.println("ATUALIZANDO OS ARQUIVOS:\n");
 
         do {
@@ -129,7 +131,7 @@ public class DriveUpdate {
         } while (pageToken != null);
 
         nomeFile = nome;
-
+        MostraDrive.dados.setText("ATUALIZANDO O ARQUIVO: " + nomeFile + "...");
         String folderId = idPasta;
         File fileMetadata = new File();
         fileMetadata.setName(nomeFile);

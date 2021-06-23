@@ -12,12 +12,13 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import principal.MD5;
 
 /**
  *
  * @author hugov
  */
-public class FrmUsuarios extends javax.swing.JInternalFrame {
+public final class FrmUsuarios extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form FrmUsuarios
@@ -160,7 +161,7 @@ public class FrmUsuarios extends javax.swing.JInternalFrame {
         codigo.setOpaque(false);
         codigo.setPhColor(new java.awt.Color(255, 255, 255));
         codigo.setPlaceholder("CÓDIGO");
-        jPanel2.add(codigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 180, -1));
+        jPanel2.add(codigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 90, -1));
 
         codigoL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/produtos/codigoL.png"))); // NOI18N
         jPanel2.add(codigoL, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, 52));
@@ -206,6 +207,11 @@ public class FrmUsuarios extends javax.swing.JInternalFrame {
         senha.setOpaque(false);
         senha.setPhColor(new java.awt.Color(255, 255, 255));
         senha.setPlaceholder("SENHA");
+        senha.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                senhaMouseClicked(evt);
+            }
+        });
         senha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 senhaActionPerformed(evt);
@@ -439,7 +445,7 @@ public class FrmUsuarios extends javax.swing.JInternalFrame {
     boolean selecionarRegistro = false;
     private void registrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registrarActionPerformed
         if (selecionarRegistro) {
-            JOptionPane.showMessageDialog(this, "O código: " + this.codigo.getText() + "\n já está registrado.", "Usuarios", 0,
+            JOptionPane.showMessageDialog(this, "O código: " + codigo.getText() + "\n já está registrado.", "Usuarios", 0,
                     new ImageIcon(getClass().getResource("/imagens/usuarios/info.png")));
         } else {
             String sen = new String(senha.getPassword());
@@ -453,6 +459,7 @@ public class FrmUsuarios extends javax.swing.JInternalFrame {
                 us.setNome(nome.getText());
                 us.setSexo(sexo.getSelectedItem().toString());
                 us.setTipouser(tipo.getSelectedItem().toString());
+                sen = MD5.md5(sen);
                 us.setSenha(sen);
                 int op = UsuariosSql.registrarUsuario(us);
                 if (op != 0) {
@@ -481,6 +488,7 @@ public class FrmUsuarios extends javax.swing.JInternalFrame {
                     us.setNome(nome.getText());
                     us.setSexo(sexo.getSelectedItem().toString());
                     us.setTipouser(tipo.getSelectedItem().toString());
+                    sen = MD5.md5(sen);
                     us.setSenha(sen);
                     int opc = UsuariosSql.atualizarUsuario(us);
                     if (opc != 0) {
@@ -559,6 +567,10 @@ public class FrmUsuarios extends javax.swing.JInternalFrame {
     private void senhaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_senhaKeyPressed
 
     }//GEN-LAST:event_senhaKeyPressed
+
+    private void senhaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_senhaMouseClicked
+        senha.setText("");
+    }//GEN-LAST:event_senhaMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -6,7 +6,6 @@
 package vendas;
 
 import atos.FrmListaAtos;
-import static caixa.FrmCaixa.numFac;
 import caixa.Servicos;
 import caixa.ServicosSql;
 import documentos.FrmListaDoc;
@@ -18,8 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import static principal.MenuPrincipal.carregador;
-import selos.FrmListaSelo;
-import static vendas.FrmVendas.tabela;
 
 /**
  *
@@ -503,7 +500,7 @@ public class FrmCaixa extends javax.swing.JInternalFrame {
                     s.setPrimaryKey(numFac.getText());
                     s.setNumDoc_ser(vendas.FrmCaixa.tabela.getValueAt(0, 0).toString());
                     s.setNumAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 0).toString());
-                    s.setQuant_ser(vendas.FrmCaixa.tabela.getValueAt(i, 3).toString());
+                    s.setQuant_ser(vendas.FrmCaixa.tabela.getValueAt(i, 3).toString() + "x - ");
                     s.setTotalAto_ser(vendas.FrmCaixa.tabela.getValueAt(i, 5).toString());
                     s.setData_ser(data1);
                     opc = ServicosSql.registrar(s);

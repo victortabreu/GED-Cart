@@ -138,6 +138,7 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
         for (int i = 0; i < vendas.FrmVendas.tabela.getRowCount(); i++) {
             quant = vendas.FrmVendas.tabela.getValueAt(i, 4).toString();
+            quant = quant.replaceAll("x - ", "");
             emolBruto = vendas.FrmVendas.tabela.getValueAt(i, 5).toString();
             recompeMG = vendas.FrmVendas.tabela.getValueAt(i, 6).toString();
             emolLiquido = vendas.FrmVendas.tabela.getValueAt(i, 7).toString();
@@ -157,12 +158,14 @@ public class FrmVendas extends javax.swing.JInternalFrame {
 
                 vendas.FrmVendas.tabela.setValueAt(dataF, i, 0);
             }
-
+            
             quantidade = Integer.parseInt(quant);
             bruto = Double.parseDouble(emolBruto);
             recompe = Double.parseDouble(recompeMG);
             liquido = Double.parseDouble(emolLiquido);
             tfj = Double.parseDouble(tfj1);
+            
+            vendas.FrmVendas.tabela.setValueAt(quant, i, 4);
 
             calcB = bruto * quantidade;
             vendas.FrmVendas.tabela.setValueAt("R$ " + Math.rint(calcB * 100) / 100, i, 5);

@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Wed Jun 23 01:55:13 BRT 2021:
+ Inicializando o Derby versão The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instância a816c00e-017a-3738-e17d-000002c9c040
+no diretório de banco de dados D:\Documentos\NetBeansProjects\GEDCart\GEDCartBD 
+
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_271-b09
+user.dir=D:\Documentos\NetBeansProjects\GEDCart
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Carregador de classe do banco de dados iniciado - derby.database.classpath=''

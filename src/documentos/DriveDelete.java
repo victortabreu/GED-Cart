@@ -86,6 +86,7 @@ public class DriveDelete {
     public static int a = 0;
 
     public String executar(String nome) throws IOException, GeneralSecurityException, InterruptedException {
+        MostraDrive.dados.setText("CONECTANDO AO DRIVE...");
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
@@ -103,6 +104,7 @@ public class DriveDelete {
         a = 0;
 
         do {
+            MostraDrive.dados.setText("PESQUISANDO POR ARQUIVO: " + nomeFile + "...");
             FileList result = service.files().list()
                     .setQ("'" + idPasta + "' in parents")
                     .setSpaces("drive")
@@ -113,6 +115,7 @@ public class DriveDelete {
                 if (file.getName().equals(nomeFile)) {
                     try {
                         service.files().delete(file.getId()).execute();
+                        MostraDrive.dados.setText("EXCLUINDO ARQUIVO: " + nomeFile);
                         a++;
                     } catch (IOException ex) {
                         Logger.getLogger(DriveDelete.class.getName()).log(Level.SEVERE, null, ex);
@@ -123,6 +126,7 @@ public class DriveDelete {
         } while (pageToken != null);
 
         if (a != 0) {
+            MostraDrive.dados.setText("ARQUIVO EXCUÍDO!");
             return ("EXCLUÍDO DO DRIVE: " + nomeFile);
         } else {
             return ("ARQUIVO NAO EXISTE NO DRIVE");

@@ -5,13 +5,11 @@
  */
 package usuarios;
 
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
@@ -157,4 +155,43 @@ public class UsuariosSql {
         return rsu;
     }
 
+    public static String[] loginNome(String nome) {
+
+        String sql = "SELECT * FROM usuarios WHERE (nome_us like '" + nome + "') "
+                + " order by nome_us";
+        String dados[] = new String[1];
+        dados[0] = "null";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                dados[0] = rs.getString("nome_us");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dados;
+    }
+
+    public static String[] login(String nome, String senha) {
+
+        String sql = "SELECT * FROM usuarios WHERE (nome_us like '" + nome + "' AND senha like '" + senha + "') "
+                + " order by nome_us";
+        String dados[] = new String[3];
+        dados[0] = "null";
+        dados[1] = "null";
+        dados[2] = "null";
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                dados[0] = rs.getString("nome_us");
+                dados[1] = rs.getString("senha");
+                dados[2] = rs.getString("tipo_us");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dados;
+    }
 }
